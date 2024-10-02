@@ -120,3 +120,34 @@
 * virtual machine `>` check status, if running `>` click 'stop'.
 
 ---
+
+
+## Logging into our VMs
+
+1. Click 'Start': status will change to 'Running'.
+2. Click 'Connect' (the normal one).
+3. It'll show you the IP address: 172.167.29.191
+4. use native SSH
+5. Copy and execute SSH commandSSH Command will only work if youre in you .ssh folder: (tech264-georgia-az-key) 
+6. Git Bash: cd ? cd .shh > ls .ssh > grab the key^^ > ssh -i ~/.ssh/id_rsa.pem adminuser@172.167.29.191 (.pem is the private padlock/key) > exit.
+7. Are you sure? type 'yes'
+8. Home directory is: adminuser@tech264-georgia-first-vm
+
+
+### SSH command to use form anywhere:
+1. Copy and execute SSH command:
+2. ~/.ssh/tech264-georgia-az-key (we've provided the path to it). 
+3. enter cd on Git Bash to go back to home directory(~)
+4. paste the path for the key here: ssh -i ~/.ssh/tech264-georgia-az-key adminuser@172.167.29.191
+5. 
+
+
+## Organised notes: Connecting Your Virtual Machine
+1. **Start** your virtual machine.
+2. Navigate to "Connect" under your VM.
+3. Find "Native SSH" and **select** it. A side panel should open.
+4. Input `~/.ssh/` and your `private key name` into the "Copy and Execute SSH Command" line. This will output a command for us to use in our CL (We are using **GitBash**).
+5. Click the copy button for the code below what was just inputted.
+6. Paste this code into your **GitBash**.
+7. A **warning** will come out once entered into your **GitBash**. Respond with `yes` and then it will permanently save the IP address, meaning we will not be given the warning again.
+8. You can type `exit` to **logout** of the Virtual Machine.
