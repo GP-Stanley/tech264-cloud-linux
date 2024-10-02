@@ -2,6 +2,7 @@
 ** more details underneath daily notes.
 
 - [My notes:](#my-notes)
+- [What is VNet?](#what-is-vnet)
 - [Azure VM Labelling and Networking](#azure-vm-labelling-and-networking)
   - [Creating an Azure Test VNet](#creating-an-azure-test-vnet)
   - [Deleting an Azure VNet](#deleting-an-azure-vnet)
@@ -18,6 +19,9 @@
     - [Steps to Create a VNet in Azure:](#steps-to-create-a-vnet-in-azure)
     - [What Information Do You Need to Plan a VNet?](#what-information-do-you-need-to-plan-a-vnet)
 
+# What is VNet?
+A VNet (short for Virtual Network) is a cloud-based network that allows resources like virtual machines (VMs), databases, and other services to securely communicate with each other, the internet, and on-premises networks. 
+It’s a fundamental building block in cloud environments (such as Microsoft Azure or AWS) for managing communication between resources.
 
 # Azure VM Labelling and Networking
 
@@ -76,6 +80,7 @@ Creating a Virtual Machine (VM) inside a Virtual Network (VNet). A VM is essenti
 5. Add the **owner tag** to identify yourself as the creator.
    - `Tags` help manage resources by identifying ownership, environment, or purpose, especially in large cloud deployments.
    - aka, they are used to group things together. 
+6. Check Security - most likey, you need to make no modifications. 
 
 ---
 
@@ -90,21 +95,22 @@ To securely access your Azure VM, you will need to create an SSH key pair. The *
 
 1. Open **Git Bash** (or terminal) on your local machine.
 2. Make sure you are in your home directory (e.g., `C:/Users/your-username`).
-3. Create an `.ssh` folder if it doesn't exist:
+3. `ls -a` (display all the hidden files - files starting with a dot). Typically, you may not have a .shh folder, here's how to create one:
+4. Create an `.ssh` folder if it doesn't exist:
    ```bash
    mkdir .ssh```
-4. Change directory into your .ssh folder: cd `.shh`
-5. Generate the SSH key pair using this command: `ssh-keygen -t rsa -b 4096 -C "your_email@example.com"`
-   * -t rsa: Specifies that the type of key is RSA.
-   * -b 4096: Sets the key to be 4096 bits long (high security).
-   * -C: Adds a comment, in this case, your email address.
-6. When prompted, hit Enter to accept the default filename (or you can specify a name like tech264-georgia-az-key).
-7. Press Enter again if you don't want to use a passphrase.
-8. After generating, the key pair will be stored in two files:
+5. Change directory into your .ssh folder: cd `.shh`
+6. Generate the SSH key pair using this command: `ssh-keygen -t rsa -b 4096 -C "your_email@example.com"`
+   * `-t rsa`: Specifies that the type of key is RSA.
+   * `-b 4096`: Sets the key to be 4096 bits long (high security).
+   * `-C`: Adds a comment, in this case, your email address.
+7. When prompted, hit Enter to accept the default filename (or you can specify a name like tech264-georgia-az-key).
+8. Press Enter again if you don't want to use a passphrase.
+9. After generating, the key pair will be stored in two files:
    * Private key: tech264-georgia-az-key
    * Public key: tech264-georgia-az-key.pub
-9. To view the public key, `run:cat tech264-georgia-az-key.pub`
-10. Copy the entire public key (starting from ssh-rsa and ending with your email address).
+10. To view the public key, `run:cat tech264-georgia-az-key.pub`
+11. Copy the entire public key (starting from ssh-rsa and ending with your email address).
 
 ### Adding the Public Key to Azure:
 1. In the Azure Portal, search for SSH keys.
