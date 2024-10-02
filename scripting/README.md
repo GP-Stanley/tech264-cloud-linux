@@ -117,7 +117,6 @@ Script name: test_for_args.py
 First argument: hello
 ```
 
-# Virtual Machine
 
 
 

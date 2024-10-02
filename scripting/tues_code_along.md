@@ -121,29 +121,67 @@ With these instructions, you can set up and manage virtual networks and secure a
 
 
 
-
-
-
 # Architecture of a Virtual Machine
 * `A Virtual Machine` (VM) is like a pretend computer running inside your real computer. Imagine you have a Windows computer, but you want to run a Linux operating system on it without buying a new computer. That's where a VM comes in — it lets you create a "fake" Linux computer inside your Windows computer.
 * Consists of several key components that work together to emulate a physical computer. 
 
 # Diagram
 
-** image won't insert: insert at a later date.
+![alt text](image.png)
+![alt text](image-1.png)
 
-1. Region (physically in the world).
-2. Resource Group.
-3. Virtual Network (VNet).
-4. Subnet.
-5. Virtual machine.
-6. Disk (of machine).
-7. Network Interface Controller (NIC).
-8. Public IP.
-9. Network Security Group (NSG) aka, like a firewall.
-10. NSG rule - allow HTTP.
-11. NSG rule - allow SSH.
-12. SSH Key.
+
+## Key Components of a VM
+
+1. **Region**:
+   - **Definition**: A geographical area where your resources are physically located.
+   - **Use**: Helps in choosing the closest location to your users for better performance and compliance with local regulations.
+
+2. **Resource Group**:
+   - **Definition**: A container that holds related resources for an application.
+   - **Use**: Organizes and manages resources like VMs, storage accounts, and virtual networks in a single unit.
+
+3. **Virtual Network (VNet)**:
+   - **Definition**: A network that allows VMs to communicate with each other and with the internet.
+   - **Use**: Provides isolation, segmentation, and security for your resources, similar to how a house provides structure and boundaries.
+
+4. **Subnet**:
+   - **Definition**: A segment of a VNet that can contain multiple VMs.
+   - **Use**: Divides the VNet into smaller, manageable sections, like rooms within a house, to improve organization and security.
+
+5. **Virtual Machine**:
+   - **Definition**: The actual virtualized instance of a computer.
+   - **Use**: Runs applications and services, just like a physical computer.
+
+6. **Disk**:
+   - **Definition**: Storage for the VM's operating system, applications, and data.
+   - **Use**: Stores all the files necessary for the VM to function, similar to a hard drive in a physical computer.
+
+7. **Network Interface Controller (NIC)**:
+   - **Definition**: A hardware component that connects the VM to the network.
+   - **Use**: Enables communication between the VM and other devices, both within the VNet and externally.
+
+8. **Public IP**:
+   - **Definition**: An IP address that is accessible from the internet.
+   - **Use**: Allows external users to access the VM, similar to how a public address lets people find your house.
+
+9. **Network Security Group (NSG)**:
+   - **Definition**: A set of rules that control inbound and outbound traffic to VMs.
+   - **Use**: Acts like a firewall, protecting your VMs by allowing or denying traffic based on specified rules.
+
+10. **NSG Rule - Allow HTTP**:
+    - **Definition**: A rule that permits HTTP traffic.
+    - **Use**: Allows web traffic to reach your VM, enabling web servers to function.
+
+11. **NSG Rule - Allow SSH**:
+    - **Definition**: A rule that permits SSH traffic.
+    - **Use**: Allows secure remote access to your VM for management and configuration.
+
+12. **SSH Key**:
+    - **Definition**: A cryptographic key used for secure access to the VM.
+    - **Use**: Acts like a padlock, ensuring that only authorized users can access the VM.
+
+
 
 ## Steps to Create a New SSH Key Pair and Add the Public Key to Azure
 SSH keys are like a pair of locks and keys that let you securely log in to a server without needing a password. You create the pair on your computer and then put the public "lock" on the server so you can access it with your private key.
