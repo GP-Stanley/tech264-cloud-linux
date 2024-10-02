@@ -23,7 +23,7 @@ The cloud means storing and accessing data or programs over the internet, rather
    * Use example: Large businesses leveraging various strengths of cloud providers.
 
 ## Types of Cloud Services:
-* `IaaS` (Infrastructure as a Service): Provides virtualized computing resources like virtual machines, storage, and networking. Example: AWS EC2.
+* `IaaS` (Infrastructure as a Service): Provides virtualised computing resources like virtual machines, storage, and networking. Example: AWS EC2.
 * `PaaS` (Platform as a Service): Provides a platform allowing customers to develop, run, and manage applications. Example: Microsoft Azure App Service.
 * `SaaS` (Software as a Service): Software that is accessible via the internet. Example: Gmail, Dropbox.
   
@@ -40,9 +40,10 @@ Disadvantages:
 * Ongoing operational costs.
 
 ## OpEx vs CapEx (Operational vs Capital Expenses)
-  * CapEx (Capital Expenditure): Upfront investment in physical infrastructure, like buying servers. Used in on-prem environments.
-  * OpEx (Operational Expenditure): Ongoing costs like paying for cloud services month-to-month. Used in cloud environments.
-  * The cloud favors OpEx, making it easier to scale costs gradually rather than large upfront investments.
+  * `CapEx` (Capital Expenditure): Upfront investment in physical infrastructure, like buying servers. Used in on-prem environments.
+  * `OpEx` (Operational Expenditure): Ongoing costs like paying for cloud services month-to-month. Used in cloud environments.
+
+The cloud favors OpEx, making it easier to scale costs gradually rather than large upfront investments.
 
 ## Is Migrating to the Cloud Always Cheaper?
 Not always. While cloud services reduce upfront costs, ongoing expenses (OpEx) may become higher over time, depending on the use case, especially for heavy, continuous workloads.
