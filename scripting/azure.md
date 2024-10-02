@@ -1,5 +1,18 @@
 # Azure
 
+- [Azure](#azure)
+      - [Why are we working with Azure?](#why-are-we-working-with-azure)
+  - [Creating a Virtual Machine](#creating-a-virtual-machine)
+    - [Plan to Create a Virtual Machine on Azure: Considerations](#plan-to-create-a-virtual-machine-on-azure-considerations)
+    - [Additional Notes](#additional-notes)
+  - [Creating a Virtual Machine: Original notes](#creating-a-virtual-machine-original-notes)
+  - [Creating a Virtual Machine: Organised notes](#creating-a-virtual-machine-organised-notes)
+  - [Stopping VM](#stopping-vm)
+  - [Logging into our VMs](#logging-into-our-vms)
+    - [SSH command to use form anywhere:](#ssh-command-to-use-form-anywhere)
+  - [Organised notes: Connecting Your Virtual Machine](#organised-notes-connecting-your-virtual-machine)
+
+
 #### Why are we working with Azure?
 * Your skills are transferable as things will work in a very silimar way to the other cloud providers: they just name things differently.
 * Azure `CLI`: is the command line.

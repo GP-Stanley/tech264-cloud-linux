@@ -1,9 +1,43 @@
 # Documentation of Linux code along (02/10/2024)
 
+- [Documentation of Linux code along (02/10/2024)](#documentation-of-linux-code-along-02102024)
+- [Raw Notes:](#raw-notes)
+  - [Linux:](#linux)
+  - [Basic Linux Commands](#basic-linux-commands)
+  - [Ramon's tips and tricks](#ramons-tips-and-tricks)
+- [Some Linux Commands](#some-linux-commands)
+  - [download a file: using the `curl` command to downloada an image.](#download-a-file-using-the-curl-command-to-downloada-an-image)
+  - [Copying a file (e.g., cat image).](#copying-a-file-eg-cat-image)
+  - [Make a directory - Mkdir](#make-a-directory---mkdir)
+  - [How you name files and folders](#how-you-name-files-and-folders)
+  - [Create a file](#create-a-file)
+    - [Summary:](#summary)
+    - [Summary:](#summary-1)
+  - [Navigating files and folders](#navigating-files-and-folders)
+  - [Logging out of Linux](#logging-out-of-linux)
+- [CHAT GPT 3.5 notes adaptation](#chat-gpt-35-notes-adaptation)
+- [Basic Linux Commands](#basic-linux-commands-1)
+    - [Navigation \& File Management](#navigation--file-management)
+    - [Useful `ls` Variants](#useful-ls-variants)
+    - [Directory Traversal](#directory-traversal)
+  - [Additional Linux Concepts](#additional-linux-concepts)
+    - [System \& User Information Commands](#system--user-information-commands)
+    - [Shell \& Process Management](#shell--process-management)
+  - [Ramon's Tips and Tricks](#ramons-tips-and-tricks-1)
+    - [Command Shortcuts](#command-shortcuts)
+    - [Viewing Hidden Files and Directories](#viewing-hidden-files-and-directories)
+  - [Useful Commands](#useful-commands)
+    - [System Maintenance](#system-maintenance)
+  - [Downloading Files with `curl`](#downloading-files-with-curl)
+    - [Basic File Download](#basic-file-download)
+  - [download a file: using the `curl` command to downloada an image.](#download-a-file-using-the-curl-command-to-downloada-an-image-1)
+
+
 # Raw Notes:
 
 ## Linux: 
 * What is linux? a clone of the unix operating system that was used on large mainframes. 
+  * Linux is a free, open source operating system, released under the GNU General Public License (GPL). Anyone can run, study, modify, and redistribute the source code, or even sell copies of their modified code, as long as they do so under the same license.
 * Scales.
 * Lots of different distributions out there.
 * 

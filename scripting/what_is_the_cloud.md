@@ -1,5 +1,43 @@
 # Understand what the cloud is
 
+- [Understand what the cloud is](#understand-what-the-cloud-is)
+  - [How Do We Know if Something Is in the Cloud?](#how-do-we-know-if-something-is-in-the-cloud)
+  - [Differences Between On-Prem and Cloud](#differences-between-on-prem-and-cloud)
+  - [4 Cloud Deployment Models:](#4-cloud-deployment-models)
+  - [Types of Cloud Services:](#types-of-cloud-services)
+- [Ramons diagram](#ramons-diagram)
+  - [Cloud Advantages/Disadvantages (For Businesses)](#cloud-advantagesdisadvantages-for-businesses)
+  - [Cloud Advantages and Disadvantages (For Businesses)](#cloud-advantages-and-disadvantages-for-businesses)
+    - [Advantages:](#advantages)
+    - [Disadvantages:](#disadvantages)
+  - [OpEx vs CapEx (Operational vs Capital Expenses)](#opex-vs-capex-operational-vs-capital-expenses)
+  - [Is Migrating to the Cloud Always Cheaper?](#is-migrating-to-the-cloud-always-cheaper)
+  - [Talk about this^ more:](#talk-about-this-more)
+      - [Short Answer: Not Always.](#short-answer-not-always)
+    - [Upfront Cost Savings](#upfront-cost-savings)
+    - [Ongoing Costs (OpEx)](#ongoing-costs-opex)
+    - [When Cloud Costs Can Get High](#when-cloud-costs-can-get-high)
+    - [Conclusion](#conclusion)
+  - [Market Share of Cloud Providers:](#market-share-of-cloud-providers)
+  - [Largest Cloud Providers' Strengths:](#largest-cloud-providers-strengths)
+  - [Which Cloud Provider Is Best?](#which-cloud-provider-is-best)
+  - [What Do You Pay for in the Cloud?](#what-do-you-pay-for-in-the-cloud)
+- [MORE DETAIL: ADD EDITS:](#more-detail-add-edits)
+  - [What Do You Pay for in the Cloud?](#what-do-you-pay-for-in-the-cloud-1)
+    - [1. `Storage`](#1-storage)
+    - [2. `Compute Power`](#2-compute-power)
+    - [3. `Networking`](#3-networking)
+    - [Conclusion](#conclusion-1)
+  - [4 Pillars of DevOps in the Cloud:](#4-pillars-of-devops-in-the-cloud)
+- [MORE DETAILS: ADD EDITS:](#more-details-add-edits)
+  - [4 Pillars of DevOps in the Cloud](#4-pillars-of-devops-in-the-cloud-1)
+    - [1. **Collaboration**](#1-collaboration)
+    - [2. **Automation**](#2-automation)
+    - [3. **Continuous Delivery**](#3-continuous-delivery)
+    - [4. **Monitoring and Feedback**](#4-monitoring-and-feedback)
+    - [Conclusion](#conclusion-2)
+
+
 ## How Do We Know if Something Is in the Cloud?
 The cloud means storing and accessing data or programs over the internet, rather than your local hard drive. If you access a service via the web or through a remote server, it’s in the cloud.
 * If it's on the cloud - it's `on demand`.

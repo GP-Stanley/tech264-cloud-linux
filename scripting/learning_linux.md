@@ -1,5 +1,39 @@
 # Research managing file ownership Linux
 
+- [Research managing file ownership Linux](#research-managing-file-ownership-linux)
+  - [Why is managing file ownership important?](#why-is-managing-file-ownership-important)
+  - [What is the command to view file ownership?](#what-is-the-command-to-view-file-ownership)
+      - [For example:](#for-example)
+  - [What permissions are set when a user creates a file or directory? Who does the file or directory belong to?](#what-permissions-are-set-when-a-user-creates-a-file-or-directory-who-does-the-file-or-directory-belong-to)
+  - [Why does the owner, by default, not receive X (execute) permissions when they create a file?](#why-does-the-owner-by-default-not-receive-x-execute-permissions-when-they-create-a-file)
+  - [What command is used to change the owner of a file or directory?](#what-command-is-used-to-change-the-owner-of-a-file-or-directory)
+  - [Summary of Commands:](#summary-of-commands)
+- [Research managing file permissions](#research-managing-file-permissions)
+    - [No.](#no)
+  - [If you give permissions to the User entity, what does this mean?](#if-you-give-permissions-to-the-user-entity-what-does-this-mean)
+  - [If you give permissions to the Group entity, what does this mean?](#if-you-give-permissions-to-the-group-entity-what-does-this-mean)
+  - [If you give permissions to the Other entity, what does this mean?](#if-you-give-permissions-to-the-other-entity-what-does-this-mean)
+  - [You give the following permissions to a file:](#you-give-the-following-permissions-to-a-file)
+      - [You are logged in as the user who is the owner of the file. What permissions will you have on this file? Explain.](#you-are-logged-in-as-the-user-who-is-the-owner-of-the-file-what-permissions-will-you-have-on-this-file-explain)
+  - [Here is one line from the ls -l command:](#here-is-one-line-from-the-ls--l-command)
+    - [Breakdown of the permissions:](#breakdown-of-the-permissions)
+    - [Other details:](#other-details)
+    - [Summary of file permissions:](#summary-of-file-permissions)
+- [Research managing file permissions using numeric values](#research-managing-file-permissions-using-numeric-values)
+  - [What numeric values are assigned to each permission?](#what-numeric-values-are-assigned-to-each-permission)
+  - [What can you assign with the values read + write permissions?](#what-can-you-assign-with-the-values-read--write-permissions)
+  - [What value would assign read, write, and execute permissions?](#what-value-would-assign-read-write-and-execute-permissions)
+  - [What value would assign read and execute permissions?](#what-value-would-assign-read-and-execute-permissions)
+- [Often, a file or directory's mode/permissions are represented by 3 numbers. What do you think 644 would mean?](#often-a-file-or-directorys-modepermissions-are-represented-by-3-numbers-what-do-you-think-644-would-mean)
+      - [A file’s permissions represented by three numbers apply to:](#a-files-permissions-represented-by-three-numbers-apply-to)
+      - [For 644, the permissions break down as:](#for-644-the-permissions-break-down-as)
+      - [So, 644 means:](#so-644-means)
+- [Research changing file permissions](#research-changing-file-permissions)
+  - [What command changes file permissions?](#what-command-changes-file-permissions)
+  - [To change permissions on a file, what must the end user be? (2 answers)](#to-change-permissions-on-a-file-what-must-the-end-user-be-2-answers)
+  - [Examples of Different Ways/Syntaxes to Set Permissions on a New File (testfile.txt)](#examples-of-different-wayssyntaxes-to-set-permissions-on-a-new-file-testfiletxt)
+
+
 ## Why is managing file ownership important?
 * Managing file ownership is important in Linux because it `controls who has the ability to read, write, or execute a file or directory`. 
 * In a multi-user system, this helps `maintain security and privacy` by ensuring that only authorised users can access or modify certain files. 
