@@ -120,8 +120,9 @@ You manage: hardware (servers, storage, networking).
    - **Example**: A healthcare provider storing patient data in the cloud needs to ensure compliance with regulations like HIPAA, which require strict data protection measures.
    
 
-2. `Downtime Risks`:
+2. `Downtime Risks` (go either way):
    - Cloud providers may suffer from technical issues, server failures, or even cyberattacks, leading to periods where businesses canâ€™t access critical services.
+   - You could have more uptime because some servers give a guarentee. 
    - **Example**: When major cloud providers like AWS or Microsoft Azure experience outages, businesses relying entirely on these platforms can face downtime, affecting operations.
    
 
@@ -172,14 +173,16 @@ Migrating to the cloud **can** save money, especially in the beginning, but itâ€
 ![cloud_provider_market_share](image-5.png)
 
 ## Market Share of Cloud Providers:
-* `AWS`: Dominates the market, known for its broad range of services, particularly IaaS and PaaS.
+* `Amazon Web Services` (AWS): Dominates the market, known for its broad range of services, particularly IaaS and PaaS.
 * `Microsoft Azure`: Second largest, integrates well with Microsoft products, popular for PaaS solutions.
 * `Google Cloud`: Known for machine learning and big data analytics.
 
 ## Largest Cloud Providers' Strengths:
 1. `AWS`: Wide variety of services, scalability, global reach.
+   - Cheapest VM's out of these three.
 2. `Azure`: Strong integration with Microsoft products (Office 365, Windows).
 3. `Google Cloud Platform` (GCP): Leading in data processing, AI, and analytics.
+   - If you're an expert in GCP, you're invaluable. It's a niche. 
 
 ## Which Cloud Provider Is Best?
 It depends on your needs:
