@@ -10,7 +10,8 @@ Azure is Microsoft's cloud computing platform, offering a wide range of services
 
 **Takeaway**: Azure’s structure ensures services are highly available and resilient, even in the event of hardware failure or disaster.
 
-![regions-availability-zones](image.png)
+![scope-levels](image.png)
+
 
 ---
 ## How is Azure Structured/Organised?
@@ -22,10 +23,10 @@ Azure is organised into:
 
 * `Resources`: Actual services and applications, such as virtual machines (VMs), databases, and storage accounts.
 
-**Takeaway**: Organizing resources into groups and subscriptions helps simplify management and billing.
+**Takeaway**: Organising resources into groups and subscriptions helps simplify management and billing.
 
 
-![scope-levels](image-2.png)
+![scope-levels](images/scope-levels.png)
 
 ---
 ## Types of Services Azure Provides
