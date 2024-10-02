@@ -132,8 +132,10 @@ This diagram shows `how a VM is connected to a network` and `controlled via secu
 
 It emphasises the importance of security groups (NSGs) in managing access and the key role of public IPs for external access to the VM from local machines.
 
-![alt text](image.png)
-![alt text](image-1.png)
+![Alt text](./images/colourful_diagram.png)
+![Alt text](./images/vm_architecture.png)
+
+
 
 ## Looking at the components and interactions involved in setting up a virtual machine (VM) in a cloud environment (based on the diagrams above).
 

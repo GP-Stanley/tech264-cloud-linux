@@ -64,9 +64,10 @@ The cloud means storing and accessing data or programs over the internet, rather
 
 * `SaaS` (Software as a Service): Software that is accessible via the internet. Example: Gmail, Dropbox, Salesforce. 
 
-![clopud_service_models](image-4.png)
+![Alt text](./images/cloud_service_models.png)
 
-### Ramons diagram
+
+# Ramons diagram
 How much control do you have? how much responsibility?
 
 You manage: hardware (servers, storage, networking).
@@ -82,7 +83,8 @@ You manage: hardware (servers, storage, networking).
 
 `Saas`: you manage: data. Provider manages: applications, runtime, middleware, O/S, virtualisation, servers, storage, netwroking.
 
-![defining_prem_iaas_saas_paas](image-3.png)
+![Alt text](./images/you_manage_they_manage.png)
+
 
 
   
@@ -169,8 +171,8 @@ However, while you save money upfront, the **ongoing costs** of using cloud serv
 Migrating to the cloud **can** save money, especially in the beginning, but it’s important to plan ahead. If your business uses the cloud heavily or grows quickly, ongoing costs might become higher than expected.
 
 ---
+![Alt text](./images/could_provider_market_trend.png)
 
-![cloud_provider_market_share](image-5.png)
 
 ## Market Share of Cloud Providers:
 * `Amazon Web Services` (AWS): Dominates the market, known for its broad range of services, particularly IaaS and PaaS.
