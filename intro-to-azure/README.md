@@ -5,7 +5,7 @@
   - [Types of Services Azure Provides](#types-of-services-azure-provides)
   - [Ways to Access Azure](#ways-to-access-azure)
   - [Table: difference between Azure and Azure Devops](#table-difference-between-azure-and-azure-devops)
-  - [Difference Between Azure and Azure DevOps](#difference-between-azure-and-azure-devops)
+  - [Difference Between Azure and Azure DevOps ♾️](#difference-between-azure-and-azure-devops-️)
   - [Why Use the Azure Pricing Calculator?](#why-use-the-azure-pricing-calculator)
 
 
@@ -95,6 +95,8 @@ Azure offers a vast array of services, categorised into:
 
 ---
 ## Ways to Access Azure
+No matter how you access Azure, what you're using behind it is the ARM API (Azure Resource manager). They all talk to one API. 
+
 You can access Azure in multiple ways:
 1. `Azure Portal`: A web-based, graphical user interface that allows you to *manage your Azure resources*.
    * It provides a comprehensive dashboard where you can create, configure, and monitor services. 
@@ -121,7 +123,7 @@ You can access Azure in multiple ways:
 ![diff-azure-devops](images/differences-table.png)
 
 
-## Difference Between Azure and Azure DevOps
+## Difference Between Azure and Azure DevOps ♾️
 * `Azure`: A general-purpose cloud platform that *provides infrastructure and services* to build, deploy, and manage applications globally.
   * ***General-Purpose Cloud Platform***: Azure is a comprehensive cloud computing platform provided by Microsoft. It offers a wide range of services, including computing power, storage, databases, networking, and more.
   * ***Infrastructure and Services***: Azure provides the foundational infrastructure and services needed to build, deploy, and manage applications on a global scale. This includes virtual machines, databases, AI services, and more.
@@ -140,4 +142,6 @@ You can access Azure in multiple ways:
 ---
 ## Why Use the Azure Pricing Calculator?
 The `Azure Pricing Calculator` helps you estimate costs for using different Azure services. You can input the services you plan to use, such as virtual machines, storage, and databases, to get an estimate of your monthly bill. This tool helps prevent unexpected costs and enables better budgeting and planning.
+
+Link: https://azure.microsoft.com/en-gb/pricing/calculator/?ef_id=_k_4b2e508ea7be1c97cc9e3670d72e631e_k_&OCID=AIDcmm3bvqzxp1_SEM__k_4b2e508ea7be1c97cc9e3670d72e631e_k_&msclkid=4b2e508ea7be1c97cc9e3670d72e631e
 
