@@ -138,6 +138,46 @@ It emphasises the importance of security groups (NSGs) in managing access and th
 
 
 ## Looking at the components and interactions involved in setting up a virtual machine (VM) in a cloud environment (based on the diagrams above).
+* NIC is linked to the public IP adress. You can detachit from the vard and link it to something else.
+* * How does the traffic move through to gain access to that VM?
+* Traffic has to be filtered through the NSG?
+* NSG can be used by multiple VMs at once. 
+
+
+### Components and Interactions
+#### Network Interface Card (NIC)
+* The NIC is a critical component that connects the VM to the network.
+* It can be linked to a public IP address, allowing the VM to communicate with external networks (e.g., the internet).
+* The NIC can be detached from one VM and attached to another if needed.
+#### Public IP Address
+* A public IP address is assigned to the NIC, making the VM accessible from the internet.
+* This IP address is used by external clients to send traffic to the VM.
+
+### Traffic Flow to the VM
+#### Traffic Initiation
+* When a client wants to communicate with the VM, it sends a request to the public IP address associated with the NIC.
+
+#### Traffic Filtering
+* The traffic first reaches the NIC. The NIC acts as a gateway for all incoming and outgoing traffic.
+* The NIC can have security rules (Network Security Groups) that filter traffic based on IP addresses, ports, and protocols.
+
+#### Traffic Routing
+* After passing through the NIC, the traffic is routed to the VM.
+* The VM processes the incoming traffic and sends responses back through the NIC.
+
+### Key Points
+*` NIC and Public IP`: The NIC is linked to a public IP address, making the VM accessible from the internet. You can detach the NIC and link it to another VM if needed.
+* `Traffic Filtering`: All traffic to and from the VM is filtered through the NIC. Security rules on the NIC can control which traffic is allowed or denied.
+* `Traffic Flow`: Traffic from external clients reaches the public IP, passes through the NIC, and is then routed to the VM.
+
+### Example Scenario
+* **Client Request**: A user on the internet sends a request to the public IP address of your VM.
+* **NIC Filtering**: The NIC checks the request against its security rules. If the request is allowed, it proceeds.
+* **VM Processing**: The request reaches the VM, which processes it and generates a response.
+* **Response**: The response is sent back through the NIC to the client.
+
+--- 
+## Looking at the components and interactions involved in setting up a virtual machine (VM) in a cloud environment (based on the diagrams above)
 
 ## Main Components:
 `Virtual Machine` (VM):
