@@ -1,5 +1,6 @@
-# Research managing file ownership Linux
+# Learning Linux
 
+- [Learning Linux](#learning-linux)
 - [Research managing file ownership Linux](#research-managing-file-ownership-linux)
   - [Why is managing file ownership important?](#why-is-managing-file-ownership-important)
   - [What is the command to view file ownership?](#what-is-the-command-to-view-file-ownership)
@@ -33,6 +34,8 @@
   - [Examples of Different Ways/Syntaxes to Set Permissions on a New File (testfile.txt)](#examples-of-different-wayssyntaxes-to-set-permissions-on-a-new-file-testfiletxt)
       - [**Summary**:](#summary)
 
+
+# Research managing file ownership Linux
 
 ## Why is managing file ownership important?
 * Managing file ownership is important in Linux because it `controls who has the ability to read, write, or execute a file or directory`. 

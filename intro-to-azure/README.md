@@ -1,4 +1,17 @@
+- [Understanding Azure](#understanding-azure)
+  - [Introduction to Azure](#introduction-to-azure)
+  - [Azure Regions and Availability Zones](#azure-regions-and-availability-zones)
+  - [How is Azure Structured/Organised?](#how-is-azure-structuredorganised)
+  - [Types of Services Azure Provides](#types-of-services-azure-provides)
+  - [Ways to Access Azure](#ways-to-access-azure)
+  - [Table: difference between Azure and Azure Devops](#table-difference-between-azure-and-azure-devops)
+  - [Difference Between Azure and Azure DevOps](#difference-between-azure-and-azure-devops)
+  - [Why Use the Azure Pricing Calculator?](#why-use-the-azure-pricing-calculator)
+
+
+
 # Understanding Azure
+Source link: https://holori.com/list-of-all-azure-regions-and/#azure-regions 
 
 ## Introduction to Azure
 Azure is Microsoft's `cloud computing platform`, offering services like: computing, storage, networking, and analytics. 
@@ -10,23 +23,36 @@ Azure is Microsoft's `cloud computing platform`, offering services like: computi
 
 * `Availability Zones`: These are *physically separated* data centers within a region. Each zone has independent power, cooling, and networking, ensuring higher availability and fault tolerance. If one zone fails, others can still provide service.
 
-**Summary:**: Azure’s structure ensures services are highly available and resilient, even in the event of hardware failure or disaster.
+**Summary**: Azure’s structure ensures services are highly available and resilient, even in the event of hardware failure or disaster.
 
-![alt text](image.png)
+![region-pair](images/region-pair.png)
 
 
 ---
 ## How is Azure Structured/Organised?
-Azure is organised into:
+Each level provides a different scope so we can set up different levels of access and apply different policies to any one of these scopes. At each level you can set access and policies.
 
-* `Subscriptions`: A subscription is like an account that contains the resources (VMs, databases, etc.). Each subscription has limits, such as how many resources you can deploy.
+Azure is organised into:
+* At the very top: `root management group`.
+  * Azure Entra: this is where all the user/groups permissions are stored. 
+
+* `Management groups`: help you manage access, policy, and compliance for multiple subscriptions. All subscriptions in a management group automatically inherit the conditions that are applied to the management group.
+  * they're like folders for organising your structure. 
+  * You can have management groups within management groups - up to 6 levels. 
+
+* `Subscriptions`: A subscription is like a (payment) account that contains the resources (VMs, databases, etc.). 
+  * Each subscription has limits, such as how many resources you can deploy. 
+  * Organisations can use subscriptions to manage costs and the resources that are created by users, teams, and projects.
+  * There are different types of subscriptions like student, free trial, pay as you go.
+  * They have limits/quotas: there will be a limit on how many resources you'll be able to create under that particular subscription. It's a way of organising within an organisation. 
   
-* `Resource Groups`: These are logical containers that group related resources (like VMs, storage accounts, etc.) so they can be managed as a single unit.
+* `Resource Groups`: These are logical containers that group related resources (like VMs, storage accounts, etc.) so they can be managed as a single unit. You cannot have a resource group within a resource group. (in our case, the resouce group is tech264).
 
 * `Resources`: Actual services and applications, such as virtual machines (VMs), databases, and storage accounts.
 
 **Takeaway**: Organising resources into groups and subscriptions helps simplify management and billing.
-
+ 
+⚠️ Note: To minimise the effect of regional outages, we recommend that you place resources in the same region as the resource group.
 
 ![scope-levels](images/scope-levels.png)
 
@@ -92,7 +118,8 @@ You can access Azure in multiple ways:
 ---
 ## Table: difference between Azure and Azure Devops
 
-![diff-azure-devops](image.png)
+![diff-azure-devops](images/differences-table.png)
+
 
 ## Difference Between Azure and Azure DevOps
 * `Azure`: A general-purpose cloud platform that *provides infrastructure and services* to build, deploy, and manage applications globally.
