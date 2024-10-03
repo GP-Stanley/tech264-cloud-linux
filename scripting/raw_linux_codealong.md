@@ -30,7 +30,27 @@
     - [System Maintenance](#system-maintenance)
   - [Downloading Files with `curl`](#downloading-files-with-curl)
     - [Basic File Download](#basic-file-download)
-  - [download a file: using the `curl` command to downloada an image.](#download-a-file-using-the-curl-command-to-downloada-an-image-1)
+  - [Create a Directory:](#create-a-directory)
+  - [Delete Files or Directories:](#delete-files-or-directories)
+- [Editing Files with Nano](#editing-files-with-nano)
+  - [Saving and Exiting in Nano:](#saving-and-exiting-in-nano)
+- [Guide to Connecting, Managing Files, and Creating a Script to Set Up Nginx](#guide-to-connecting-managing-files-and-creating-a-script-to-set-up-nginx)
+  - [1. Always Test Commands Manually First](#1-always-test-commands-manually-first)
+- [Writing a Bash Script](#writing-a-bash-script)
+  - [Step 2: Create and Edit the Script:](#step-2-create-and-edit-the-script)
+  - [Step 3: Write the Script:](#step-3-write-the-script)
+  - [Test and Control Nginx](#test-and-control-nginx)
+  - [Step 4: Save and Exit:](#step-4-save-and-exit)
+- [Making the Script Executable and Running It](#making-the-script-executable-and-running-it)
+- [Managing Nginx](#managing-nginx)
+  - [Check Nginx Status:](#check-nginx-status)
+  - [Restart Nginx:](#restart-nginx)
+  - [Enable Nginx to Start on Boot:](#enable-nginx-to-start-on-boot)
+- [Environment Variables](#environment-variables)
+- [Kagan's Notes: EDIT LATER:](#kagans-notes-edit-later)
+- [What is an environment variable and how do we make one?](#what-is-an-environment-variable-and-how-do-we-make-one)
+- [Managing processes](#managing-processes)
+- [Killing processors](#killing-processors)
 
 
 # Raw Notes:
@@ -106,6 +126,7 @@ Bash shell: a process/software that interprets the commands.
 * `pwd`: to see the download and wherever it is: /home/adminuser
 * `ls`: to see the downloads. 
 * `mv himalayan-cat.jpg ~/images/`: to move the image, make sure you know the path!.
+`mv chicken-joke.txt funny-stuff`
 
 ## Copying a file (e.g., cat image).
 * 'cp': copy
@@ -132,7 +153,7 @@ Bash shell: a process/software that interprets the commands.
 ## Create a file
 `touch chicken-joke.txt`
 * `ls`
-* `nano in to the chicken-joke file: `nano chicken-joke.txt'
+* `nano chicken-joke.txt`: nano in to the chicken-joke file.
 * `Ctrl+s` = save
 * `Ctrl+x` = exit
 * `cat chicken-joke.txt`: shows the text on the screen.
@@ -303,5 +324,303 @@ back to: georg@Aceroma MINGW64 ~
 * `pwd`: to see the download and wherever it is: /home/adminuser
 * `ls`: to see the downloads. 
 * `mv himalayan-cat.jpg ~/images/`: to move the image, make sure you know the path!.
+
+
+
+# Making our first bash script: Original notes.
+ALWAYS DO IT MANUALLY FIRST - to make sure you KNOW the commands work before you use them. 
+* planning out our script file.
+* make a new file called 'provision'.
+* `nano provision.sh`
+* Specifiy the shell you want it to run underneath the commands.
+* shbang: `#!`: NEED EVERYTIME YOU WRITE A BASH SCRIPT. need on the top of every bash script. its telling it the location of the bash shell.
+* after (no spaces) path to the bashshell: `#!/bin/bash`
+* nginx: 
+
+`sudo apt install -y`
+
+make sure nginx is running: `sudo systemctl` (control system processes) OR `sudo systemctl status nginx`
+
+`Ctrl+z`: to get out of it. (less harsh)
+`Ctrl+c`:
+
+how to restear nginx: `sudo systemctl restart nginx`
+
+how to enable nginx: `sudo systemctl enable nginx`
+
+to run the script: in linux you have to tell them where the script is: `./provision.sh`
+
+`chmod +x provision.sh`
+
+
+
+
+
+
+# Navigating the Remote Server
+Once you're connected to the server, you'll want to move around the file system and see what's there.
+
+`ls`: This command lists all the files and directories in your current location.
+
+`tree`: View Directory Structure: This shows the folder structure in a tree-like format, displaying directories and subdirectories.
+
+`cd <directory-name>`: Change Directory: You use this command to move into a specific folder. e.g., cd 'funny-stuff/'. Explanation: You are moving into the funny-stuff folder.
+
+
+
+# Basic File Management
+Now, you can manage files by moving, creating, and deleting them.
+
+Move Files: `mv <file> <destination-directory>` The mv command moves a file from one location to another. It can also be used to rename files.
+```bash
+mv chicken-joke.txt funny-stuff/
+# This command moves the file chicken-joke.txt into the funny-stuff folder.
+```
+
+## Create a Directory:
+
+`mkdir <directory-name>`: mkdir stands for "make directory." It creates a new folder.
+```bash
+mkdir funny-jokes
+# You are creating a new directory called funny-jokes.
+```
+
+## Delete Files or Directories:
+* Delete a file:
+
+```bash
+rm <file-name>
+# rm stands for "remove" and is used to delete a file.
+```
+
+* Delete a directory (and all its contents):
+```bash
+rm -r <directory-name>
+# The -r option means "recursive," which tells the command to delete the folder and everything inside it.
+```
+Example:
+
+```bash
+rm -r funny-stuff/
+# You are deleting the entire funny-stuff directory and its contents.
+```
+
+# Editing Files with Nano
+To edit files on the server, you can use the nano text editor. It's a simple, command-line text editor.
+
+```bash
+nano <file-name>
+```
+
+Example:
+```bash
+nano chicken-joke.txt
+# This command opens the file chicken-joke.txt for editing.
+```
+
+## Saving and Exiting in Nano:
+* After editing, press `CTRL+s` to save.
+* Then press `CTRL+x` to exit the editor.
+
+
+
+# Guide to Connecting, Managing Files, and Creating a Script to Set Up Nginx
+## 1. Always Test Commands Manually First
+   * Before writing a script, it's important to manually run the commands. 
+   * This ensures that the commands work as expected. Once you're sure, you can script them.
+
+
+
+# Writing a Bash Script
+You can automate tasks by writing a script in Bash. This script will contain a series of commands that the system will execute in sequence.
+
+## Step 2: Create and Edit the Script:
+```bash
+nano provision.sh
+# This command creates a new file named provision.sh and opens it in the Nano editor for you to add commands.
+```
+
+## Step 3: Write the Script: 
+* Specify the Shell with a Shebang #!
+
+At the very top of every Bash script, you need a "shebang" (#!). This tells the system the location of the shell that should execute the script. `#!/bin/bash` ensures that the script runs under the Bash shell.
+
+Here’s an example of a simple script to update, upgrade, and install the Nginx web server:
+```bash
+#!/bin/bash
+
+# update
+sudo apt update -y
+
+# upgrade
+sudo apt upgrade -y
+
+# install nginx
+sudo apt install nginx -y
+
+# restart nginx
+sudo systemctl restart nginx
+
+# enable nginx - to start on boot
+sudo systemctl enable nginx
+```
+
+Explanation:
+
+`sudo apt update -y`: Updates the package list.
+`sudo apt upgrade -y`: Installs available updates.
+`sudo apt install nginx -y`: Installs the Nginx web server.
+`sudo systemctl restart nginx`: Restarts Nginx to apply any changes.
+`sudo systemctl enable nginx`: Enables Nginx to start automatically when the system boots.
+
+## Test and Control Nginx
+To ensure Nginx is running, you can manually check its status using the following command:
+`sudo systemctl status nginx`.
+* This command shows whether Nginx is running or stopped. You can also control Nginx processes using `systemctl`.
+
+
+## Step 4: Save and Exit: 
+Once you've written the script, press `ctrl+s` to save, and `ctrl+x` to exit Nano.
+
+---
+
+# Making the Script Executable and Running It
+To run a script, you first need to make it executable:
+```bash
+chmod +x provision.sh
+# The chmod +x command gives execute permissions to the file provision.sh, allowing it to be run as a program.
+```
+
+Now you can run the script:
+
+```bash
+./provision.sh
+# The ./ tells the system to execute the file in the current directory.
+```
+
+# Managing Nginx
+After installing Nginx, you can manage its status and control it using the systemctl command.
+
+## Check Nginx Status:
+
+```bash
+sudo systemctl status nginx
+```
+* This shows the current status of the Nginx service, including whether it is running or stopped.
+
+## Restart Nginx:
+```bash
+sudo systemctl restart nginx
+```
+* This restarts Nginx, useful after making configuration changes.
+
+
+## Enable Nginx to Start on Boot:
+```bash
+sudo systemctl enable nginx
+```
+* This command enables Nginx to start automatically whenever the server boots up.
+
+
+
+
+
+
+
+
+# Environment Variables
+A container for storing data vales.
+* Storing a value in memory.
+* Give it a particular name. 
+
+Why do we use them?
+* a value in memory that is available to any tool that want to look up those values or a particular command.
+
+Contain information about where to go and find a database (a connection string). 
+* set them in memory so anyone can look them up at any time. 
+
+What environment variables do we already have?
+* `printenv`: print variables to the scren.
+* `printenv <variable in captial letters>`: too look up a particular variable.
+*  : to store a variable.
+
+
+# Kagan's Notes: EDIT LATER:
+# What is an environment variable and how do we make one?
+ 
+An **environment variable** is a dynamic **variable** stored in a process environment. It is used to **pass** configuration information and settings to processes running in the system. These **variables** can influence the behavior of software and system components by providing information such as paths, user preferences, and system settings.
+- To view these, we can use the command `printenv`.
+- We can view a certain environment variable by using `printenv VARIABLENAME`.
+- To set a **variable**, we can use `VARIABLENAME=data`. This is a **shell variable**. To ensure this worked, we could use `echo $VARIABLENAME`, which would then output the `data` value. **Note** that this is **NOT** the same as an **enviornment variable**.
+- To set an **environment variable**, we can use `export VARIABLENAME=data`, Which would then display it if we used `printenv MYNAME`. If we were to log out, the created **environment variable** would disappear as it is not **persistent**.
+- If we were to set our **environment variable** inside of the hidden `.bashrc`, it would be visible to the user (admin) across sessions, making it **persistent**. **Note** that `.bashrc` is unique to the user. We can do this by using `nano .bashrc` and writing `export VARIABLENAME=data` in the file.
+
+##########################################################################
+
+
+MYNAME=georgia
+
+`echo $MYNAME`
+
+turn the variable into an environment variable:
+* `export <variable name>`: 
+
+make a variable persistent:
+* survive logging out and logging back in, we need to make it persistent
+* Whilat in home directory: 'ls -a'
+* set environment variable in .bashrc
+edit .bashrc file:
+
+* nano .bashrc
+* export added to the end. 
+* tail -4 .bashrc : to look at the 4 last lines. 
+
+`echo "export MYNAME=georgia_is_persistent" >> .filename`: will get that output and will save it into a file you specify.  
+`>>` adds it to the end of the specified file (appending). 
+
+
+# Managing processes
+* a process is a prgram thats been loaded into memory (RAM).
+* it could be being processed by the CPU or sitting idle. 
+* thye may be running at the same time but that doent mean the CPU is running.  
+* they can be running in memory.
+* if its doing multiple instructions at te same time, it will need more than one core. 
+* multicore CPUs can run multiple at a time.
+* single core can only run 1 at a time.
+
+Two types:
+* user pocesors
+* System processors
+
+`ps`: shows processors: will only show the user processors.
+`TTY`: refering to the id of the terminal session. 
+`ps --help simple`: to get simple help to see processors.
+`ps -A` or `ps -e`: to see the whole list of processors. 
+`ps aux`: all comprehensive information about processors.
+`PPID`: parent process ID: the partent process thst started another process.
+top command : orders the processors by default: the ones using the most CPU.
+`Shift+M`: can see its ordered by the ones using the most memory.
+`Shift+N`: order by newest processes. newest - oldest.
+`Shift+P`: see which is using the most procesing power. 
+`q`: for quit (to get out of this). 
+
+
+# Killing processors
+* Run a process
+`sleep 3`: delay of 3 seconds. Puts the foreground to sleep. While it does this, we cant do anything. 
+`sleep 5000 &` : & tells it to run in in the background. Output: [1] 2171 (process id).
+`job`: see processes running in the background. 
+` : how to end sleep process that is in the background (kill command).
+
+there are different levels of kill. You can be gentle (kill signal 1) (a hang up signal, like the phone).
+You'll need your process id from before^: (example) `kill -1 2171` > `jobs -l`: to show/check it.  
+
+harsh/terminate: `kill <ID number>` > to show/check it.  Output: [2]+  2181 Terminated 
+
+brute force: `kill -9 <ID>` >  `jobs -l`: Output: 2244 Killed
+
+
+
+
 
 

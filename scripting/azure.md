@@ -141,10 +141,11 @@
 2. Click 'Connect' (the normal one).
 3. It'll show you the IP address: 172.167.29.191
 4. use native SSH
-5. Copy and execute SSH command, SSH Command will only work if you're in your .ssh folder: (tech264-georgia-az-key) 
-6. Git Bash: cd `>` cd .shh `>` ls .ssh `>` grab the key^^ `>` ssh -i ~/.ssh/id_rsa.pem adminuser@172.167.29.191 (.pem is the private padlock/key) `>` exit.
-7. Are you sure? type 'yes'
-8. Home directory is: adminuser@tech264-georgia-first-vm
+5. Find "Native SSH" and **select** it. A side panel should open.
+6. Input `~/.ssh/` and your `private key name` into the "Copy and Execute SSH Command" line. This will output a command for us to use in our CL (We are using **GitBash**). Copy and execute SSH command, SSH Command will only work if you're in your .ssh folder: (tech264-georgia-az-key) 
+7. Git Bash: cd `>` cd .shh `>` ls .ssh `>` grab the key^^ `>` ssh -i ~/.ssh/id_rsa.pem adminuser@172.167.29.191 (.pem is the private padlock/key) `>` exit.
+8. Are you sure? type 'yes'
+9. Home directory is: adminuser@tech264-georgia-first-vm
 
 
 ### SSH command to use form anywhere:
