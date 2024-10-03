@@ -141,18 +141,17 @@
 2. Click 'Connect' (the normal one).
 3. It'll show you the IP address: 172.167.29.191
 4. use native SSH
-5. Copy and execute SSH commandSSH Command will only work if youre in you .ssh folder: (tech264-georgia-az-key) 
-6. Git Bash: cd ? cd .shh > ls .ssh > grab the key^^ > ssh -i ~/.ssh/id_rsa.pem adminuser@172.167.29.191 (.pem is the private padlock/key) > exit.
+5. Copy and execute SSH command, SSH Command will only work if you're in your .ssh folder: (tech264-georgia-az-key) 
+6. Git Bash: cd `>` cd .shh `>` ls .ssh `>` grab the key^^ `>` ssh -i ~/.ssh/id_rsa.pem adminuser@172.167.29.191 (.pem is the private padlock/key) `>` exit.
 7. Are you sure? type 'yes'
 8. Home directory is: adminuser@tech264-georgia-first-vm
 
 
 ### SSH command to use form anywhere:
 1. Copy and execute SSH command:
-2. ~/.ssh/tech264-georgia-az-key (we've provided the path to it). 
+2. ~/.ssh/tech264-georgia-az-key (the path to it). 
 3. enter cd on Git Bash to go back to home directory(~)
 4. paste the path for the key here: ssh -i ~/.ssh/tech264-georgia-az-key adminuser@172.167.29.191
-5. 
 
 
 ## Organised notes: Connecting Your Virtual Machine
