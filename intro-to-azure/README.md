@@ -143,5 +143,7 @@ You can access Azure in multiple ways:
 ## Why Use the Azure Pricing Calculator?
 The `Azure Pricing Calculator` helps you estimate costs for using different Azure services. You can input the services you plan to use, such as virtual machines, storage, and databases, to get an estimate of your monthly bill. This tool helps prevent unexpected costs and enables better budgeting and planning.
 
+* The default setting does not mean its the cheapest!! ⚠️ BEWARE ⚠️
+
 Link: https://azure.microsoft.com/en-gb/pricing/calculator/?ef_id=_k_4b2e508ea7be1c97cc9e3670d72e631e_k_&OCID=AIDcmm3bvqzxp1_SEM__k_4b2e508ea7be1c97cc9e3670d72e631e_k_&msclkid=4b2e508ea7be1c97cc9e3670d72e631e
 
