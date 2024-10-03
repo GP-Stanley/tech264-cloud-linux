@@ -30,6 +30,10 @@
     - [System Maintenance](#system-maintenance)
   - [Downloading Files with `curl`](#downloading-files-with-curl)
     - [Basic File Download](#basic-file-download)
+  - [download a file: using the `curl` command to downloada an image.](#download-a-file-using-the-curl-command-to-downloada-an-image-1)
+- [Making our first bash script: Original notes.](#making-our-first-bash-script-original-notes)
+- [Navigating the Remote Server](#navigating-the-remote-server)
+- [Basic File Management](#basic-file-management)
   - [Create a Directory:](#create-a-directory)
   - [Delete Files or Directories:](#delete-files-or-directories)
 - [Editing Files with Nano](#editing-files-with-nano)
@@ -46,11 +50,46 @@
   - [Check Nginx Status:](#check-nginx-status)
   - [Restart Nginx:](#restart-nginx)
   - [Enable Nginx to Start on Boot:](#enable-nginx-to-start-on-boot)
-- [Environment Variables](#environment-variables)
-- [Kagan's Notes: EDIT LATER:](#kagans-notes-edit-later)
-- [What is an environment variable and how do we make one?](#what-is-an-environment-variable-and-how-do-we-make-one)
-- [Managing processes](#managing-processes)
-- [Killing processors](#killing-processors)
+- [Environment Variables in the Context of Azure and Linux/Git Bash](#environment-variables-in-the-context-of-azure-and-linuxgit-bash)
+  - [What Are Environment Variables?](#what-are-environment-variables)
+    - [Notes from class:](#notes-from-class)
+  - [Why Do We Use Environment Variables?](#why-do-we-use-environment-variables)
+  - [Common environment variables in Linux](#common-environment-variables-in-linux)
+  - [Environment variables in Azure](#environment-variables-in-azure)
+    - [Azure CLI authentication:](#azure-cli-authentication)
+    - [Storing sensitive information:](#storing-sensitive-information)
+  - [Managing Environment Variables in Git Bash](#managing-environment-variables-in-git-bash)
+    - [View Environment Variables:](#view-environment-variables)
+    - [Set a Temporary Environment Variable:](#set-a-temporary-environment-variable)
+    - [Set a Permanent Environment Variable:](#set-a-permanent-environment-variable)
+- [Using Environment Variables in Azure and Scripts](#using-environment-variables-in-azure-and-scripts)
+  - [In Azure:](#in-azure)
+  - [In Scripts:](#in-scripts)
+  - [**Explanation**: This script would echo the value of the AZURE\_REGION environment variable, which could be set to different values depending on where you’re deploying your app.](#explanation-this-script-would-echo-the-value-of-the-azure_region-environment-variable-which-could-be-set-to-different-values-depending-on-where-youre-deploying-your-app)
+- [Two Types of Processors: User Processors vs. System Processors](#two-types-of-processors-user-processors-vs-system-processors)
+    - [Characteristics:](#characteristics)
+    - [Example of User Process:](#example-of-user-process)
+    - [Characteristics:](#characteristics-1)
+  - [Example of System Process:](#example-of-system-process)
+  - [Conclusion](#conclusion)
+- [Codealong Notes:](#codealong-notes)
+  - [What is an environment variable and how do we make one?](#what-is-an-environment-variable-and-how-do-we-make-one)
+- [Code-along: Creating and Managing Environment Variables](#code-along-creating-and-managing-environment-variables)
+  - [Step 1: Create a basic variable](#step-1-create-a-basic-variable)
+  - [This will print "georgia" on the screen.](#this-will-print-georgia-on-the-screen)
+  - [Step 2: Turn the Variable into an Environment Variable](#step-2-turn-the-variable-into-an-environment-variable)
+  - [Now, the MYNAME variable is available to any process or script you run.](#now-the-myname-variable-is-available-to-any-process-or-script-you-run)
+  - [Step 3: Make the Variable Persistent](#step-3-make-the-variable-persistent)
+- [Managing Processes](#managing-processes)
+  - [System processor commands](#system-processor-commands)
+- [Killing Processes](#killing-processes)
+    - [Running a Process in the Foreground:](#running-a-process-in-the-foreground)
+    - [Running a Process in the Background:](#running-a-process-in-the-background)
+    - [Viewing Background Jobs:](#viewing-background-jobs)
+- [Killing a Process:](#killing-a-process)
+    - [Gentle Termination (Signal 1 - Hangup):](#gentle-termination-signal-1---hangup)
+    - [Standard Termination:](#standard-termination)
+    - [Brute Force Termination (Signal 9 - Kill):](#brute-force-termination-signal-9---kill)
 
 
 # Raw Notes:
@@ -314,6 +353,7 @@ back to: georg@Aceroma MINGW64 ~
 - Example: Download an image:
   ```bash
   curl https://cdn.britannica.com/39/7139-050-A88818BB/Himalayan-chocolate-point.jpg --output cat.jpg
+  ```
 
 
 ## download a file: using the `curl` command to downloada an image.
@@ -524,100 +564,278 @@ sudo systemctl enable nginx
 
 
 
+# Environment Variables in the Context of Azure and Linux/Git Bash
+## What Are Environment Variables?
+Environment variables are *key-value pairs* used by the operating system and applications to *store configuration settings or information*. They influence the way processes run on your system and are used to pass dynamic values such as file paths, user information, or service endpoints.
+
+In Azure, environment variables are commonly used to *configure cloud services, credentials, and other app settings*. In a Linux or Git Bash environment, environment variables *help manage settings for shell sessions, development environments, or deployment processes*.
+
+### Notes from class:
+* Environment variables are *containers that store data values in memory*.
+* These values are associated with specific names (usually written in uppercase) and can be accessed by any tool or command that needs them.
+* They're commonly used to store system settings, configuration data, or paths.
+
+## Why Do We Use Environment Variables?
+* **Global Access**: Once a value is stored as an environment variable, it can be *accessed by any process or command* that runs on the system.
+* **Configuration**: They’re often used to *store configuration details *like database connection strings, API keys, or paths to important directories.
+  * For example, you might store the path to a database, so any application can find and connect to it easily.
+
+## Common environment variables in Linux
+* `echo $PATH`: This variable contains a list of directories the shell searches for executable files. This shows all the directories the system looks into when you run a command.
+* `echo $HOME`: The path to the user’s home directory, which is where you typically start when you open a terminal. This returns the location of your home directory, such as */home/your-username.*
+* `echo $USER`: Stores the username of the current user.
+
+## Environment variables in Azure
+In the context of Azure, environment variables are used for *configuring cloud applications and virtual machines* (VMs). For example, you might need to set environment variables for:
+
+### Azure CLI authentication:
+To authenticate and interact with Azure services using the Azure CLI, you may set environment variables such as AZURE_SUBSCRIPTION_ID, AZURE_CLIENT_ID, AZURE_TENANT_ID, etc.
+```bash
+export AZURE_SUBSCRIPTION_ID="your-subscription-id"
+export AZURE_CLIENT_ID="your-client-id"
+export AZURE_TENANT_ID="your-tenant-id"
+```
+
+### Storing sensitive information:
+Environment variables can *securely store sensitive information*, like connection strings, access keys, or credentials, without hardcoding them into your scripts. 
+  * For example, when deploying an application to an Azure App Service, you might set the database connection string as an environment variable so your application can read it.
+---
+
+## Managing Environment Variables in Git Bash
+In Git Bash or any Linux-based terminal, environment variables can be managed using the following commands:
+
+### View Environment Variables:
+* `printenv`: This lists all active environment variables and their values.
+* `printenv <VARIABLE_NAME>`: To look up the value of a specific environment variable. Replace <VARIABLE_NAME> with the name of the variable (usually in all capital letters). E.g., 'printenv HOME'.
+
+### Set a Temporary Environment Variable:
+* `export VARIABLENAME="value"`: To set an environment variable for the current session:
+  * 📝 Note: This will only persist for the duration of the session. When you close the terminal, it’s gone.
+
+### Set a Permanent Environment Variable:
+To make environment variables persistent across sessions, you can add them to your `.bashrc` or .bash_profile file in your home directory.
+
+For example:
+```bash
+nano ~/.bashrc
+
+# Add the following line (edit to match your own needs):
+export AZURE_REGION="eastus"
+
+# Then run:
+source ~/.bashrc
+
+# This makes the environment variable permanent for future terminal sessions.
+```
+---
+
+# Using Environment Variables in Azure and Scripts
+## In Azure: 
+* When deploying applications or automating tasks, environment variables can be *set within Azure resources* (e.g., Azure App Service or Azure VM). These variables can be accessed by applications to read configuration values.
+  * For instance, in a web application hosted on Azure App Service, you can configure environment variables in the Application Settings section.
+
+## In Scripts: 
+* When writing Bash scripts to automate tasks, *environment variables* can dynamically *adjust script behavior*. 
+  * For example, a deployment script may read environment variables to get credentials or configuration data.
+
+Example:
+```bash
+#!/bin/bash
+echo "Deploying to region: $AZURE_REGION"
+
+# Edit to match your needs^^
+```
+**Explanation**: This script would echo the value of the AZURE_REGION environment variable, which could be set to different values depending on where you’re deploying your app.
+---
+
+# Two Types of Processors: User Processors vs. System Processors
+In the context of operating systems, user processes and system processes refer to *different types of processes based on the privilege levels and the scope of tasks they perform*. These are not necessarily two types of physical processors (hardware), but rather *two types of software processes* (running programs) that utilise the CPU.
+
+1. User Processes (User Mode)
+User processes run in user mode, which is a restricted environment where applications and non-critical programs execute. User mode has limited access to system resources and hardware, ensuring the system remains stable and secure.
+
+### Characteristics:
+* **Limited Access**: User processes cannot directly access critical system resources like hardware, memory management, or kernel-level operations. They must *request these resources through system calls.*
+* **Examples**: Applications like web browsers, word processors, games, and other programs that you run on your operating system.
+* **Isolated**: Each user process is *isolated from others*, preventing one user program from crashing or interfering with another.
+* **Crash Impact**: If a user process crashes, it typically doesn't bring down the entire system. Only the affected application or program stops.
+
+### Example of User Process:
+Running a program like a web browser (e.g., chrome.exe or firefox) on your machine would be a user process. It operates in a safe space with limited permissions to prevent damaging the core system.
+
+---
+
+2. System Processes (Kernel Mode)
+System processes run in kernel mode, which provides *unrestricted access to the system's hardware and critical resources*. Kernel mode is where the *core parts of the operating system function*, allowing the system to control hardware, memory, and CPU allocation.
+
+### Characteristics:
+* **Full Access**: System processes can access hardware directly, manage memory, and execute low-level instructions that user processes are not allowed to perform.
+* **Examples**: Device drivers, operating system services, and background tasks essential for running the OS (e.g., process schedulers, file system managers).
+* **Kernel Privileges**: System processes have elevated privileges and can directly interact with the kernel and hardware.
+* **Crash Impact**: If a system process crashes, it can cause the entire operating system to fail, leading to a system crash or "kernel panic."
+
+## Example of System Process:
+When your system manages file I/O operations or interacts with hardware devices (e.g., a network card driver or disk management process), these are system processes running in kernel mode.
+
+
+![types-of-processors](images/types_of_processors.png)
+
+
+## Conclusion
+* **User processes**: Handle everyday applications and run in a restricted environment to ensure security and stability. These processes interact with the system through system calls.
+
+* **System processes**: Manage the core operations of the operating system and hardware, running with higher privileges. They are crucial for the system's functionality but can have severe consequences if they fail.
 
 
 
 
-# Environment Variables
-A container for storing data vales.
-* Storing a value in memory.
-* Give it a particular name. 
-
-Why do we use them?
-* a value in memory that is available to any tool that want to look up those values or a particular command.
-
-Contain information about where to go and find a database (a connection string). 
-* set them in memory so anyone can look them up at any time. 
-
-What environment variables do we already have?
-* `printenv`: print variables to the scren.
-* `printenv <variable in captial letters>`: too look up a particular variable.
-*  : to store a variable.
 
 
-# Kagan's Notes: EDIT LATER:
-# What is an environment variable and how do we make one?
+
+# Codealong Notes:
+## What is an environment variable and how do we make one?
  
 An **environment variable** is a dynamic **variable** stored in a process environment. It is used to **pass** configuration information and settings to processes running in the system. These **variables** can influence the behavior of software and system components by providing information such as paths, user preferences, and system settings.
+
 - To view these, we can use the command `printenv`.
 - We can view a certain environment variable by using `printenv VARIABLENAME`.
-- To set a **variable**, we can use `VARIABLENAME=data`. This is a **shell variable**. To ensure this worked, we could use `echo $VARIABLENAME`, which would then output the `data` value. **Note** that this is **NOT** the same as an **enviornment variable**.
+- To set a **variable**, we can use `VARIABLENAME=data`. This is a **shell variable**. To ensure this worked, we could use `echo $VARIABLENAME`, which would then output the `data` value.
+
+**Note** that this is **NOT** the same as an **enviornment variable**.
+
 - To set an **environment variable**, we can use `export VARIABLENAME=data`, Which would then display it if we used `printenv MYNAME`. If we were to log out, the created **environment variable** would disappear as it is not **persistent**.
 - If we were to set our **environment variable** inside of the hidden `.bashrc`, it would be visible to the user (admin) across sessions, making it **persistent**. **Note** that `.bashrc` is unique to the user. We can do this by using `nano .bashrc` and writing `export VARIABLENAME=data` in the file.
 
-##########################################################################
+#########################################################################
 
-
+# Code-along: Creating and Managing Environment Variables
+## Step 1: Create a basic variable
+* You can create a simple variable in your terminal like this:
+```bash
 MYNAME=georgia
+```
+This stores the string "georgia" in the variable MYNAME.
 
-`echo $MYNAME`
+* View the Variable: To check the value stored in MYNAME, use:
+```bash
+echo $MYNAME
+```
+This will print "georgia" on the screen.
+---
 
-turn the variable into an environment variable:
-* `export <variable name>`: 
+## Step 2: Turn the Variable into an Environment Variable
+Environment variables are global and accessible by all processes, not just your current session. To turn a variable into an environment variable, use the export command:
+```bash
+export MYNAME
+```
+Now, the MYNAME variable is available to any process or script you run.
+---
 
-make a variable persistent:
-* survive logging out and logging back in, we need to make it persistent
-* Whilat in home directory: 'ls -a'
-* set environment variable in .bashrc
-edit .bashrc file:
+## Step 3: Make the Variable Persistent
+To ensure that your environment variable persists even after logging out or restarting, you need to make it *persistent* by adding it to the `.bashrc` file (a script that runs every time you start a new terminal session).
 
-* nano .bashrc
-* export added to the end. 
-* tail -4 .bashrc : to look at the 4 last lines. 
+1. List Hidden Files: Use the following command to confirm you're in the home directory and to view hidden files like `.bashrc`:
+```bash
+la -a
+```
+2. Edit the .bashrc File: Open the .bashrc file for editing using nano:
+```bash
+nano .bashrc
+```
+3. Add the Export Statement: At the end of the file, add the following line to make the MYNAME variable persistent:
+```bash
+export MYNAME=georgia_is_persistent
+```
+4. View Last 4 Lines of .bashrc: To confirm the variable was added, you can view the last 4 lines of the file:
+```bash
+tail -4 .bashrc
+```
+5. Appending to .bashrc Using >>: You can also append a line to the .bashrc file without manually opening it:
+```bash
+echo "export MYNAME=georgia_is_persistent" >> ~/.bashrc
+```
+* The `>>` operator appends the line to the end of the specified file (.bashrc in this case).
+6. Apply Changes: After editing .bashrc, apply the changes by running:
+```bash
+source ~/.bashrc
+```
 
-`echo "export MYNAME=georgia_is_persistent" >> .filename`: will get that output and will save it into a file you specify.  
-`>>` adds it to the end of the specified file (appending). 
+# Managing Processes
+A process is any *running instance of a program*. It could be actively running on the CPU or sitting idle in memory. If your system has a multicore CPU, multiple processes can run at the same time, while a single-core CPU can only process one at a time.
 
+Types of Processes:
+* **User Processes**: Processes started by the user, such as applications or scripts.
+* **System Processes**: Processes started by the operating system, like background services or device drivers.
+  
 
-# Managing processes
-* a process is a prgram thats been loaded into memory (RAM).
-* it could be being processed by the CPU or sitting idle. 
-* thye may be running at the same time but that doent mean the CPU is running.  
-* they can be running in memory.
-* if its doing multiple instructions at te same time, it will need more than one core. 
-* multicore CPUs can run multiple at a time.
-* single core can only run 1 at a time.
+## System processor commands
+* `ps`: shows processors: will only show the user processors.
+* `TTY`: refering to the id of the terminal session. 
+* `ps --help simple`: to get simple help to see processors.
+* `ps -A` or `ps -e`: to see the whole list of processors. 
+* `ps aux`: all comprehensive information about processors.
+* `PPID`: parent process ID: the partent process thst started another process.
+* Top command : orders the processors by default: the ones using the most CPU.
+* `Shift+M`: can see its ordered by the ones using the most memory.
+* `Shift+N`: order by newest processes. newest - oldest.
+* `Shift+P`: see which is using the most procesing power. 
+* `q`: for quit (to get out of this). 
 
-Two types:
-* user pocesors
-* System processors
+---
 
-`ps`: shows processors: will only show the user processors.
-`TTY`: refering to the id of the terminal session. 
-`ps --help simple`: to get simple help to see processors.
-`ps -A` or `ps -e`: to see the whole list of processors. 
-`ps aux`: all comprehensive information about processors.
-`PPID`: parent process ID: the partent process thst started another process.
-top command : orders the processors by default: the ones using the most CPU.
-`Shift+M`: can see its ordered by the ones using the most memory.
-`Shift+N`: order by newest processes. newest - oldest.
-`Shift+P`: see which is using the most procesing power. 
-`q`: for quit (to get out of this). 
+# Killing Processes
+Sometimes, you may need to *terminate a process*. There are several ways to do this, depending on how aggressive you need to be.
 
+### Running a Process in the Foreground:
+Run a Command and Delay It: The sleep command puts a delay on the system. For example:
+```bash
+sleep 3
+```
+* This will make the system wait for 3 seconds. 
 
-# Killing processors
-* Run a process
-`sleep 3`: delay of 3 seconds. Puts the foreground to sleep. While it does this, we cant do anything. 
-`sleep 5000 &` : & tells it to run in in the background. Output: [1] 2171 (process id).
-`job`: see processes running in the background. 
-` : how to end sleep process that is in the background (kill command).
+### Running a Process in the Background:
+Run a Process in the Background: To allow other tasks to continue while the process runs, add & to the command:
+```bash 
+sleep 5000 &
+```
+* This starts the sleep command in the background and gives you the process ID (PID). Example output: [1] 2171 (where 2171 is the PID).
 
-there are different levels of kill. You can be gentle (kill signal 1) (a hang up signal, like the phone).
-You'll need your process id from before^: (example) `kill -1 2171` > `jobs -l`: to show/check it.  
+### Viewing Background Jobs:
+Check Running Jobs: Use the jobs command to see processes running in the background:
+```bash
+jobs
+```
+View Job Details: Use jobs -l to see details, including the PID:
+```bash
+jobs -l
+```
 
-harsh/terminate: `kill <ID number>` > to show/check it.  Output: [2]+  2181 Terminated 
+# Killing a Process:
+There are different levels of force for terminating processes:
 
-brute force: `kill -9 <ID>` >  `jobs -l`: Output: 2244 Killed
+### Gentle Termination (Signal 1 - Hangup):
+Use kill -1 <PID> to gently ask a process to terminate:
+```bash 
+kill -1 2171
+```
+Then check with jobs -l to confirm:
+```bash
+jobs -l
+```
+
+### Standard Termination:
+Use the basic kill command to stop a process:
+```bash
+kill <PID>
+```
+Example output: [2]+ 2181 Terminated.
+
+### Brute Force Termination (Signal 9 - Kill):
+If the process is unresponsive, use kill -9 to forcibly terminate it:
+```bash
+kill -9 <PID>
+```
+Example output: [2]+ 2244 Killed.
 
 
 
