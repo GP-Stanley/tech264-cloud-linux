@@ -15,7 +15,7 @@
     - [Summary:](#summary-1)
   - [Navigating files and folders](#navigating-files-and-folders)
   - [Logging out of Linux](#logging-out-of-linux)
-- [CHAT GPT 3.5 notes adaptation](#chat-gpt-35-notes-adaptation)
+- [CHAT GPT 3.5 notes adaptation: do we want this?](#chat-gpt-35-notes-adaptation-do-we-want-this)
 - [Basic Linux Commands](#basic-linux-commands-1)
     - [Navigation \& File Management](#navigation--file-management)
     - [Useful `ls` Variants](#useful-ls-variants)
@@ -205,7 +205,7 @@ back to: georg@Aceroma MINGW64 ~
 
 
 
-# CHAT GPT 3.5 notes adaptation
+# CHAT GPT 3.5 notes adaptation: do we want this?
 # Basic Linux Commands 
 
 ### Navigation & File Management
