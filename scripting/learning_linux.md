@@ -3,7 +3,6 @@
 - [Research managing file ownership Linux](#research-managing-file-ownership-linux)
   - [Why is managing file ownership important?](#why-is-managing-file-ownership-important)
   - [What is the command to view file ownership?](#what-is-the-command-to-view-file-ownership)
-      - [For example:](#for-example)
   - [What permissions are set when a user creates a file or directory? Who does the file or directory belong to?](#what-permissions-are-set-when-a-user-creates-a-file-or-directory-who-does-the-file-or-directory-belong-to)
   - [Why does the owner, by default, not receive X (execute) permissions when they create a file?](#why-does-the-owner-by-default-not-receive-x-execute-permissions-when-they-create-a-file)
   - [What command is used to change the owner of a file or directory?](#what-command-is-used-to-change-the-owner-of-a-file-or-directory)
@@ -17,7 +16,7 @@
       - [You are logged in as the user who is the owner of the file. What permissions will you have on this file? Explain.](#you-are-logged-in-as-the-user-who-is-the-owner-of-the-file-what-permissions-will-you-have-on-this-file-explain)
   - [Here is one line from the ls -l command:](#here-is-one-line-from-the-ls--l-command)
     - [Breakdown of the permissions:](#breakdown-of-the-permissions)
-    - [Other details:](#other-details)
+    - [Other details from the example above:](#other-details-from-the-example-above)
     - [Summary of file permissions:](#summary-of-file-permissions)
 - [Research managing file permissions using numeric values](#research-managing-file-permissions-using-numeric-values)
   - [What numeric values are assigned to each permission?](#what-numeric-values-are-assigned-to-each-permission)
@@ -32,6 +31,7 @@
   - [What command changes file permissions?](#what-command-changes-file-permissions)
   - [To change permissions on a file, what must the end user be? (2 answers)](#to-change-permissions-on-a-file-what-must-the-end-user-be-2-answers)
   - [Examples of Different Ways/Syntaxes to Set Permissions on a New File (testfile.txt)](#examples-of-different-wayssyntaxes-to-set-permissions-on-a-new-file-testfiletxt)
+      - [**Summary**:](#summary)
 
 
 ## Why is managing file ownership important?
@@ -42,16 +42,23 @@
 `Ownership` defines **who** (which user or group) **has control** over a file or directory and **how they can interact with it**.
 
 ## What is the command to view file ownership?
-* To view the ownership of a file or directory, you can use the `ls -l` command. 
+* To *view the ownership* of a file or directory, you can use the `ls -l` command. 
 * This command *lists the files in a directory* and *shows detailed information*, including the owner.
 
-#### For example:
-`ls -l` > This will display something like: `-rw-r--r--  1  john  staff  1234  Jan 1 12:00  file.txt`
+For example:
+```bash
+ls -l 
+# This will display something like: 
+
+-rw-r--r--  1  john  staff  1234  Jan 1 12:00  file.txt
+```
+---
 
 ## What permissions are set when a user creates a file or directory? Who does the file or directory belong to?
-When a user creates a file or directory, Linux assigns default permissions using the umask value (which we'll explain below), and the file or directory belongs to the user who created it.
+When a user creates a file or directory, Linux assigns *default permissions using the umask value*, and the file or directory belongs to the user who created it.
 
-By default, files are given read and write permissions for the owner, and read permissions for others. For directories, the owner typically gets read, write, and execute permissions.
+By default, files are given read and write permissions for the owner, and read permissions for others. 
+* For directories, the owner typically gets read, write, and execute permissions.
 
 For example:
 * File: `rw-r--r--`
@@ -62,15 +69,16 @@ For example:
   * Others can read and execute, but not write.
 
 ## Why does the owner, by default, not receive X (execute) permissions when they create a file?
-When you create a regular file (like a text file), the system assumes that it is meant for reading or writing—not executing as a program. For security reasons, execute (`x`) permissions are not granted by default. If you need to make a file executable (such as a script or program), you must manually give it execute permission using the `chmod` command.
+When you create a regular file (like a text file), the system assumes that it is meant for reading or writing—not executing as a program. For security reasons, execute (`x`) permissions are **not granted** by default. If you need to make a file executable (such as a script or program), you must **manually give it execute permission** using the `chmod` command.
 
 ```bash
-Example: chmod +x my_script.sh
+# Example: 
+chmod +x my_script.sh
 ```
 
 This makes the file executable.
 
-
+---
 ## What command is used to change the owner of a file or directory?
 To change the ownership of a file or directory, you use the `chown` command (short for "change owner").
 ```bash
@@ -90,6 +98,7 @@ ls -l
 2. Change ownership:
 ```bash
 sudo chown new_owner file.txt
+# or:
 sudo chown new_owner:new_group file.txt
 ```
 
@@ -98,7 +107,7 @@ sudo chown new_owner:new_group file.txt
 chmod +x file.txt
 ```
 
-By understanding and managing file ownership and permissions, you can better control who can access and modify files, which is crucial for maintaining a secure system.
+By understanding and managing file ownership and permissions, you can better **control who can access and modify files**, which is crucial for maintaining a secure system.
 
 ---
 
@@ -118,7 +127,7 @@ For example, if the permissions look like this:
 
 ---
 ## If you give permissions to the User entity, what does this mean?
-Giving permissions to the User entity means you're setting the permissions for the owner of the file. 
+Giving permissions to the User entity means you're **setting the permissions for the owner of the file**. 
 * The owner is the person who created the file or to whom ownership has been transferred. 
 * The user’s permissions determine what actions the owner can perform on the file.
 
@@ -130,7 +139,7 @@ For example, if the permissions are:
 ```
 ---
 ## If you give permissions to the Group entity, what does this mean?
-When you give permissions to the Group entity, you are setting permissions for other users who are part of the group that owns the file. These users can interact with the file based on the group's permissions.
+When you give permissions to the Group entity, you are *setting permissions for other users* who are *part of the group* that *owns the file*. These users can interact with the file based on the group's permissions.
 
 For example, if the permissions are:
 ```bash
@@ -151,9 +160,9 @@ For example, if the permissions are:
 ```
 ---
 ## You give the following permissions to a file:
-* **User permissions** are read-only.
-* **Group permissions** are read and write.
-* **Other permissions** are read, write, and execute.
+* **User permissions** are read-only (`r`).
+* **Group permissions** are read and write (`rw`).
+* **Other permissions** are read, write, and execute (`rwx`).
 
 #### You are logged in as the user who is the owner of the file. What permissions will you have on this file? Explain.
 * Even though Group and Other have more permissions, the *User permissions apply to you because you are the owner of the file*.
@@ -168,10 +177,10 @@ For example, if the permissions are:
 * `-rwxr-xr--`: This is the permissions string.
 * `-`: The first character shows the file type (`-` means a regular file, `d` would mean directory).
 * `rwx`: The owner (`User`) has read (`r`), write (`w`), and execute (`x`) permissions.
-* `r-x`: The group has read (`r`) and execute (x) permissions, but not write.
+* `r-x`: The group has read (`r`) and execute (`x`) permissions, but not write.
 * `r--`: Others (everyone else) only have read (`r`) permission.
 
-### Other details:
+### Other details from the example above:
 * `1`: Number of hard links.
 * `tcboony`: The owner of the file.
 * `staff`: The group associated with the file.
@@ -189,17 +198,17 @@ For example, if the permissions are:
 
 ## What numeric values are assigned to each permission?
 Each permission is assigned a numeric value:
-* Read (r) = 4
-* Write (w) = 2
-* Execute (x) = 1
-* No permission = 0
+* Read (`r`) = `4`
+* Write (`w`) = `2`
+* Execute (`x`) = `1`
+* `No permission` = `0`
 
-To assign multiple permissions, you add these values together.
+To assign **multiple permissions**, you *add these values together*.
 
 ## What can you assign with the values read + write permissions?
 For read + write permissions, you add the values for read (4) and write (2), giving you:
 ```bash
-4 + 2 = 6
+4 (rad) + 2 (write) = 6 (read + write)
 
 #So, the value 6 assigns read and write permissions.
 ```
@@ -243,14 +252,14 @@ The command used to change file permissions is:
 ```bash
 chmod
 ```
-* `chmod` stands for change mode and is used to modify file or directory permissions.
+* `chmod` stands for **change mode** and is used to *modify file or directory permissions*.
 
 ## To change permissions on a file, what must the end user be? (2 answers)
 * The owner of the file.
-* A superuser (root), which has the ability to modify any file's permissions.
+* A superuser (su)(root), which has the ability to modify any file's permissions.
 
 ## Examples of Different Ways/Syntaxes to Set Permissions on a New File (testfile.txt)
-1. Set User to read, Group to read + write + execute, and Other to read and write only
+1. Set User to read, Group to read + write + execute, and Other to read and write only.
 
 You can use `chmod` with symbolic values:
 ```bash
@@ -267,7 +276,7 @@ To add execute permissions for User, Group, and Other:
 ```bash
 chmod a+x testfile.txt
 
-# This gives execute permission (+x) to all (a) entities.
+# This gives execute permission (+x) to all (a) entities (user, group, and others).
 ```
  
 3. Take write permissions away from Group
@@ -292,3 +301,6 @@ This breaks down as:
 * 4: Read (4) = read-only for the Group.
 * 0: No permissions for Others.
 
+#### **Summary**:
+* `Symbolic values`: Use letters and symbols to specify permissions (e.g., u=r).
+* `Numeric values`: Use numbers to represent permissions (e.g., 640).
