@@ -4,6 +4,7 @@
 - [Raw Notes:](#raw-notes)
   - [Linux:](#linux)
   - [Basic Linux Commands](#basic-linux-commands)
+  - [Bash Shell Explanation](#bash-shell-explanation)
   - [Ramon's tips and tricks](#ramons-tips-and-tricks)
 - [Some Linux Commands](#some-linux-commands)
   - [download a file: using the `curl` command to downloada an image.](#download-a-file-using-the-curl-command-to-downloada-an-image)
@@ -12,7 +13,8 @@
   - [How you name files and folders](#how-you-name-files-and-folders)
   - [Create a file](#create-a-file)
     - [Summary:](#summary)
-    - [Summary:](#summary-1)
+  - [Pipe (|)](#pipe-)
+  - [grep](#grep)
   - [Navigating files and folders](#navigating-files-and-folders)
   - [Logging out of Linux](#logging-out-of-linux)
 - [CHAT GPT 3.5 notes adaptation: do we want this?](#chat-gpt-35-notes-adaptation-do-we-want-this)
@@ -50,6 +52,7 @@
   - [Check Nginx Status:](#check-nginx-status)
   - [Restart Nginx:](#restart-nginx)
   - [Enable Nginx to Start on Boot:](#enable-nginx-to-start-on-boot)
+- [Environment Variables](#environment-variables)
 - [Environment Variables in the Context of Azure and Linux/Git Bash](#environment-variables-in-the-context-of-azure-and-linuxgit-bash)
   - [What Are Environment Variables?](#what-are-environment-variables)
     - [Notes from class:](#notes-from-class)
@@ -99,7 +102,8 @@
   * Linux is a free, open source operating system, released under the GNU General Public License (GPL). Anyone can run, study, modify, and redistribute the source code, or even sell copies of their modified code, as long as they do so under the same license.
 * Scales.
 * Lots of different distributions out there.
-* 
+
+
 ## Basic Linux Commands 
 * `ls`: lists the contents of the current directory.
 * `cd`: changes the current directory.
@@ -114,14 +118,19 @@
 * `touch --`: The -- in a command is often used to signify the end of command options, meaning that anything after -- is treated as a file name, even if it starts with a -.
 * `cd ..`: changes the directory to the parent directory (moves up one level in the directory structure).
 * `cd ../..`: changes the directory up two levels in the directory structure.
+* `uname --help`:Provides a summary of the available options for the uname command.
+* `uname -a`: Displays comprehensive system information.
+* `whoami`: Displays the username of the current user logged into the system. 
+* `cat /etc/shells`: Lists all the available shells installed on the system.
+* `ps --p $$`: Displays information about the current shell process.
 
-  
-`uname --help`
-`uname -a`
-`whoami`: to find out who I'm logged in as. 
-Bash shell: a process/software that interprets the commands. 
-`cat /etc/shells`: 
-`ps --p $$`: 
+---
+
+## Bash Shell Explanation
+* `Bash Shell`: The Bash shell is a *command-line interpreter* that processes and *executes the commands* you type in the terminal. When you enter a command, the shell interprets it and communicates with the operating system to carry out the task.
+
+* `Bash Process`: In technical terms, when you open a terminal, it starts a process for the shell (like Bash) that listens to your commands and runs them.
+---
 
 ## Ramon's tips and tricks
 `tab`: auto complete.
@@ -190,7 +199,7 @@ Bash shell: a process/software that interprets the commands.
 * `cd ..`: back to home directory.
 
 ## Create a file
-`touch chicken-joke.txt`
+* `touch chicken-joke.txt`: Creates a new, empty file named chicken-joke.txt if it doesn’t already exist.
 * `ls`
 * `nano chicken-joke.txt`: nano in to the chicken-joke file.
 * `Ctrl+s` = save
@@ -203,18 +212,9 @@ Bash shell: a process/software that interprets the commands.
 * `nl chicken-joke.txt`: numbers the lines.
 
 * `cat chicken-joke.txt | grep chicken`: 
-*  `cat chicken-joke.txt | grep the`:
-
-The command `cat chicken-joke.txt | grep chicken` in Git Bash does the following:
-
-1. **`cat chicken-joke.txt`**: This part of the command prints the contents of the file `chicken-joke.txt` to the standard output (your terminal). `cat` is short for "concatenate" and is used to display the contents of files.
-
-2. **`|` (pipe)**: The pipe `|` takes the output of the `cat` command (i.e., the contents of the file `chicken-joke.txt`) and passes it as input to the next command, which is `grep`.
-
-3. **`grep chicken`**: `grep` is a command-line tool used for searching text using patterns (regular expressions). In this case, `grep chicken` searches for lines in the input that contain the word "chicken."
-
-### Summary:
-The command reads the contents of `chicken-joke.txt` and then filters and displays only the lines that contain the word "chicken."
+* `cat chicken-joke.txt | grep the`:
+  *  `|` (pipe): The pipe symbol *takes the output from the command* on its left (cat chicken-joke.txt) and *passes it as input to the command on its right* (grep chicken).
+  `grep` chicken: This command *searches for the string* “chicken” *within the input it receives *(which is the content of chicken-joke.txt in this case). It then outputs only the lines that contain the string “chicken”.
 
 
 The command `cat chicken-joke.txt | grep chicken` in Git Bash does the following:
@@ -228,6 +228,15 @@ The command `cat chicken-joke.txt | grep chicken` in Git Bash does the following
 ### Summary:
 The command reads the contents of `chicken-joke.txt` and then filters and displays only the lines that contain the word "chicken."
 
+
+## Pipe (|)
+The pipe symbol (|) is used in Unix-like operating systems to pass the output of one command as input to another command. It’s a way to chain commands together, allowing you to perform complex tasks in a single line.
+
+## grep
+The grep command is used to search for specific patterns or strings within text. It stands for “global regular expression print.” When you use grep, it looks through the input it receives and prints out lines that match the pattern you specify.
+
+
+---
 
 ## Navigating files and folders
 * Sometimes it'll say that the package does not exist. This is how we delt with it:
@@ -560,9 +569,9 @@ sudo systemctl restart nginx
 sudo systemctl enable nginx
 ```
 * This command enables Nginx to start automatically whenever the server boots up.
+---
 
-
-
+# Environment Variables
 
 # Environment Variables in the Context of Azure and Linux/Git Bash
 ## What Are Environment Variables?
@@ -686,10 +695,7 @@ When your system manages file I/O operations or interacts with hardware devices 
 
 * **System processes**: Manage the core operations of the operating system and hardware, running with higher privileges. They are crucial for the system's functionality but can have severe consequences if they fail.
 
-
-
-
-
+--- 
 
 
 # Codealong Notes:

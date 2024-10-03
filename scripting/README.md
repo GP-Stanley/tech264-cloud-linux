@@ -908,11 +908,7 @@ DevOps and cloud computing work together to streamline software development and 
 ### Conclusion
 The **four pillars of DevOps in the cloud**—collaboration, automation, continuous delivery, and monitoring—work together to create a smooth, efficient, and reliable pipeline for software development and operations. Cloud platforms enhance these practices by offering tools and services that make them easier to implement, ultimately speeding up innovation, improving product quality, and reducing costs.
 
-
-
-
-
-
+---
 
 # Basic Linux Commands 
 * `ls`: lists the contents of the current directory.
@@ -943,18 +939,20 @@ Bash shell: a process/software that interprets the commands.
 `ps --p $$`: 
 
 ## Ramon's tips and tricks
-`tab`: auto complete.
-`history`: gives you a history of every command youve used since youve logged into the machine. 
+* `tab`: auto complete.
+* `history`: gives you a history of every command youve used since youve logged into the machine. 
 * there is a clear history command to cover yourself with credentials.
-`!(no. of command in history)` and hit enter - it runs the command after looking at the list of: history. Needs to be after using the command 'history'.
-`history -w`: clear history file permanently. 
-`history -c`: clears the history. 
-`ls -a`: see the hidden files and folders. In blue = folders, files = in white.
-`ls --help`: for command prompt options.
-`-l`: use a long listing format. Long version with lost of detail.
-`ls -al`: a lot of information about your hidden files and folders. When you do this command, you might see along the left side of the column: 'dr' = directory (folder), 'rw' = a file.
-`.`: current directory.
-`..`: parent folder.
+* `!(no. of command in history)` and hit enter - it runs the command after looking at the list of: history. Needs to be after using the command 'history'.
+* `history -w`: clear history file permanently. 
+* `history -c`: clears the history. 
+* `ls -a`: see the hidden files and folders. In blue = folders, files = in white.
+* `ls --help`: for command prompt options.
+* `-l`: use a long listing format. Long version with lost of detail.
+* `ls -al`: a lot of information about your hidden files and folders. When you do this command, you might see along the left side of the column: 
+  * 'dr' = directory (folder),
+  * 'rw' = a file.
+* `.`: current directory.
+* `..`: parent folder.
 
 # Some Linux Commands
 - `uname` : Displays system information.
