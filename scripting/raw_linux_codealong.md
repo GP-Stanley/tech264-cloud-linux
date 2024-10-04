@@ -590,8 +590,8 @@ In Azure, environment variables are commonly used to *configure cloud services, 
   * For example, you might store the path to a database, so any application can find and connect to it easily.
 
 ## Common environment variables in Linux
-* `echo $PATH`: This variable contains a list of directories the shell searches for executable files. This shows all the directories the system looks into when you run a command.
-* `echo $HOME`: The path to the user’s home directory, which is where you typically start when you open a terminal. This returns the location of your home directory, such as */home/your-username.*
+* `echo $PATH`: This variable contains a *list of directories the shell searches for executable files*. This shows all the directories the system looks into when you run a command.
+* `echo $HOME`: The path to the user’s home directory, which is where you typically start when you open a terminal. This *returns the location* of your home directory, such as */home/your-username.*
 * `echo $USER`: Stores the username of the current user.
 
 ## Environment variables in Azure
@@ -615,10 +615,10 @@ In Git Bash or any Linux-based terminal, environment variables can be managed us
 
 ### View Environment Variables:
 * `printenv`: This lists all active environment variables and their values.
-* `printenv <VARIABLE_NAME>`: To look up the value of a specific environment variable. Replace <VARIABLE_NAME> with the name of the variable (usually in all capital letters). E.g., 'printenv HOME'.
+* `printenv <VARIABLE_NAME>`: To look up the value of a specific environment variable. Replace <VARIABLE_NAME> with the name of the variable (in all capital letters). E.g., 'printenv HOME'.
 
 ### Set a Temporary Environment Variable:
-* `export VARIABLENAME="value"`: To set an environment variable for the current session:
+* `export VARIABLENAME="value"`: To set an environment variable for the current session.
   * 📝 Note: This will only persist for the duration of the session. When you close the terminal, it’s gone.
 
 ### Set a Permanent Environment Variable:
