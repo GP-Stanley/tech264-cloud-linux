@@ -406,6 +406,7 @@ commands to: run the app, stop the app, and start again.
 
 # Using & to Run the App in the Background
 * Running the app with & at the end of the command simply starts the app in the background: `node app.js &`
+* If you use the '&', you will have to constantly kill the process so it's best to use pm2.
 
 ## Issue with this Method:
 * While the app runs in the background, managing (stopping or restarting) the app is more difficult because:
@@ -519,6 +520,11 @@ server {
 `sudo sed -i 's|try_files $uri $uri/ =404;|proxy_pass http://localhost:3000;|' /etc/nginx/sites-available/default`
    * What the Command Does:
      * The command searches for the line `try_files $uri $uri/ =404;` in the Nginx configuration file located at `/etc/nginx/sites-available/default` and replaces it with `proxy_pass http://localhost:3000;`.
+     
+  * `sudo`: Runs the command with superuser privileges.
+  * `sed`: The stream editor command.
+  * `-i`: In-place editing, which means the file is modified directly.
+
 
 ### Purpose
 * `Original Line`: `try_files $uri $uri/ =404;`
@@ -588,12 +594,6 @@ echo now into the app file
 
 
 
-
-
-
-
-
-
 # User Data
 * To achieve the next level of automation.
 * immediatley after VM is created, user data will be run.
@@ -602,3 +602,252 @@ echo now into the app file
 * User data only runs once. 
 * runs as root user. It's not starting in your home directory. It's starting from the root folder (the very top of the directory folder - root directory). This is where you want to clone http??? 
   * For example, `git clone http` to the repo folder > cd into repo folder (`cd repo/app`). 
+
+# What is User Data?
+* User Data is a **script that automatically runs** when you create a new virtual machine (VM).
+* It helps **automate tasks** like installing software, setting up your environment, or downloading code.
+* You can think of it as a set of instructions that your VM follows to set everything up right after it starts, so you don’t have to do it manually.
+* Using User Data helps automate the setup of your VM so your web app can be up and running as soon as the VM is created. 
+
+## Why Use User Data?
+* `Automation`: Instead of manually configuring your VM every time it starts, you can provide a script that will automatically run and set up everything for you. This is helpful if you want your app to be ready immediately.
+* `Run Once`: The script runs once, right after the VM is created. It won’t run again unless you create a new VM or manually trigger it later.
+
+## Key Things to Know About User Data:
+1. The Script Runs as Root:
+   * The script runs with **root** (admin) privileges, so you don’t need to use `sudo` for commands in your script.
+   * It starts from the **root directory** (`/`), which is the top of the file system. So, when you clone a repository (like from GitHub), make sure to specify where you want it to go.
+
+2. Make Sure Your VM Can Be Accessed:
+   * Your virtual machine’s Network Security Group (NSG) controls what traffic can come in or go out of the VM. If you want people to access your app on the web, you need to make sure your NSG allows HTTP (port 80) and/or HTTPS (port 443) traffic.
+   * If this isn't set, people won’t be able to reach your app in their web browser.
+  
+**How to allow HTTP:**
+  * Go to the NSG settings for your VM and make sure port 80 (for HTTP) is open for inbound traffic.
+
+3. Setting Up a Reverse Proxy (Nginx):
+   * When you're hosting a web app (like a Node.js app), you often use a **reverse proxy**. 
+     * This is a program (like Nginx) that takes web traffic coming into your VM and forwards it to the right place (like your app running on port 3000).
+   * You can **automate setting up a reverse proxy** in your User Data script, so you don’t have to manually configure it every time.
+
+4. Cloning Your Code:
+   * If your app’s code is on GitHub or another repository, you’ll want to **download (clone) it onto your VM**. You can do this as part of your User Data script.
+
+5. One-Time Setup:
+   * Since User Data only runs once (right after the VM is created), make sure your script is complete and works correctly. 
+     * If there are errors, you’ll need to manually fix them later, so it’s good to test the script in small parts to ensure everything works.
+
+### Example script:
+```bash 
+#!/bin/bash
+
+# Set up MongoDB connection (replace with the actual IP of your MongoDB VM)
+MONGODB_HOST="mongodb://10.0.0.4:27017/posts"
+export DB_HOST=$MONGODB_HOST
+
+# Update the package list and upgrade installed packages
+apt-get update -y
+apt-get upgrade -y
+
+# Install Nginx (web server)
+apt-get install -y nginx
+
+# Install Node.js (required for running JavaScript apps)
+curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
+apt-get install -y nodejs
+
+# Install PM2 (a tool to keep your app running)
+npm install -g pm2
+
+# Clone your app from GitHub
+git clone https://github.com/yourusername/yourapp.git /home/ubuntu/app
+cd /home/ubuntu/app
+
+# Install app dependencies (things your app needs to run)
+npm install
+
+# Start the app using PM2 (which will keep it running even if the VM restarts)
+pm2 start app.js --name myapp
+
+# Set up Nginx as a reverse proxy (so people can access your app from the web)
+sudo sed -i 's|try_files \$uri \$uri/ =404;|proxy_pass http://localhost:3000;|' /etc/nginx/sites-available/default
+sudo systemctl restart nginx
+
+```
+> What This Script Does:
+* **Sets up a MongoDB connection**: It assigns the IP of the MongoDB server to an environment variable (DB_HOST).
+* **Updates and upgrades** the system to make sure it has the latest security patches.
+* **Installs Nginx**, which will serve as a reverse proxy for the app.
+* **Installs Node.js**, which is needed to run the app.
+* **Installs PM2**, a process manager that will keep the app running.
+* **Clones** the app from GitHub into the /home/ubuntu/app folder.
+* **Installs dependencies** (like libraries the app needs).
+* **Starts the app** using PM2 so it stays running.
+* **Configures Nginx** to forward requests to the app (which is running on port 3000).
+  
+
+
+# Levels of Automation: Deploying our app on the cloud.
+1. `Manual Deployment`: Everything is done manually, time-consuming and prone to errors.
+2. `Scripted Deployment`: Use scripts to automate setup tasks, faster but still involves some manual steps.
+3. `Infrastructure as Code` (IaC): Automate the creation of infrastructure and deployment of apps, highly scalable and replicable.
+4. `Continuous Deployment` (CI/CD): Fully automated deployment and updates whenever changes are pushed to the codebase, enabling seamless updates and scaling.
+
+Each level brings more efficiency, scalability, and consistency to your deployment process, with the final goal of having a fully automated pipeline that handles everything from infrastructure to app updates with minimal manual intervention.
+
+### 1. Manual Deployment (No Automation)
+At this level, the deployment process is done entirely by hand. This involves manually creating a virtual machine (VM), installing required software, and configuring the environment step-by-step.
+
+    Steps:
+    * Create a VM in a cloud provider (like Azure, AWS, or Google Cloud) manually.
+    * SSH into the VM to install software (e.g., Nginx, Node.js, MongoDB).
+    * Manually download your application code (e.g., clone from GitHub).
+    * Set up the environment variables, configure the reverse proxy (Nginx), and start your application.
+
+Pros:
+* Simple and easy to understand for beginners.
+
+Cons:
+* Time-consuming and error-prone.
+* Inconsistent deployments because steps might be missed or done incorrectly.
+* Not scalable—each new VM needs to be set up from scratch.    
+
+
+### 2. Scripted Deployment (Basic Automation)
+   * At this level, you automate repetitive tasks by writing scripts (e.g., Bash scripts) that can install the necessary software, clone your app, and set it up. 
+   * Instead of doing everything manually, you simply run a script that executes all these commands for you.
+
+   Steps:
+   * Write a script that performs all the necessary installation and configuration steps (installing software, setting up environment variables, etc.).
+   * Run this script manually after creating a VM.
+
+Pros:
+* Faster than manual deployment.
+* Reduces the chances of human error.
+
+Cons:
+* The script must be run manually (or provided during VM creation with a feature like User Data).
+* Still needs some manual intervention to manage different VMs.
+
+
+### 3. Infrastructure as Code (Full Automation)
+* At this level, you automate the entire process of creating the infrastructure (VMs, networks, security groups) and deploying the app. 
+* Infrastructure as Code (IaC) tools like Terraform or Azure Resource Manager (ARM) templates are used to define and provision the infrastructure using configuration files. 
+* This way, everything is automated—from creating the VM to deploying the application.
+
+Steps:
+* Use an IaC tool (like Terraform, AWS CloudFormation, or ARM templates) to define the cloud resources required for your app (VMs, load balancers, databases, etc.).
+* Write deployment scripts to automate the configuration and deployment of the app on the provisioned VMs.
+* Deploy the entire infrastructure and application automatically with one command.
+
+Pros:
+* Full automation, including infrastructure provisioning.
+* Can easily replicate the entire setup in multiple environments (dev, test, prod) with consistent results.
+* Scalable—automatically creates and deploys VMs as needed.
+
+Cons:
+* Requires learning IaC tools.
+* More complex to set up initially, but pays off in the long run.
+
+
+### 4. Continuous Deployment (Full Automation + Continuous Integration)
+* At this level, you not only automate infrastructure and deployment but also integrate it with a CI/CD pipeline. 
+* This allows your application to be automatically deployed and updated whenever you push changes to your code repository (e.g., GitHub, GitLab).
+
+Steps:
+* Set up a CI/CD pipeline (e.g., with Jenkins, GitHub Actions, or Azure DevOps) to automatically build, test, and deploy your application whenever changes are pushed to the repository.
+* Use IaC tools to automatically provision infrastructure and deploy the app on it.
+* Ensure that new code changes trigger redeployment, making the process seamless.
+
+Pros:
+* The most advanced and efficient deployment process.
+* Full automation from code push to deployment.
+* Enables continuous updates and scaling without manual intervention.
+
+Cons:
+* The most complex to set up initially.
+* Requires knowledge of CI/CD tools and processes.
+
+
+# Images: Ramon's diagram 10/10/2024
+* We've been using Ubuntu Pro 22 (a market place image). 
+* We've been using a market place image to create our Vms.
+  * The image determines everything thats going to go on the disk.
+  * Then we prepared the VM to run the app. 
+  * Create a custom image, used to create an app VM with everything already installed. 
+  
+"requires Plan information": you can't do this unless your provide information about the origihnal market place image you used. This is because you need to give credit: sometimes they may need to charge you. You need to provide that information when you create your VM.
+  * they want to have info on the original market place image that you included. 
+  * To solve this: don't use the one from ubuntu, we'll be using a custom marketplace image that Ramon has set up. `ramon-official-ubuntu2204-clean-image`
+
+Resource group > tech264 > ramon clean image > 
+In order to create a custom image:
+* needs to be based on something: it needs a source file that contains what that image is going to use. 
+* To get those files, if you go to ubuntu.com, you can download a virtual harddisk file (matching the ubuntu version youre using), then you have to upload from you local machine it to blob storgae in Azure. From blob storage, you can then use that file to creat a custom image. 
+* The custmo image will have all the files that are included in that virtual harddisk file that you downloaded. 
+
+Check script has worked:
+* `sudo systemctl status mongod` > until it starts running (this m ay take a while).
+* `cat /etc/mongod.conf | grep bindIp` > should be 0.0.0.0
+* `sudo systemctl is-enabled mongod` > check if its enabled > should sau 'enabled'. 
+
+
+# Images on Azure
+*  an "image" is like a **blueprint or template** that helps you **create a virtual machine (VM) quickly**. 
+*  Think of it as a **pre-built package** that **includes everything you need** to get your virtual computer (VM) up and running, such as an operating system (like Windows or Linux) and sometimes additional software.
+
+## Types of Images:
+* `Predefined Images`: Azure provides many standard images for **common operating systems** (like Ubuntu, Windows Server) or configurations. 
+  * For example, you can choose an image with Ubuntu Linux already installed, so when the VM is created, it’s ready to go.
+
+* `Custom Images`: You can also **create your own image** that includes the OS and any special software or configurations you need. 
+  * This is helpful if you want to replicate the same setup across multiple VMs quickly.
+
+## How You Use Images:
+* When you want to create a VM, you **select an image** from Azure's image gallery (like choosing "Ubuntu 22.04" or "Windows Server 2022").
+* Azure **uses that image to build your VM**, meaning the **VM will have** all the **software and configurations from the image**, so you **don’t need to set it up manually**.
+
+## Benefits:
+* `Faster Deployment`: Since the OS and software are already installed, your VM is ready to use much faster.
+* `Consistency`: If you use the same image to create multiple VMs, they’ll all have the same setup, which makes it easier to manage them.
+
+In short, Azure images help you quickly create virtual machines that are ready to use, without having to manually install an operating system or software.
+
+
+
+# Plan for creating an app and database image:
+1. Created database VM: using custom image (Ramon's) and user data to run entire database script. ✅
+2. SSH'd in: Tested that user data did it's job. ✅
+3. Create app VM using custom image and user data to run the entire app script. 
+   * Make sure the DB_HOST variable has the correct IP. ✅
+4. test by:
+   * check the public IP can bring up the home page. ✅
+   * check /posts page. 
+5. Create database VM image from the database VM.
+   * delete the old db VM. 
+6. Create database VM from the database image. ✅
+7. Create app VM image from the app VM. ✅
+   * delete the old app VM. 
+8. Create app VM from the app image we just created. 
+9. /posts page to work connecting to the database VM made from image. 
+    * we want to use image and a littble bit of user data. You're going to have to have a special script - "`run-app-only.sh`"
+
+#### `run-app-only.sh`
+The bottom part of your full app script.
+ * start with she-bang.
+ * export db host variable. 
+ * cd into the app folder. 
+ * npm install (might not need). 
+ * pm2 stop all (either or).
+ * pm2 start app.js
+
+
+
+`db vm` > `capture` > `image` > No, capture only managed image > Name: `tech264-georgia-ready-to-run-dab-image` > 
+
+
+
+
+Before creating an image, use "` sudo waagent -deprovision+user`" to prepare the Linux guest OS on the virtual machine. If you create an image from a virtual machine that hasn't been generalized, any virtual machines created from that image won't start.
+^^^ **MAKE THIS COMMAND AFTER YOU SSH'd into YOUR VM. **It gets rid of specific information that we don't want. 
+* exit out. 
