@@ -144,6 +144,7 @@ For example, if the permissions are:
 ---
 ## If you give permissions to the Group entity, what does this mean?
 When you give permissions to the Group entity, you are *setting permissions for other users* who are *part of the group* that *owns the file*. These users can interact with the file based on the group's permissions.
+* (usually) the groups is the group that the user belongs to as well. 
 
 For example, if the permissions are:
 ```bash
@@ -281,6 +282,8 @@ To add execute permissions for User, Group, and Other:
 chmod a+x testfile.txt
 
 # This gives execute permission (+x) to all (a) entities (user, group, and others).
+# ANOTHER WAY (shorter):
+chmod +x testfile.txt
 ```
  
 3. Take write permissions away from Group

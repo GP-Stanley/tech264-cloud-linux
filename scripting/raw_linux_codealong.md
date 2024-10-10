@@ -69,6 +69,7 @@
   - [In Azure:](#in-azure)
   - [In Scripts:](#in-scripts)
   - [**Explanation**: This script would echo the value of the AZURE\_REGION environment variable, which could be set to different values depending on where you’re deploying your app.](#explanation-this-script-would-echo-the-value-of-the-azure_region-environment-variable-which-could-be-set-to-different-values-depending-on-where-youre-deploying-your-app)
+  - [making MYNAME env var persistent: post-assessment review.](#making-myname-env-var-persistent-post-assessment-review)
 - [Two Types of Processors: User Processors vs. System Processors](#two-types-of-processors-user-processors-vs-system-processors)
     - [Characteristics:](#characteristics)
     - [Example of User Process:](#example-of-user-process)
@@ -93,6 +94,19 @@
     - [Gentle Termination (Signal 1 - Hangup):](#gentle-termination-signal-1---hangup)
     - [Standard Termination:](#standard-termination)
     - [Brute Force Termination (Signal 9 - Kill):](#brute-force-termination-signal-9---kill)
+- [FRIDAY CODEALONG](#friday-codealong)
+- [Deleting Your Virtual Machine](#deleting-your-virtual-machine)
+  - [in case you deleted your first bash script (above).](#in-case-you-deleted-your-first-bash-script-above)
+  - [The first two commands that we ru on a new virtual machine:](#the-first-two-commands-that-we-ru-on-a-new-virtual-machine)
+- [How to add a port:](#how-to-add-a-port)
+- [What is scp?](#what-is-scp)
+  - [How does scp work?](#how-does-scp-work)
+  - [Why use scp?](#why-use-scp)
+- [GnuPG (GNU Privacy Guard)](#gnupg-gnu-privacy-guard)
+- [cURL (Client URL)](#curl-client-url)
+- [Why Use These Tools?](#why-use-these-tools)
+- [Making a Database in Azure - MongoDB](#making-a-database-in-azure---mongodb)
+  - [What's the export DB\_HOST for?](#whats-the-export-db_host-for)
 
 
 # Raw Notes:
@@ -657,6 +671,14 @@ echo "Deploying to region: $AZURE_REGION"
 **Explanation**: This script would echo the value of the AZURE_REGION environment variable, which could be set to different values depending on where you’re deploying your app.
 ---
 
+
+## making MYNAME env var persistent: post-assessment review.
+* Solution: put the export command in the .bashrc file to avoid having to SSH out and then SSH in inorder to reload the .bashrc file. 
+  * To avoid having to SSH out, then SSH in, by using command to reload .bashrc file:
+    * `source .bashrc`: to set the env in the current session. 
+
+
+
 # Two Types of Processors: User Processors vs. System Processors
 In the context of operating systems, user processes and system processes refer to *different types of processes based on the privilege levels and the scope of tasks they perform*. These are not necessarily two types of physical processors (hardware), but rather *two types of software processes* (running programs) that utilise the CPU.
 
@@ -843,8 +865,318 @@ kill -9 <PID>
 ```
 Example output: [2]+ 2244 Killed.
 
+---
+
+# FRIDAY CODEALONG
+
+# Deleting Your Virtual Machine
+1. Navigate to overview.
+2. Find your resource group.
+3. Filter your name. You will see multiple items appear.
+4. Tick `resourcegroupname-name-vmname`
+5. Tick `resourcegroupname-vmname-ip`
+6. Tick `resourcegroupname-vmname-nsg`
+7. Tick `resourcegroupname-name-networkinterface`
+8. Tick `resourcegroupname-name-Disk`
+9. Locate **delete**. Avoid
+10. Tick "Apply force delete" just to be safe.
+11. Enter "delete" in the input box and click **delete**.
+12. Select **delete** once more to confirm **deletion**.
+ 
+We leave the Virtual Network and SSH Key as they can be reused.
+
+---
+## in case you deleted your first bash script (above).
+- Always test your commands manually first.
+- `nano provision.sh` - to create a new file called provision.sh
+  - `#!/bin/bash` - shows location of bash script required to run commands (called "shabang").
+- updates packages
+  - `sudo apt update -y`
+- upgrades packages
+  - `sudo apt upgrade -y`
+- install nginx - webserver
+  - `sudo apt install nginx -y`
+  - `sudo systemctl status nginx` - checks if nginx is running.
+  - copy your IP address from your VM, check that it works when accessing through HTTP
+- restart nginx
+  - `sudo systemctl restart nginx`
+- enable nginx - going to automatically start when VM starts
+  - `sudo systemctl enable nginx`
+- `chmod +x provision.sh` - add execute permissions to your file
+- `./provision.sh` - to execute your script
+
+
+
+* if you change ubuntu versions, don't assume it has the same commands as before. 
+
+## The first two commands that we ru on a new virtual machine: 
+ALWAYS DO THIS:
+After logging in for the first time:
+  1. `sudo apt-get update -y`
+  2. `sudo apt-get upgrade -y`
+1. ⚠️ERROR: this is to fix it: `sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y`
+2. install nginx: `sudo DEBIAN_FRONTEND=noninteractive apt-get install nginx -y`: Installs the Nginx web server.
+3. To check if it's running: `sudo systemctl status nginx` > press '`q`' to exit.
+4. 
+5. curl command to download content from the website: using it to download a script file: it's going to use this to install node: curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - &&\
+sudo apt-get install -y nodejs
+
+> Another error here: pink screen, ctrl+c clear to exit if frozen. if not: tab and then enter.
+
+8. ⚠️ERROR: curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - &&\
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
+
+9. how to check if it's installed: `node -v`
+
+> here, my version was different to the teams so I closed the git bash window, re-logged in via SSH key, checked the version installed using 'node -v' which was the lower one and re-pasted the code above (curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - &&\
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs). This ran fine so I checked the version and it was the correct one: v20.17.0
+
+* You can type `history` to check previous commands used. 
+
+10. Start a new script file: `nano prov-app.sh`
+```bash
+#!/bin/bash
+ 
+echo update sources list...
+sudo apt-get update -y
+echo Done!
+ 
+echo upgrade any packages available...
+sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
+echo Done!
+ 
+echo install nginx...
+sudo DEBIAN_FRONTEND=noninteractive apt-get install nginx -y
+echo Done!
+ 
+echo install nodejs v20...
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - &&\
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
+echo Done!
+ 
+echo check nodejs version...
+node -v
+echo Done!
+```
+
+11. change file permissions: `chmod +x prov-app.sh`
+12. check: `ls`
+13. to run the script: `./prov-app.sh`
+
+14. How to get the code onto our VMs / how to get the app running.
+
+> Ramon gave us a folder to download, we had to unzip that folder first. 
+
+* red: PAY ATTENTIONS.
+* warn (warning): are okay.
+
+
+I think you need the location before these commands:
+* `npm install`
+* `nmp start` OR `node app.js`
+* `:3000`
+
+
+# How to add a port:
+* default port: PORT (80). Your app is not running on this. you need to go to PORT 3000 (.3000) (on the end of your IP address in the window: IP.3000). 
+  * "can't reach page": need to allow the traffic through the Azure web page.
+  * virtual machine > Network settings > click on key name (NSG) > imbound security rules > click Add > change Destination port ranges to 3000 > protocol > change to TCP > 
+
+Once done: post your link to the app running on the web.
+
+1. Go into home directory of normal git bash:
+2. type: `scp -i ~/.ssh/tech264-georgia-az-key -r "C:\Users\georg\apps-to-deploy\app" adminuser@172.167.155.248:~/` THIS WILL TAKE A WHILE!
+
+
+
+Set Up Git on Your Virtual Machine: 
+1. SSH into your VM: 
+2. Create a bare repo:
+   * Navigate to where you want to store the code:
+   * ~/apps-to-deploy/nodejs20-sparta-test-app
+   * $ cd app
+adminuser@tech264-georgia-run-app-vm:~/apps-to-deploy/nodejs20-sparta-test-app/app$ ls
+
+
+log in > naigate to where the folder is kept 
+* cd
+* ls
+* cd nodejs20-sparta-test-app
+  
+npm install
+
+npm audit fix
+
+where the 'app' folder is kept: C:\Users\georg\apps-to-deploy\nodejs20-sparta-test-app
+
+
+
+# What is scp?
+* scp stands for Secure Copy Protocol.
+* It’s a command-line tool in Linux used to securely transfer files between computers over a network.
+* Think of it like copying files from one folder to another, but instead of folders, you’re copying between different computers.
+
+## How does scp work?
+* scp uses SSH (Secure Shell) to transfer files.
+* SSH is a protocol that allows secure communication between computers.
+* This means that when you use scp, your files are encrypted during the transfer, keeping them safe from prying eyes.
+
+## Why use scp?
+* `Security`: Since scp uses SSH, your files are encrypted during transfer.
+* `Simplicity`: It’s straightforward to use, especially if you’re familiar with the cp (copy) command in Linux.
+* `Availability`: scp is usually pre-installed on most Linux systems.
+
+
+# GnuPG (GNU Privacy Guard)
+* GnuPG, also known as GPG, is a tool used to encrypt and sign your data and communications. Think of it as a way to lock your files with a digital padlock so that only the intended recipient can unlock and read them. Here’s a bit more detail:
+
+* `Encryption`: This means converting your data into a secret code to prevent unauthorized access. Only someone with the correct key can decrypt and read the data.
+* `Signing`: This ensures that the data comes from you and hasn’t been tampered with. It’s like putting a digital signature on a document.
+* GnuPG is widely used for securing emails, files, and other forms of communication. It’s free and open-source, meaning anyone can use and modify it12.
+
+# cURL (Client URL)
+* cURL is a command-line tool used to transfer data to and from a server. Imagine you want to download a file from the internet or send data to a web service; cURL is the tool you’d use. Here’s how it works:
+
+* `URL`: You specify the location of the data using a URL (like a web address).
+* `Protocols`: cURL supports many protocols, including HTTP, HTTPS, FTP, and more. This makes it very versatile.
+
+
+# Why Use These Tools?
+* `GnuPG`: Use it to keep your data private and secure. It’s essential for anyone who needs to protect sensitive information.
+* `cURL`: Use it to interact with web services, download files, or test APIs. It’s a handy tool for developers and anyone who needs to transfer data over the internet.
 
 
 
 
 
+# Making a Database in Azure - MongoDB
+`sudo apt-get install gnupg curl` :
+- `gnupg` : This is the GNU Privacy Guard, a tool for encrypting files and managing keys. It's often used for securely managing software repositories, verifying signatures, and other cryptographic functions.
+
+
+1. Download PGP:
+
+`curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | \ sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg \ --dearmor`
+
+This command downloads the PGP (Pretty Good Privacy) public key for MongoDB version 7.0 and converts it to a .gpg file format using gpg. The resulting key is then stored in /usr/share/keyrings/ for use in authenticating MongoDB packages during installation. It ensures the packages are coming from a trusted source.
+
+2. Register MongoDB to the system:
+
+creating a sources list file: echo `"deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list`
+
+This command registers the MongoDB 7.0 repository to your system, ensuring that MongoDB packages will be fetched from the official source and verified with the correct GPG key during installation.
+
+
+3. Run update:
+
+run update command again: `sudo DEBIAN_FRONTEND=noninteractive apt update -y`
+Running sudo apt update is necessary to update the package lists from all configured repositories.
+
+
+4. Install MongoDB components:
+
+install specific version of mongodb: `sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mongodb-org=7.0.6 mongodb-org-database=7.0.6 mongodb-org-server=7.0.6 mongodb-mongosh=2.1.5 mongodb-org-mongos=7.0.6 mongodb-org-tools=7.0.6`
+
+5. Status check:
+
+`sudo systemctl status mongod`
+Check the status of mongod. It will not be active.
+
+'`q`'
+
+6. Start up:
+
+`sudo systemctl start mongod`
+Starts mongod. If you then re-run status, it will read as active.
+
+`sudo systemctl status mongod`
+
+'q'
+
+*now running but not configured properly* : it will only accept connections from itself. Not configured to accept external connections.
+
+We need it to accept connections from externals.
+
+7. Change bindIp:
+
+`sudo nano /etc/mongod.conf`
+- change bindIp to: 0.0.0.0
+- Nanos into the mongo configuration file and locate `bindIp`. Replace whatever is there with `0.0.0.0`. Allows connections from any IP.
+
+
+8. Restart:
+
+`sudo systemctl restart mongod`
+check status: sudo systemctl status mongod
+
+'`q`'
+This applies the changes we made in the config file.
+
+
+9. Check if it's enabled:
+
+make sure mongod is enabled: 
+
+`sudo systemctl is-enabled mongod`
+output: disabled. It should read as disabled, so we will enable it.
+
+
+10. Enable it:
+
+`sudo systemctl enable mongod`
+This will enable MongoDB, which then should be enabled on our VMs whenever we boot it up.
+
+############
+
+
+opened anoyher git bash terminal for the VM.
+
+
+* cd into the 'app'
+* private ip address: `export DB_HOST=mongodb://10.0.2.5:27017/posts`
+(mine is different becuase its stored differently to the rest of the class). 
+
+## What's the export DB_HOST for?
+* What part of the app we want to work.
+* So that the posts page would work. 
+* 
+
+`printenv DB_HOST`
+`nmp install` 
+
+`npm start`
+
+using vm ip aaddress:
+http://172.167.155.248:3000
+http://172.167.155.248:3000/posts
+
+if you get a blank posts page: you need to run this command `node seeds/seed.js` before your printenv DB_Host ????????
+
+
+
+
+To connect our DB to our app...
+ 
+1. Open a new GitBash window and CD into app directory.
+```bash
+export DB_HOST=mongodb://10.0.3.4:27017/posts
+```
+This will connect via our VMs private IP.
+ 
+2. Set the environment variable.
+```bash
+printenv DB_HOST
+```
+ 
+3. Install
+```bash
+npm install
+```
+ 
+4. Start
+ 
+```bash
+npm start
+```
+ 
+We can then access the app page via the IP in the **Connect** tab of Azure.

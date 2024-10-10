@@ -346,5 +346,12 @@ ssh -i ~/.ssh/id_rsa username@vm_ip_address
 
 
 
+## pre-assessment notes: SSH & Security 
+* Should we allow anyone else to have access? No.
+* Any IP can try to have access at this point. 
+> Access your network security group > network settings > network securoty group > click on SSH .
+> click on SSH > change source to "My IP address" > save.
+* Now only my IP address can SSH into a machine. 
+* If your router is turned off, you will have to change the source back to "Any" until you can SSH in again. 
 
-
+You can deny it to not allow anyone: you tend to use this when you know you're not going to SSH in for a long period of time. Change your SSH > change source to "Deny" ????
