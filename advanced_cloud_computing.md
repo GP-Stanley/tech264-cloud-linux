@@ -9,7 +9,7 @@
 * Post in the chat in the chat to your app running on port 3000
 
 ### Part 1: Upload the app folder to your GitHub repository
-Step 1: Initialize a Git Repository in Your App Folder
+Step 1: Initialise a Git Repository in Your App Folder
 * Open your terminal or command line.
 * Navigate to the directory where your app folder is located.
 * Initialise the Git repository: `git init`
@@ -285,12 +285,12 @@ A two-tier architecture.
 * This layer is responsible for reading and writing data to the database. It acts as an intermediary between the business logic and the database, ensuring that data is stored and retrieved correctly.
 
 `Database`:
-* The database stores all the application’s data. In a monolithic architecture, there is typically a single, centralized database that all parts of the application interact with.
+* The database stores all the application’s data. In a monolithic architecture, there is typically a single, centralised database that all parts of the application interact with.
 
 #### Advantages and Disadvantages
 Advantages:
 * `Simplicity`: Easier to develop and deploy since everything is in one place.
-* `Performance`: Can be optimized for performance as all components are tightly integrated.
+* `Performance`: Can be optimised for performance as all components are tightly integrated.
 
 Disadvantages:
 * `Scalability`: Harder to scale because you have to scale the entire application, not just parts of it.
@@ -815,6 +815,39 @@ In short, Azure images help you quickly create virtual machines that are ready t
 
 
 
+# Azure custom images and market images
+* virtual machines (VMs) can be created using either custom images or marketplace images.
+
+## 1. Azure Marketplace Images
+* These are **pre-built images available** in the Azure Marketplace, which is like a store for cloud resources. They are created and maintained by either Microsoft or third-party vendors. When you create a virtual machine (VM), you can choose one of these **pre-configured images**.
+  * `What's included`: Operating systems (like Windows Server, Ubuntu, etc.) and sometimes additional software (like web servers, databases, or complete solutions like a WordPress environment).
+  * `Ease of use`: Very convenient because they are ready to go, often requiring just a few settings from you (like VM size, region, etc.).
+  * `Who uses them`: Ideal for beginners or people who want a quick, standardised setup without customisation.
+  * `Updates`: Managed by the image publisher, ensuring that the software is kept up to date.
+
+## 2. Custom Images
+* A custom image is something you **create yourself**, **based on a VM that you have already configured**. Essentially, you take a *snapshot of a VM* (its operating system, installed software, settings, etc.) and *turn it into an image* that can be *used to create new VMs*.
+  * `What's included`: Everything you’ve customized on the original VM (the operating system, software, specific configurations).
+  * `Flexibility`: You have total control over the VM’s configuration, meaning it’s tailor-made to fit your exact needs.
+  * `Who uses them`: Useful for experienced users or companies that need a specific configuration repeated across multiple VMs.
+  * `Use case`: If you have set up a specific environment or application that you want to replicate, custom images are the way to go.
+
+## Key Differences:
+
+| Feature                | Azure Marketplace Images                        | Azure Custom Images                      |
+|------------------------|-------------------------------------------------|------------------------------------------|
+| **Definition**          | Pre-built images from Azure Marketplace         | Images you create from your customised VMs |
+| **What's included**     | Pre-configured OS and sometimes additional software | All software, settings, and OS from your original VM |
+| **Ease of use**         | Very convenient and ready to deploy             | Requires creating and managing your own image |
+| **Flexibility**         | Limited customisation                           | Full control and customisation           |
+| **Managed by**          | Publisher (Microsoft or third-party)            | You or your team                         |
+| **Ideal for**           | Beginners or quick setups                       | Experienced users or tailored setups     |
+| **Updates**             | Handled by the image publisher                  | You are responsible for updates          |
+
+
+
+
+
 # Plan for creating an app and database image:
 1. Created database VM: using custom image (Ramon's) and user data to run entire database script. ✅
 2. SSH'd in: Tested that user data did it's job. ✅
@@ -826,7 +859,7 @@ In short, Azure images help you quickly create virtual machines that are ready t
 5. Create database VM image from the database VM.
    * delete the old db VM. 
 6. Create database VM from the database image. ✅
-7. Create app VM image from the app VM. ✅
+7. Create app VM image from the app VM. 
    * delete the old app VM. 
 8. Create app VM from the app image we just created. 
 9. /posts page to work connecting to the database VM made from image. 
@@ -842,12 +875,12 @@ The bottom part of your full app script.
  * pm2 start app.js
 
 
-
+#### How to create an image:
 `db vm` > `capture` > `image` > No, capture only managed image > Name: `tech264-georgia-ready-to-run-dab-image` > 
 
 
 
-
-Before creating an image, use "` sudo waagent -deprovision+user`" to prepare the Linux guest OS on the virtual machine. If you create an image from a virtual machine that hasn't been generalized, any virtual machines created from that image won't start.
+## Before creating an Image
+Before creating an image, use "` sudo waagent -deprovision+user`" to prepare the Linux guest OS on the virtual machine. If you create an image from a virtual machine that hasn't been generalised, any virtual machines created from that image won't start.
 ^^^ **MAKE THIS COMMAND AFTER YOU SSH'd into YOUR VM. **It gets rid of specific information that we don't want. 
 * exit out. 
