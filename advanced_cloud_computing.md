@@ -10,6 +10,7 @@
     - [Edited bash script:](#edited-bash-script)
   - [Task:](#task-1)
   - [](#)
+- [A Reverse Proxy](#a-reverse-proxy)
 - [Task: Get a reverse proxy working:](#task-get-a-reverse-proxy-working)
   - [Task 2: at least get the reverse proxy working manually.](#task-2-at-least-get-the-reverse-proxy-working-manually)
   - [Task: Automate database Stage 2 - Provision Mongo database VM with a Bash script](#task-automate-database-stage-2---provision-mongo-database-vm-with-a-bash-script)
@@ -71,9 +72,10 @@
   - [2. Custom Images](#2-custom-images)
   - [Key Differences:](#key-differences)
 - [Plan for creating an app and database image:](#plan-for-creating-an-app-and-database-image)
-      - [`run-app-only.sh`](#run-app-onlysh)
-      - [How to create an image:](#how-to-create-an-image)
-  - [Before creating an Image](#before-creating-an-image)
+    - [Script for app VM from image:](#script-for-app-vm-from-image)
+    - [How to create an image:](#how-to-create-an-image)
+    - [How to create a VM from an image:](#how-to-create-a-vm-from-an-image)
+  - [Before creating the Image](#before-creating-the-image)
 
 
 ## Get the 'app'folder onto the Azure VM using "git"
@@ -241,6 +243,29 @@ with a message saying its by using your Bash script + a fresh VM).
 * check scp command: check bindIp, everything. 
 
 `Item potent`: it means you've designed it so that no matter how many times you run it, it will still achieve the desired state. It should work every single time. 
+
+
+# A Reverse Proxy
+A reverse proxy is like a middleman between your computer (or any device) and the servers where websites or applications are hosted. Here’s why you might use one:
+
+* **Hiding Your Servers**: Imagine you have a bunch of servers running your website. You don’t want everyone to know their exact addresses for security reasons. The reverse proxy stands in front and takes all the requests, then passes them to the right server. This way, the real addresses of your servers stay hidden.
+  
+* **Sharing the Work**: If lots of people visit your website at the same time, one server might get too busy. The reverse proxy can spread the work across several servers, so no single server gets overwhelmed. This makes your website faster and more reliable.
+  
+* **Handling Secure Connections**: When you visit a website with “https,” your data is encrypted. The reverse proxy can handle this encryption and decryption, so your servers don’t have to do this extra work. This can make things run more smoothly.
+  
+* **Speeding Things Up**: The reverse proxy can save copies of your website’s pages. When someone visits, it can quickly send the saved copy instead of asking the server to generate it again. This makes the website load faster.
+  
+* **Keeping an Eye on Traffic**: It can also keep track of all the requests coming in and out. This helps you understand how people are using your website and spot any problems.
+  
+* **Optimising Content**: The reverse proxy can also tweak things like compressing files or resizing images before sending them to users. This helps your website load faster and use less data.
+
+So, using a reverse proxy helps make your website more secure, faster, and easier to manage.
+
+
+
+
+
 
 # Task: Get a reverse proxy working: 
 * Manually change Nginx config file (it is possible to change one line ideally) + restart Nginx + test in web browser without port 3000 on the end.
@@ -941,7 +966,7 @@ In short, Azure images help you quickly create virtual machines that are ready t
 9. /posts page to work connecting to the database VM made from image. 
     * we want to use image and a littble bit of user data. You're going to have to have a special script - "`run-app-only.sh`"
 
-#### `run-app-only.sh`
+### Script for app VM from image: 
 The bottom part of your full app script.
  * start with she-bang.
  * export db host variable. 
@@ -950,14 +975,48 @@ The bottom part of your full app script.
  * pm2 stop all (either or).
  * pm2 start app.js
 
+```bash
+#!/bin/bash
 
-#### How to create an image:
-`db vm` > `capture` > `image` > No, capture only managed image > Name: `tech264-georgia-ready-to-run-dab-image` > 
+GITHUB_REPO="https://github.com/GP-Stanley/tech264-sparta-app"
+
+MONGODB_HOST="mongodb://10.0.3.4:27017/posts"
+
+echo "Connect via our VMs via IP."
+export DB_HOST=$MONGODB_HOST
+echo "Connection complete."
+printenv DB_HOST
+echo "env variable set."
+
+echo cd into the app file
+cd repo/app
+echo now into the app file
+
+# Stop any existing pm2 processes
+echo stopping any running pm2 processes...
+pm2 stop all
+
+# Run the app
+echo Run app...
+pm2 start app.js
+echo Done!
+```
+
+
+### How to create an image:
+`db vm` > `capture` > `image` > No, capture only managed image > Name: `tech264-georgia-ready-to-run-db-image` > 
 
 **This is the same for app vm.**
 
+### How to create a VM from an image:
+`image` > `create VM` > add `run-app-only` bash script to user data > 
 
-## Before creating an Image
-Before creating an image, use "` sudo waagent -deprovision+user`" to prepare the Linux guest OS on the virtual machine. If you create an image from a virtual machine that hasn't been generalised, any virtual machines created from that image won't start.
+
+> Make sure when you need to run the app, run the database first. 
+
+## Before creating the Image
+* Before creating an image, use "`sudo waagent -deprovision+user`" to prepare the Linux guest OS on the virtual machine. 
+* If you create an image from a virtual machine that hasn't been generalised, any virtual machines created from that image won't start.
+
 ^^^ **MAKE THIS COMMAND AFTER YOU SSH'd into YOUR VM. **It gets rid of specific information that we don't want. 
 * exit out. 
