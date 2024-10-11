@@ -506,13 +506,13 @@ Here’s a simple flow:
 #### Re-run the app
 * After the first process has been terminated, you can run your app again on port 3000.
 
-![original-error](./images/dual_error.png)
+![original-error](.\scripting\images/dual_error.png)
 
-![lsof-command](./images/lsof_3000.png)
+![lsof-command](.\scripting\images/lsof_3000.png)
 
-![kill-command](./images/kill_command.png)
+![kill-command](.\scripting\images/kill_command.png)
 
-![app-listening](./images/app_listening.png)
+![app-listening](.\scripting\images/app_listening.png)
 
 
 # PM2 
@@ -1056,3 +1056,183 @@ echo Done!
 
 ^^^ **MAKE THIS COMMAND AFTER YOU SSH'd into YOUR VM. **It gets rid of specific information that we don't want. 
 * exit out. 
+
+
+
+# Ramon's diagram
+
+**WORSE:**
+* You have your app VM.
+* the CPU load is too high (because of too much traffic).
+* This will cause the VM to stop working or respomnding. 
+
+**NOT SO WORSE:**
+* You have your app VM.
+* We use an Azure Monitor (CPU load) so we can see what's happening. 
+* We can use a dashboard to help prevent a situation from falling over.
+* However, having someone constantly watching it is not ideal.
+
+**A BIT BETTER:**
+* You have your app VM.
+* We use an Azure Monitor (CPU load) so we can see what's happening. 
+* Set up an alert/alarm so that when things reach a certain point - you get an alert. E.g., CPU load gets to 70%. 
+* (notification) Decide how you want to be notified: email, phone, etc. Telling you about the problem.
+
+**BETTER:** 
+* You have your app VM.
+* We use an Azure Monitor (CPU load) so we can see what's happening. 
+* Auto-Scaling is the solution!
+* Fixes will get automatically created to handle the new load. 
+* Things will automatically scale back. 
+
+
+![ramons-diagram](.\scripting\images\ramons-diagram.png)
+
+---
+
+# Auto scaling
+1. `Adjusting Resources Automatically`: Auto scaling automatically adds more “staff” (computers or servers) when there’s a lot of traffic to your website or application. When the traffic goes down, it reduces the number of servers, so you’re not paying for resources you don’t need.
+  
+2. `Efficiency`: This helps ensure your website runs smoothly without wasting money. You have just the right amount of resources at any given time.
+  
+3. `Types of Scaling`:
+   * *Scaling Out/In* (Horizontal Scaling): This means adding more servers when needed and removing them when they’re not. It’s like hiring extra staff for busy days and letting them go when things are quiet.
+   * *Scaling Up/Down* (Vertical Scaling): This means making your existing servers more powerful or less powerful. It’s like giving your staff extra tools to work faster or taking them away when they’re not needed.
+
+4. `Why It’s Useful`: Auto scaling is great for websites or apps that have unpredictable traffic. For example, an online store might get a lot of visitors during a sale, or a news site might get a spike in traffic when big news breaks.
+   
+5. `How It Works`: Cloud providers like AWS, Azure, and Google Cloud offer auto scaling services. They monitor your application and adjust the resources based on how busy it is, following rules you set up.
+   
+> Auto scaling helps your website or app handle more visitors when needed and saves money when things are quiet, all without you having to manually adjust anything.
+
+---
+
+
+# Types of Scaling
+
+## Vertical Scaling
+
+### 1. Scalling-up
+   * Scaling up in VMs means **increasing the power** of your existing VM. You might add more CPU, RAM, or storage to handle more tasks.
+   * Scaling-up: increasing the size of the VM.
+   * It copies whatever work load is on this VM and is copied to a bigger VM. 
+   * Once its copied the workload, it deletes the smaller VM. 
+
+### 2. Scaling-down
+  * Scaling down means **reducing the power of your VM**. 
+  * You might decrease the CPU, RAM, or storage when you don’t need as much capacity.
+
+
+## Horizontal Scaling
+
+### 1. Scaling-out
+  * In the world of VMs, scaling out means **adding more VMs to handle increased load**. If your website gets a lot of visitors, you add more VMs to share the work.
+  * You may get more of those VM's duplicated. 
+
+### 2. Scaling-in
+  * Scaling in means removing some VMs when the load decreases.
+  * This helps save resources and money.
+
+
+## Real-World Example
+* Imagine you run an online store. During a big sale, lots of people visit your site:
+
+* `Horizontal Scaling`: You **add more VMs** to handle all the visitors. After the sale, you remove the extra VMs.
+* `Vertical Scaling`: If you expect a steady increase in traffic, you might **upgrade** your main VM to handle more visitors **without adding new ones**.
+
+
+#### To summerise:
+* **horizontal** scaling *adds or removes* VMs to match the load.
+* **vertical** scaling *changes the power* of your existing VM. 
+* Both methods help ensure your application *runs smoothl*y and *efficiently*.
+
+--- 
+
+
+# Task: created: tech264-georgia-test-monitoring-with-app
+* we created a vm from the app image.
+* The only difference is weve added only this into the user data as we are not connecting to the database: 
+```bash
+#!/bin/bash
+echo cd into the app file
+cd repo/app
+echo now into the app file
+
+# Stop any existing pm2 processes
+echo stopping any running pm2 processes...
+pm2 stop all
+
+# Run the app
+echo Run app...
+pm2 start app.js
+echo Done!
+```
+
+# Create a dashboard
+* Be on the Overview page.
+* Scroll down to monitoring tab.
+* Charts under Performance and Utilisation. 
+* "See all metrics"/"Show more metrics": to see all metrics.
+* We want to add 
+* Pin (CPU average option) > create new > shared > nasme: `tech264-georgia-shared-app-dashboard` > create and pin.
+* pin disk/operations/sec (average): eisting > shared > dashboard name. 
+* Same again with: network (total). 
+
+## How to view the dashboard:
+* Search 'dashboard hub' on Azure.
+* Go to 'shared dashboards' 
+* Click on the link under 'go to dashboard' heading.
+
+## How to arrange your dashboard
+* click 'Edit'.
+* click and drag the charts to fit on one line. 
+* Click 'save'. 
+* if you want to see the metrics of that time (whichever you've chosen), click on the chart, in the top right corner you can choose your timeline. 
+* Click 'apply' to save it. 
+* Save to dashboard if you want to keep it that way. Otherwise it won't save.
+
+
+# Load Testing Simulation
+* Aim: we want to trigger the CPU to cause an alert. 
+* Work out what the threshold is for it to work. 
+
+
+## How to manually start tech264-georgia-test-monitoring-with-app
+* SSH in.
+* `pm2 start /repo/app/app.js`.
+* pm2 start app.js
+
+* ⚠️PROBLEMS⚠️: got to root directory > go to app folder > `pm2 stop all` > `sudo pm2 start app.js`. 
+
+
+# How to connect the VM app after you stop it and start again - using  SSH key
+ 
+1. Connect the `VM with SSH key`
+2. To see the `repo/app`- need to be in root directory  -> `cd /repo/app`
+3. Stop all processes -> `pm2 stop all`
+4. To start the app -> `sudo pm2 start app.js`
+
+
+# Tool to spike the CPU
+* Simulate the situation: it gives the CPU instructions on your behalf.
+* Give requests using a tool.
+
+## Apatchy Bench (AB): install it first. 
+* `sudo apt-get install apache2-utils -y`
+
+
+# Load testing
+`ab -n 1000 -c 100 http://yourwebsite.com/`
+* we're going to modify this command so it works for us. 
+* This is going to send a thousand requests (-n 1000) in blocks of 100 (-c 100). 
+* Add your public IP address: http://172.167.64.221/
+* `ab -n 1000 -c 100 http://172.167.64.221/`
+
+### Increase the values
+* `ab -n 10000 -c 200 http://172.167.64.221/`
+* Outcome: it failed after 1000 requests. 
+
+
+
+* set your thresh hold so it will trigger, (36% ?). 
+

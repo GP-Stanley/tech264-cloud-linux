@@ -33,6 +33,24 @@
   - [To change permissions on a file, what must the end user be? (2 answers)](#to-change-permissions-on-a-file-what-must-the-end-user-be-2-answers)
   - [Examples of Different Ways/Syntaxes to Set Permissions on a New File (testfile.txt)](#examples-of-different-wayssyntaxes-to-set-permissions-on-a-new-file-testfiletxt)
       - [**Summary**:](#summary)
+- [Streams](#streams)
+  - [1. What is a stream in Linux?](#1-what-is-a-stream-in-linux)
+  - [2 . What are the 3 data streams?](#2--what-are-the-3-data-streams)
+  - [3. How can we direct each stream to a file (one at a time)?](#3-how-can-we-direct-each-stream-to-a-file-one-at-a-time)
+  - [4. How can we direct both 2 output streams to a file?](#4-how-can-we-direct-both-2-output-streams-to-a-file)
+  - [5. Which stream is directed to a file by default?](#5-which-stream-is-directed-to-a-file-by-default)
+  - [6. How can we direct both output streams to a file in one command?](#6-how-can-we-direct-both-output-streams-to-a-file-in-one-command)
+- [Task: Linux - Redirection and appending](#task-linux---redirection-and-appending)
+  - [1. What does \> do?](#1-what-does--do)
+  - [2. How is appending different?](#2-how-is-appending-different)
+  - [3. Give an example of a command where it appends to a file](#3-give-an-example-of-a-command-where-it-appends-to-a-file)
+- [Piping](#piping)
+  - [1. What is piping?](#1-what-is-piping)
+  - [2.  How is piping different from redirection using \> or \>\>?](#2--how-is-piping-different-from-redirection-using--or-)
+  - [3. What character is used for piping?](#3-what-character-is-used-for-piping)
+  - [4. Give an example of a command that uses piping once](#4-give-an-example-of-a-command-that-uses-piping-once)
+  - [5. Give an example of a command that uses piping twice](#5-give-an-example-of-a-command-that-uses-piping-twice)
+  - [6. Give an example of a command that uses piping twice, then sends the output to a file](#6-give-an-example-of-a-command-that-uses-piping-twice-then-sends-the-output-to-a-file)
 
 
 
@@ -311,3 +329,100 @@ This breaks down as:
 #### **Summary**:
 * `Symbolic values`: Use letters and symbols to specify permissions (e.g., u=r).
 * `Numeric values`: Use numbers to represent permissions (e.g., 640).
+
+---
+
+# Streams
+
+## 1. What is a stream in Linux?
+* In Linux, a stream is a flow of data that can be read from or written to. 
+* Think of it as a way for the system to handle data input and output, like reading from a file or printing text to the screen. 
+* There are different types of streams used for different purposes, such as reading input, printing output, or showing errors.
+
+## 2 . What are the 3 data streams?
+The three main data streams in Linux are:
+* `Standard Input` (stdin): This is where a program gets its input. By default, it’s your keyboard. It’s represented as 0.
+* `Standard Output` (stdout): This is where a program sends its output (like results or information). By default, it prints to the terminal screen. It’s represented as 1.
+* `Standard Error` (stderr): This is where error messages are sent. It’s used to show any errors a program encounters, also printed to the terminal by default. It’s represented as 2.
+
+## 3. How can we direct each stream to a file (one at a time)?
+You can redirect each stream separately:
+
+To redirect stdout (normal output) to a file: `ls new.txt > output.txt`. This sends the normal output to output.txt.
+To redirect stderr (error messages) to a different file: `ls missing_directory 2> error.txt`, This sends the error output to error.txt.
+
+## 4. How can we direct both 2 output streams to a file?
+You can redirect both stdout and stderr to the same file by using this command: `ls missing_directory new.txt > all_output.txt 2>&1`
+*  `all_output.txt` redirects the standard output.
+*  `2>&1` says "redirect the error output (stderr) to the same place as the standard output (stdout)."
+
+## 5. Which stream is directed to a file by default?
+By default, stdout (standard output) is redirected when you use the > operator. For example: `ls new.txt > output.txt`. 
+This only sends the normal output (not errors) to output.txt.
+
+## 6. How can we direct both output streams to a file in one command?
+You can use the same method as above to send both output and error to the same file: `ls missing_directory new.txt > all_output.txt 2>&1`
+
+This combines both stdout and stderr into all_output.txt with one command.
+
+
+# Task: Linux - Redirection and appending
+
+## 1. What does > do?
+* The > symbol in Linux is used for redirection. It redirects the output of a command to a file. If the file doesn't exist, it will create it. If the file does exist, it overwrites the file's content.
+
+Example: `echo "Hello, world!" > file.txt`
+
+* This command will write "Hello, world!" to file.txt. If file.txt already had some content, it will be replaced with the new content.
+
+
+## 2. How is appending different?
+Appending is done using `>>` instead of `>`. The difference is that >> *adds the output to the end of the file without overwriting* any existing content. If the file doesn’t exist, it creates the file.
+* So, while `> overwrites`, `>> appends`.
+
+
+## 3. Give an example of a command where it appends to a file
+If you want to **add content** to a file instead of overwriting it, you use >>.
+
+Example: `echo "This is a new line" >> file.txt`
+
+* This will add "This is a new line" to the end of file.txt. If file.txt already has content, the new line will be appended below the existing content.
+
+--- 
+
+# Piping
+
+## 1. What is piping?
+* Piping in Linux is a way to pass the output of one command as the input to another command. 
+* It allows you to combine commands and process data in a chain of operations. 
+* Piping is used when you want to filter, modify, or manipulate data step-by-step using multiple commands.
+
+## 2.  How is piping different from redirection using > or >>?
+* **Piping** (`|`) connects one command’s output directly to another command’s input.
+* **Redirection** (`>` or `>>`) sends the output of a command to a file (overwriting or appending).
+
+Example of **piping**: `ls | grep "file"`
+This sends the output of ls to grep for further processing (to search for "file").
+
+Example of **redirection**: `ls > files.txt`
+This saves the output of ls to files.txt.
+
+## 3. What character is used for piping?
+The pipe symbol is `|`.
+
+## 4. Give an example of a command that uses piping once
+Example: `ls | sort`
+* This command lists the files and directories using ls and then pipes the output to sort, which arranges them in alphabetical order.
+
+## 5. Give an example of a command that uses piping twice
+Example: `ls | grep "file" | sort -r`
+* `ls` lists the files and directories.
+* `grep` "file" filters the output to show only entries containing "file".
+* `sort -r` sorts the filtered output in reverse order.
+
+## 6. Give an example of a command that uses piping twice, then sends the output to a file
+Example: `ls | grep "file" | sort -r > sorted_files.txt`
+* This command uses the same piping as before (listing, filtering, sorting), but now the final sorted output is redirected to a file called `sorted_files.txt`.
+
+
+
