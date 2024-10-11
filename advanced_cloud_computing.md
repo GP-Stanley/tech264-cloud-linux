@@ -78,6 +78,41 @@
     - [How to create an image:](#how-to-create-an-image)
     - [How to create a VM from an image:](#how-to-create-a-vm-from-an-image)
   - [Before creating the Image](#before-creating-the-image)
+- [Ramon's diagram](#ramons-diagram)
+- [Auto scaling](#auto-scaling)
+- [Types of Scaling](#types-of-scaling)
+  - [Vertical Scaling](#vertical-scaling)
+    - [1. Scalling-up](#1-scalling-up)
+    - [2. Scaling-down](#2-scaling-down)
+  - [Horizontal Scaling](#horizontal-scaling)
+    - [1. Scaling-out](#1-scaling-out)
+    - [2. Scaling-in](#2-scaling-in)
+  - [Real-World Example](#real-world-example)
+      - [To summerise:](#to-summerise)
+- [Task: created: tech264-georgia-test-monitoring-with-app](#task-created-tech264-georgia-test-monitoring-with-app)
+- [Create a dashboard](#create-a-dashboard)
+  - [How to view the dashboard:](#how-to-view-the-dashboard)
+  - [How to arrange your dashboard](#how-to-arrange-your-dashboard)
+- [Load Testing Simulation](#load-testing-simulation)
+  - [How to manually start tech264-georgia-test-monitoring-with-app](#how-to-manually-start-tech264-georgia-test-monitoring-with-app)
+- [How to connect the VM app after you stop it and start again - using  SSH key](#how-to-connect-the-vm-app-after-you-stop-it-and-start-again---using--ssh-key)
+- [Tool to spike the CPU](#tool-to-spike-the-cpu)
+  - [Apatchy Bench (AB): install it first.](#apatchy-bench-ab-install-it-first)
+- [Load testing](#load-testing)
+    - [Increase the values](#increase-the-values)
+- [What is an Azure VM Scale Set?](#what-is-an-azure-vm-scale-set)
+- [Auto-Scaling](#auto-scaling-1)
+  - [Architecture for an Axzure VM Scale Set (HA \& SC)](#architecture-for-an-axzure-vm-scale-set-ha--sc)
+    - [Custom Autoscale](#custom-autoscale)
+    - [Our VM's Requirements](#our-vms-requirements)
+    - [How does it achieve high availability?](#how-does-it-achieve-high-availability)
+- [Starting up a scale set](#starting-up-a-scale-set)
+  - [Creating a scale set](#creating-a-scale-set)
+  - [Deleted scale set](#deleted-scale-set)
+- [Getting an Alert](#getting-an-alert)
+- [Why Use a Load Balancer?](#why-use-a-load-balancer)
+- [Task: Azure Monitor monitoring, alert management task](#task-azure-monitor-monitoring-alert-management-task)
+- [Create a CPU Usage Alert for an Azure VM Scale Set Instance](#create-a-cpu-usage-alert-for-an-azure-vm-scale-set-instance)
 
 
 ## Get the 'app'folder onto the Azure VM using "git"
@@ -940,6 +975,7 @@ Check script has worked:
 * `Custom Images`: You can also **create your own image** that includes the OS and any special software or configurations you need. 
   * This is helpful if you want to replicate the same setup across multiple VMs quickly.
 
+
 ## How You Use Images:
 * When you want to create a VM, you **select an image** from Azure's image gallery (like choosing "Ubuntu 22.04" or "Windows Server 2022").
 * Azure **uses that image to build your VM**, meaning the **VM will have** all the **software and configurations from the image**, so you **don’t need to set it up manually**.
@@ -1107,6 +1143,8 @@ echo Done!
 
 ---
 
+![types-of-scaling](./scripting/images/types-of-scaling.png)
+
 
 # Types of Scaling
 
@@ -1168,6 +1206,8 @@ pm2 start app.js
 echo Done!
 ```
 
+![dashboard](./scripting/images/dashboard.png)
+
 # Create a dashboard
 * Be on the Overview page.
 * Scroll down to monitoring tab.
@@ -1190,6 +1230,8 @@ echo Done!
 * if you want to see the metrics of that time (whichever you've chosen), click on the chart, in the top right corner you can choose your timeline. 
 * Click 'apply' to save it. 
 * Save to dashboard if you want to keep it that way. Otherwise it won't save.
+
+![arrange dashboard](./scripting/images/arrange-dashboard.png)
 
 
 # Load Testing Simulation
@@ -1217,6 +1259,8 @@ echo Done!
 * Simulate the situation: it gives the CPU instructions on your behalf.
 * Give requests using a tool.
 
+
+
 ## Apatchy Bench (AB): install it first. 
 * `sudo apt-get install apache2-utils -y`
 
@@ -1232,7 +1276,234 @@ echo Done!
 * `ab -n 10000 -c 200 http://172.167.64.221/`
 * Outcome: it failed after 1000 requests. 
 
+---
+
+# What is an Azure VM Scale Set?
+* Azure VM Scale Sets let you create and manage a group of identical, load-balanced VMs. 
+* They enable you to autoscale the number of VMs based on demand. 
+* A load balancer distributes network traffic among the instances to ensure availability and performance.
 
 
-* set your thresh hold so it will trigger, (36% ?). 
+# Auto-Scaling
+
+## Architecture for an Axzure VM Scale Set (HA & SC)
+* We are using a custom image which we got from ubuntu.com (virtual hard disk file from blob storage).
+* We used this custom image to create our VM.
+* Then we created our marketplace image that we had to provide...
+* Prepare VM to run the app. 
+* Then we created another custom image for the app.
+
+This is where the VM-SS comes in.
+* This is going to use the custom image that we've created. **If youre trying to use the marketplace image, then you are going to need to require plan information before you are allowed tio use that custom image. 
+* The Scale Set is responsible for creating and managing the VMs. 
+
+### Custom Autoscale
+* Custom autoscale: it needs to know the metric and the threshold you want it to use (75% CPU load which is the average for all the VMs we're using). 
+* Start off with a minimun of 2, but the default is going to be 2. The maximum is going to be 3. 
+
+
+### Our VM's Requirements
+* minimum of 2 VMs.
+* The 3rd may get created if it needs to create it (exceeded its 75% threshold).
+* Each of the VM's are in it's own availability zone: zone 1, zone 2, and if a third is created, it will be in zone 3.
+* Make sure that all 3 zones are going to be used by our VMs.
+* All of these VMs are going to be in the public subnet, Region: UK South. 
+* Users come through the internet > Public IP > Load Balancer: will send user to either VM depending on traffic. 
+
+
+![VM scale set](./scripting/images/arch-vm-scale-set.png)
+* This scale set it set up for tetsing purpuses.
+* There are two things we want to accomplishL:
+  * To achieve **high availability** and **scalibility**. 
+
+### How does it achieve high availability?
+* There are 3 zones. 
+* Even if we have a disaster at zone 2, we still have a VM running in zone 1. 
+
+
+![arch-scale-set](./scripting/images/arch-scale-set.png)
+
+
+# Starting up a scale set
+1. Search on Azure: virtual machine scale sets.
+2. When you start the SS, it will start the VMs.
+3. It uses user data to run the app. 
+4. They will stay in an unhealthy state. 
+
+* To get user data to run again: `reimage`. It's copying the image again and run the user data again. 
+* Go to 'load balancing' button on the left : it will give you your frontend IP address.
+* Go to 'instances' to see what's being controlled. 
+
+
+## Creating a scale set
+1. **Search**: VM scale set.
+2. Go to '**create**'
+3. **name**: `tech264-georgia-sparta-app-scale-test`
+4. **Availability zones**: 3
+5. **Orchestration mode**: Uniform
+6. **Security type**: Standard
+7. **Scaling**: autoscaling
+8. Click on '**configure**' > click on the pencil > change default condition > max: 3 > CPU threshold 75% > click 'save'.
+9. **Image** : see all images > my images > `georgia-ready-to-run-app-image` > 
+10. **Disks** > OS disk type > standard
+11. **Network** > `georgia-2-subnet-vnet`
+12. **Network interface**: click pen > keep public subnet > allow public inboud ports > HTTP, SSH.
+13. **Public IP address** : because we have a load balancer, we can SSH in through that, therefore we can keep the Public IP address 'disabled' > click 'ok'.
+14. **Load balancing** (underneath above): Azure load balancer > create a load banacer (beacause we dont have one) > Load balancer name: `tech264-georgia-sparta-app-lb` > click 'create'.
+    
+**IMBOUND NAT RULE: An inbound NAT rule forwards incoming traffic sent to a selected IP address and port combination to a specific virtual machine.
+Frontend port range start: if you have more than one VM, you will have to increment this. Starts at 50,000.
+Backend port: will have to go through the SHH Port of the first VM. You will need this backend port number (example is 22) for something. WATCH CLASS BACK: 11/10/2024 - 15:30 ? Adonis. 
+
+^^^ CHECK THESE NOTES. 
+
+15. **Health tab**: Enable application health monitoring: tick. >
+16. **Recovery**: Enable Automatic repairs: tick. 
+
+**Grace time period**: 
+The amount of time for which automatic repairs are suspended due to a state change on the VM. The grace time starts after the state change has completed. This helps avoid premature or accidental repairs.
+
+17. **Advanced tab**: user data > paste in script
+```bash
+#!/bin/bash
+
+echo cd into the app file
+cd repo/app
+echo now into the app file
+
+# Stop any existing pm2 processes
+echo stopping any running pm2 processes...
+pm2 stop all
+
+# Run the app
+echo Run app...
+pm2 start app.js
+echo Done!
+```
+
+18. **Tags** > owner Georgia
+19. **Review and create** > create.
+20. Let it deploy and set: then copy the IP into the browser. 
+21. IT WORKED!!🎊🎉🥳💃
+
+> ☠️IF YOU DARE TO TEST IT☠️: Go to Instances and delete one. Then refresh it. 
+
+If you need to SSH into your first VM on the list:
+* You'll need to clik on the first instance in the list.
+* connect > SSH > put in key pair > `~/.ssh/tech264-georgia-az-key` > copy public IP that's provided, e.g. 10.0.2.6 > you need to get into the upblic ip of the load balancer
+* Search **load balancer**: click the right VM > get the settings > frontend IP config > copy IP address. 
+* Cange the IP address to the pblic ip address of the IP balancer. 
+* Go to a specific port (write this after you key): -p 50000
+* Copy into Git Bash window. 
+* now you are in your first VM (name will appear after adminuser@tech254-r000000...). 
+
+Example:
+![scale-set-login](./scripting/images/scale-set-login.png)
+
+
+1st Instance: tech264-georgia-sparta-app-scale_0
+* 20.0.162.96
+* ssh -i ~/.ssh/tech264-georgia-az-key -p 50000 adminuser@20.0.162.96
+* adminuser@tech264-g000000:~$
+
+2nd Instance: tech264-georgia-sparta-app-scale_1
+* 20.0.162.96
+*  ssh -i ~/.ssh/tech264-georgia-az-key -p 50001 adminuser@20.0.162.96
+*  adminuser@tech264-g000001:~$
+
+
+
+## Deleted scale set 
+tech264-georgia-sparta-app-
+Go to the resource group to find everything. 
+* delete load balancer, public IP adress, scale set.
+* network security groups for your VMs. 
+* 4 things total. 
+
+
+# Getting an Alert
+* install : `sudo apt-get install apache2-utils -y`
+* to try and get an alert: `ab -n 10000 -c 200 http://20.0.162.96`
+
+> When i tried this, it couldn't connect to ubuntu.com.
+
+
+# Why Use a Load Balancer?
+A load balancer is used to **distribute incoming traffic** evenly across multiple VMs in a scale set. This ensures no single VM gets overwhelmed with requests and that traffic is efficiently handled.
+
+* `Needed for high availability`: Distributes workloads and prevents failure from affecting service.
+* `Required for SSH access`: In this setup, you will access your VMs through the public IP address of the load balancer.
+
+---
+
+# Task: Azure Monitor monitoring, alert management task
+* Document what was done in the code-along, including...
+  * What is worst to best in terms of monitoring and responding to load/traffic.
+  * How you setup a dashboard
+  * How a combination of load testing and the dashboard helped us
+* Include a screenshot of your dashboard when you manage to get it to stop responding through extreme load testing
+* Create a CPU usage alert for your app instance → you should get a notification sent your email
+* Get the alert to check the average for each minute
+Document...
+* How to setup CPU usage alert
+* Include a screenshot of the email you received as a notification
+* Post a link to your documentation in the chat by Mon 9:30
+* In Azure, remove your dashboards and alert and action group
+Document...
+* How to clean up for this task
+* Link to help with Step 2 above: https://www.stephenhackers.co.uk/azure-monitoring-alert-on-virtual-machine-cpu-usage/
+
+Hints:
+
+* You need to set the threshold low enough that the CPU utilization will trigger an alert when you do heavy load testing and you get an email notification
+* During cleanup: After deleting your alert, you will still need to delete your action group
+
+
+
+
+# Create a CPU Usage Alert for an Azure VM Scale Set Instance
+1. Go to the Azure Portal
+   * Open the Azure Portal and navigate to your VM Scale Set.
+2. Select Your Scale Set
+   * Go to Virtual Machine Scale Sets.
+   * Choose the VM Scale Set where your app is running (e.g., tech264-georgia-sparta-app-scale-test).
+3. Navigate to "Metrics"
+   * In the left-side menu of the Scale Set overview page, find and click Metrics under Monitoring.
+4. Create a Custom Metric for CPU Usage
+   * In the Metrics page, you'll configure a custom metric to track the CPU usage.
+   * Click on Select a metric and choose Percentage CPU from the dropdown.
+   * This metric will show you the CPU usage for each instance of the scale set.
+5. Add an Alert for CPU Usage
+   * After viewing the metric, click on New alert rule (found at the top of the page).
+   * This will open the Create alert rule page.
+6. Set Up the Alert Condition
+   * Scope: The scope should already be set to your VM Scale Set.
+   * Condition: Click Add Condition.
+   * In the Signal Name dropdown, search for and select Percentage CPU.
+   * Set the threshold for CPU usage. For example:
+   * Condition: Greater than
+   * Threshold value: Set this to the percentage (e.g., 75%).
+   * Aggregation type: Average (this takes the average CPU usage across all instances).
+7. Configure the Action (Notification)
+   * Under Actions, click Add Action Group.
+   * Choose an Action Group or create a new one by clicking Create action group.
+   * Name the action group.
+   * Under Notifications, click Email/SMS message/Push/Voice.
+   * Enter your email address in the Email field.
+   * Optionally, you can also set up SMS or push notifications by providing a phone number.
+   * Click OK to save the action group.
+8. Define the Alert Details
+   * Alert Rule Name: Provide a name for the alert (e.g., High CPU Usage Alert).
+   * Description: Add a description for the alert.
+   * Severity: Choose the appropriate severity level for the alert (e.g., Sev 3 - Informational or Sev 2 - Warning depending on your need).
+9. Review and Create the Alert
+   * Once everything is set, click Create alert rule.
+   * This will create the alert and the associated notification action.
+10. Test the Alert
+    * To test the alert, you can artificially increase the CPU load on your app or VM instance by running a CPU-heavy task. 
+    * You could SSH into the instance and run a script that increases CPU usage, or you can use stress-testing tools like stress or sysbench.
+    * When the CPU usage exceeds the defined threshold (e.g., 75%), Azure will trigger the alert and send a notification to your email.
+
+
+
 
