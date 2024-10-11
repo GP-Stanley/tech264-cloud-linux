@@ -11,7 +11,9 @@
   - [Task:](#task-1)
   - [](#)
 - [A Reverse Proxy](#a-reverse-proxy)
+- [Reverse Proxy \& BindIp](#reverse-proxy--bindip)
 - [Task: Get a reverse proxy working:](#task-get-a-reverse-proxy-working)
+- [Setting Up an Nginx Reverse Proxy](#setting-up-an-nginx-reverse-proxy)
   - [Task 2: at least get the reverse proxy working manually.](#task-2-at-least-get-the-reverse-proxy-working-manually)
   - [Task: Automate database Stage 2 - Provision Mongo database VM with a Bash script](#task-automate-database-stage-2---provision-mongo-database-vm-with-a-bash-script)
   - [Pre-assessment notes](#pre-assessment-notes)
@@ -242,7 +244,8 @@ with a message saying its by using your Bash script + a fresh VM).
 * e.g., check if it's enabled successfully. 
 * check scp command: check bindIp, everything. 
 
-`Item potent`: it means you've designed it so that no matter how many times you run it, it will still achieve the desired state. It should work every single time. 
+
+> `Item potent`: it means you've designed it so that no matter how many times you run it, it will still achieve the desired state. It should work every single time. 
 
 
 # A Reverse Proxy
@@ -258,18 +261,33 @@ A reverse proxy is like a middleman between your computer (or any device) and th
   
 * **Keeping an Eye on Traffic**: It can also keep track of all the requests coming in and out. This helps you understand how people are using your website and spot any problems.
   
-* **Optimising Content**: The reverse proxy can also tweak things like compressing files or resizing images before sending them to users. This helps your website load faster and use less data.
+* **Optimising Content**: The reverse proxy can also tweak things like compressing files or resising images before sending them to users. This helps your website load faster and use less data.
 
 So, using a reverse proxy helps make your website more secure, faster, and easier to manage.
 
 
+# Reverse Proxy & BindIp
+Using a reverse proxy for the bindIp in your script can be very useful.
 
+1. **Security**: By binding the IP address to the reverse proxy, you can *hide the actual IP addresses of your backend servers*. This adds a layer of security, making it *harder for attackers* to target your servers directly.
+   
+2. **Load Balancing**: The reverse proxy can *distribute incoming traffic* across multiple backend servers. This helps in balancing the load, ensuring *no single server is overwhelme*d, and *improving *overall *performance* and *reliability*.
+   
+3. **SSL Termination**: It can handle SSL encryption and decryption, offloading this resource-intensive task from your backend servers. This can *simplify* your *server configuration* and *improve performance*.
+   
+4. **Caching**: By caching responses, a reverse proxy can *reduce the load* on your backend servers and *speed up response times* for users.
+   
+5. **Centralised Logging and Monitoring**: It allows you to *centralise logging and monitoring of traffic*, making it *easier to analyse and manage*.
+   
+6. **Content Optimisation**: A reverse proxy can *optimise content delivery*, such as compressing files or resizing images, to *improve load times* and *reduce bandwidth usage*.
+   
+Using a reverse proxy for binding an IP address specifically helps in *managing and routing traffic efficiently*, ensuring that your backend infrastructure *remains secure* and *performs optimally*.
 
 
 
 # Task: Get a reverse proxy working: 
 * Manually change Nginx config file (it is possible to change one line ideally) + restart Nginx + test in web browser without port 3000 on the end.
-  * Hint: Backup the nginx config file before you start making changes: that way you can easily revert back to the original file to re-test (such as with the sed command later)
+  * **Hint**: Backup the nginx config file before you start making changes: that way you can easily revert back to the original file to re-test (such as with the sed command later)
   * Automate with your script. Use sed command to replace the string you need to inside the Nginx config file
 
 Deliver: Post link to public IP (without port 3000) in the main chat with a message like "reverse proxy configured"
@@ -279,21 +297,39 @@ If you are really stuck...
 * Research how to setup nginx so that by default, the default website will be http://localhost:3000/ (from the perspective of nginx) so you will just need to go to the app VM’s public IP address (no port 3000 in the URL) and the Sparta test app will come.
 * Use this website to help: https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/How-to-setup-Nginx-reverse-proxy-servers-by-example
 Instead of making a new location (example: location /examples), change the default location (i.e. location /)
-Hints:
-* Don't worry about setting nginx proxy header values
-* Only one line needs to be replaced, the line starting with try_files
+  
+  **Hints**:
+  * Don't worry about setting nginx proxy header values
+  * Only one line needs to be replaced, the line starting with try_files
 
 
 > CHECK YOUR APP IS STILL RUNNING IN THE BACKGROUND. You can use a different git bash window for this: cd into tech > app > `node app.js &`
-1. Add an Nginx proxy_pass setting: `sudo nano /etc/nginx/sites-available/default`
-The most important configuration step in an Nginx reverse proxy configuration is the addition of a proxy_pass setting that maps an incoming URL to a backend server.
-The proxy_pass is configured in the location section of any virtual host configuration file. To set up an Nginx proxy_pass globally, edit the default file in Nginx’s sites-available folder.
-1. Find the server block (it typically starts with `server {`).
-2. Add or update the location block to forward requests to your app running on port 3000.
-3. replace the try_files directive with a proxy_pass directive that forwards traffic to your app
-4. `sudo ln -s /etc/nginx/sites-available/proxy.conf /etc/nginx/sites-enabled/`
-5. `sudo systemctl restart nginx`
-6. Test it in browser without adding :3000.
+
+# Setting Up an Nginx Reverse Proxy
+1. Edit the Default Configuration File:
+   * Open the default configuration file in Nginx: `sudo nano /etc/nginx/sites-available/default`
+   * The most important configuration step in an Nginx reverse proxy setup is adding a proxy_pass setting. This setting maps an incoming URL to a backend server.
+   * The proxy_pass directive is configured within the location section of any virtual host configuration file.
+   * To set up an Nginx proxy_pass globally, edit the default file in Nginx’s sites-available folder.
+2. Locate the Server Block:
+   * Find the server block in the configuration file. It typically starts with: `server {`
+3. Update the Location Block:
+   * Add or update the location block to forward requests to your application running on port 3000. Replace the try_files directive with a proxy_pass directive:
+    ```bash
+    location / {
+        proxy_pass http://localhost:3000;
+    }
+    ```
+
+4. Create a Symbolic Link:
+   * Create a symbolic link to enable the configuration: `sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/`
+
+5. Restart Nginx:
+   * Restart Nginx to apply the changes: `sudo systemctl restart nginx`
+
+6. Test the Configuration:
+* Open your browser and test the setup by navigating to your domain without adding `:3000`. 
+* The reverse proxy should forward the requests to your app running on port 3000.
 
 
 ```bash
