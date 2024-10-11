@@ -954,6 +954,7 @@ The bottom part of your full app script.
 #### How to create an image:
 `db vm` > `capture` > `image` > No, capture only managed image > Name: `tech264-georgia-ready-to-run-dab-image` > 
 
+**This is the same for app vm.**
 
 
 ## Before creating an Image
