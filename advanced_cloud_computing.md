@@ -1,7 +1,9 @@
 # Week 4
 
 - [Week 4](#week-4)
-  - [Get the 'app'folder onto the Azure VM using "git"](#get-the-appfolder-onto-the-azure-vm-using-git)
+- [Differences between Azure and AWS](#differences-between-azure-and-aws)
+  - [When creating a VM.](#when-creating-a-vm)
+  - [Get the 'app' folder onto the Azure VM using "git"](#get-the-app-folder-onto-the-azure-vm-using-git)
       - [Task](#task)
     - [Part 1: Upload the app folder to your GitHub repository](#part-1-upload-the-app-folder-to-your-github-repository)
   - [Part 2: Clone the GitHub Repository to Your Azure Linux VM](#part-2-clone-the-github-repository-to-your-azure-linux-vm)
@@ -90,10 +92,14 @@
   - [Real-World Example](#real-world-example)
       - [To summerise:](#to-summerise)
 - [Task: created: tech264-georgia-test-monitoring-with-app](#task-created-tech264-georgia-test-monitoring-with-app)
+- [Setting Up a Dashboard](#setting-up-a-dashboard)
 - [Create a dashboard](#create-a-dashboard)
   - [How to view the dashboard:](#how-to-view-the-dashboard)
   - [How to arrange your dashboard](#how-to-arrange-your-dashboard)
+- [Combining Load Testing and the Dashboard](#combining-load-testing-and-the-dashboard)
 - [Load Testing Simulation](#load-testing-simulation)
+  - [How It Works](#how-it-works-1)
+  - [Why It’s Important](#why-its-important)
   - [How to manually start tech264-georgia-test-monitoring-with-app](#how-to-manually-start-tech264-georgia-test-monitoring-with-app)
 - [How to connect the VM app after you stop it and start again - using  SSH key](#how-to-connect-the-vm-app-after-you-stop-it-and-start-again---using--ssh-key)
 - [Tool to spike the CPU](#tool-to-spike-the-cpu)
@@ -109,13 +115,29 @@
 - [Starting up a scale set](#starting-up-a-scale-set)
   - [Creating a scale set](#creating-a-scale-set)
   - [Deleted scale set](#deleted-scale-set)
-- [Getting an Alert](#getting-an-alert)
 - [Why Use a Load Balancer?](#why-use-a-load-balancer)
+- [Getting an Alert](#getting-an-alert)
 - [Task: Azure Monitor monitoring, alert management task](#task-azure-monitor-monitoring-alert-management-task)
+- [Monitoring and Responding to Load/Traffic: Worst to Best](#monitoring-and-responding-to-loadtraffic-worst-to-best)
 - [Create a CPU Usage Alert for an Azure VM Scale Set Instance](#create-a-cpu-usage-alert-for-an-azure-vm-scale-set-instance)
+- [SSH in and overload it to cause an alert alarm using apache bench](#ssh-in-and-overload-it-to-cause-an-alert-alarm-using-apache-bench)
+    - [SSH into the Azure Instance](#ssh-into-the-azure-instance)
+    - [Overload the Instance with Apache Bench](#overload-the-instance-with-apache-bench)
+    - [Monitor and Trigger Alerts](#monitor-and-trigger-alerts)
+  - [Remove dashboards and alert and action group](#remove-dashboards-and-alert-and-action-group)
+    - [Removing a Dashboard](#removing-a-dashboard)
+    - [Removing an Alert Rule](#removing-an-alert-rule)
+    - [Removing an Action Group](#removing-an-action-group)
+  - [Delete the Action Group](#delete-the-action-group)
 
+# Differences between Azure and AWS
 
-## Get the 'app'folder onto the Azure VM using "git"
+## When creating a VM.
+* By default, in Azure, you get a static (fixed) public IP assigned to your VM.
+* On AWS, by default, you will get a dynamic (changing) public IP assigned to the VM. 
+  * When you stop and start the VM on AWS, the public IP address will change. 
+
+## Get the 'app' folder onto the Azure VM using "git"
 #### Task
 * Get the app folder onto a GitHub repo called tech264-sparta-app, then
 * use a git command to get the repo onto your Azure Linux VM
@@ -1206,6 +1228,14 @@ pm2 start app.js
 echo Done!
 ```
 
+# Setting Up a Dashboard
+1. **Navigate to Azure Monitor**: In the Azure portal, go to Azure Monitor.
+2. **Create a Workbook**: Under the “Insights” section, select “Workbooks” and create a new workbook.
+3. **Add Metrics and Logs**: Add visualisations for the metrics and logs you want to monitor. You can use charts, graphs, and tables.
+4. **Customise the Layout**: Arrange the visualisations in a way that makes sense for your monitoring needs.
+5. **Save and Share**: Save the workbook and share it with your team. You can also pin it to your Azure dashboard for quick access.
+
+
 ![dashboard](./scripting/images/dashboard.png)
 
 # Create a dashboard
@@ -1232,11 +1262,37 @@ echo Done!
 * Save to dashboard if you want to keep it that way. Otherwise it won't save.
 
 ![arrange dashboard](./scripting/images/arrange-dashboard.png)
+![my dashboards](./scripting/images/dashboards.png)
 
+
+# Combining Load Testing and the Dashboard
+* **Conduct Load Testing**: Use Azure Load Testing to simulate traffic and stress test your application.
+* **Monitor in Real-Time**: Use the dashboard to monitor the metrics and logs in real-time during the load test.
+* **Analyse Results**: After the load test, analyse the data collected in the dashboard to identify bottlenecks and performance issues.
+* **Adjust and Optimise**: Based on the insights, make necessary adjustments to your application and infrastructure.
+* **Repeat**: Conduct further load tests to ensure the changes have improved performance and stability.
+
+Source: https://azure.microsoft.com/en-us/products/load-testing
 
 # Load Testing Simulation
+> Load testing simulation is a way to test how a system (like a website or application) performs under a specific amount of traffic or load.
+
 * Aim: we want to trigger the CPU to cause an alert. 
 * Work out what the threshold is for it to work. 
+
+## How It Works
+* **Simulate Users**: You use a tool to *simulate many users visiting your website at once*. For example, you might simulate 1,000 users all trying to access your site at the same time.
+* **Measure Performance**: While the simulated users are accessing your site, you measure how well your site performs. You look at things like:
+  * **Response Time**: How long does it take for your *site to respond* to a user’s request?
+  * **Throughput**: How many *requests can your site handle* per second?
+  * **Error Rate**: Are there *any errors* when users try to access your site?
+* **Analyse Results**: After the test, you analyse the results to see if your site can handle the load. If there are problems, you can identify what needs to be fixed.
+
+## Why It’s Important
+* **Prevent Crashes**: By knowing how your site performs under heavy load, you can *prevent it from crashing during peak times* (like a big sale or event).
+* **Improve User Experience**: Ensuring your *site is fast and reliable* even under heavy traffic keeps *users happy*.
+* **Plan for Growth**: As your site grows, load testing helps you *plan for future traffic increases*.
+
 
 
 ## How to manually start tech264-georgia-test-monitoring-with-app
@@ -1279,9 +1335,9 @@ echo Done!
 ---
 
 # What is an Azure VM Scale Set?
-* Azure VM Scale Sets let you create and manage a group of identical, load-balanced VMs. 
-* They enable you to autoscale the number of VMs based on demand. 
-* A load balancer distributes network traffic among the instances to ensure availability and performance.
+* Azure VM Scale Sets let you *create and manage* a group of identical, *load-balanced VMs*. 
+* They enable you to *autoscale the number of VMs based on demand*. 
+* A load balancer *distributes network traffic* among the instances to *ensure availability and performance*.
 
 
 # Auto-Scaling
@@ -1421,13 +1477,6 @@ Go to the resource group to find everything.
 * 4 things total. 
 
 
-# Getting an Alert
-* install : `sudo apt-get install apache2-utils -y`
-* to try and get an alert: `ab -n 10000 -c 200 http://20.0.162.96`
-
-> When i tried this, it couldn't connect to ubuntu.com.
-
-
 # Why Use a Load Balancer?
 A load balancer is used to **distribute incoming traffic** evenly across multiple VMs in a scale set. This ensures no single VM gets overwhelmed with requests and that traffic is efficiently handled.
 
@@ -1435,6 +1484,14 @@ A load balancer is used to **distribute incoming traffic** evenly across multipl
 * `Required for SSH access`: In this setup, you will access your VMs through the public IP address of the load balancer.
 
 ---
+
+# Getting an Alert
+* I tried this on the first instance at 17:01.
+* install : `sudo apt-get install apache2-utils -y`
+* to try and get an alert: `ab -n 10000 -c 200 http://20.0.162.96`
+
+> When i tried this, it couldn't connect to ubuntu.com.
+
 
 # Task: Azure Monitor monitoring, alert management task
 * Document what was done in the code-along, including...
@@ -1444,19 +1501,31 @@ A load balancer is used to **distribute incoming traffic** evenly across multipl
 * Include a screenshot of your dashboard when you manage to get it to stop responding through extreme load testing
 * Create a CPU usage alert for your app instance → you should get a notification sent your email
 * Get the alert to check the average for each minute
+
 Document...
 * How to setup CPU usage alert
 * Include a screenshot of the email you received as a notification
 * Post a link to your documentation in the chat by Mon 9:30
 * In Azure, remove your dashboards and alert and action group
+
 Document...
 * How to clean up for this task
 * Link to help with Step 2 above: https://www.stephenhackers.co.uk/azure-monitoring-alert-on-virtual-machine-cpu-usage/
 
 Hints:
-
 * You need to set the threshold low enough that the CPU utilization will trigger an alert when you do heavy load testing and you get an email notification
 * During cleanup: After deleting your alert, you will still need to delete your action group
+
+---
+
+# Monitoring and Responding to Load/Traffic: Worst to Best
+* `No Monitoring`: This is the worst scenario where no monitoring is set up. You won’t be aware of any issues until they cause significant problems.
+* `Basic Monitoring`: Using basic metrics like CPU usage and memory consumption. This provides some visibility but might not be enough to catch all issues.
+* `Threshold-based Alerts`: Setting up alerts based on specific thresholds (e.g., CPU usage > 80%). This helps in catching issues early but can lead to alert fatigue if not tuned properly.
+* `Dynamic Thresholds`: Using dynamic thresholds that adjust based on historical data. This reduces false positives and provides more accurate alerts.
+* `Comprehensive Monitoring`: Combining metrics, logs, and traces to get a full picture of your system’s health. This is more complex but provides the best insights.
+* `Automated Responses`: Setting up automated actions in response to alerts (e.g., scaling up resources). This ensures quick mitigation of issues without manual intervention.
+* `Predictive Monitoring`: Using machine learning to predict potential issues before they occur. This is the most advanced and proactive approach.
 
 
 
@@ -1464,18 +1533,23 @@ Hints:
 # Create a CPU Usage Alert for an Azure VM Scale Set Instance
 1. Go to the Azure Portal
    * Open the Azure Portal and navigate to your VM Scale Set.
+
 2. Select Your Scale Set
    * Go to Virtual Machine Scale Sets.
    * Choose the VM Scale Set where your app is running (e.g., tech264-georgia-sparta-app-scale-test).
+
 3. Navigate to "Metrics"
    * In the left-side menu of the Scale Set overview page, find and click Metrics under Monitoring.
+
 4. Create a Custom Metric for CPU Usage
    * In the Metrics page, you'll configure a custom metric to track the CPU usage.
    * Click on Select a metric and choose Percentage CPU from the dropdown.
    * This metric will show you the CPU usage for each instance of the scale set.
+
 5. Add an Alert for CPU Usage
    * After viewing the metric, click on New alert rule (found at the top of the page).
    * This will open the Create alert rule page.
+
 6. Set Up the Alert Condition
    * Scope: The scope should already be set to your VM Scale Set.
    * Condition: Click Add Condition.
@@ -1484,6 +1558,7 @@ Hints:
    * Condition: Greater than
    * Threshold value: Set this to the percentage (e.g., 75%).
    * Aggregation type: Average (this takes the average CPU usage across all instances).
+
 7. Configure the Action (Notification)
    * Under Actions, click Add Action Group.
    * Choose an Action Group or create a new one by clicking Create action group.
@@ -1492,18 +1567,101 @@ Hints:
    * Enter your email address in the Email field.
    * Optionally, you can also set up SMS or push notifications by providing a phone number.
    * Click OK to save the action group.
+
 8. Define the Alert Details
    * Alert Rule Name: Provide a name for the alert (e.g., High CPU Usage Alert).
    * Description: Add a description for the alert.
    * Severity: Choose the appropriate severity level for the alert (e.g., Sev 3 - Informational or Sev 2 - Warning depending on your need).
+
 9. Review and Create the Alert
    * Once everything is set, click Create alert rule.
    * This will create the alert and the associated notification action.
+
 10. Test the Alert
     * To test the alert, you can artificially increase the CPU load on your app or VM instance by running a CPU-heavy task. 
     * You could SSH into the instance and run a script that increases CPU usage, or you can use stress-testing tools like stress or sysbench.
     * When the CPU usage exceeds the defined threshold (e.g., 75%), Azure will trigger the alert and send a notification to your email.
 
+Source: https://www.stephenhackers.co.uk/azure-monitoring-alert-on-virtual-machine-cpu-usage/
 
+---
+
+# SSH in and overload it to cause an alert alarm using apache bench
+### SSH into the Azure Instance
+1. Get the Public IP Address:
+   * Go to the Azure portal.
+   * Navigate to your Virtual Machine (VM).
+   * In the “Overview” section, note the public IP address of your VM.
+  
+2. Open a Terminal:
+* On  your local machine, open a terminal (Command Prompt, PowerShell, or a terminal emulator on Linux/Mac).
+
+3. Connect via SSH:
+   * Use the following command to connect to your VM: `ssh azureuser@<your-vm-ip>`
+   * Replace <your-vm-ip> with the public IP address of your VM.
+   * If you are using an SSH key, ensure you specify the path to your private key: `ssh -i /path/to/your/private/key azureuser@<your-vm-ip>`
+
+### Overload the Instance with Apache Bench
+1. Install Apache Bench:
+   * If Apache Bench (ab) isn't installed on your VM, you can install it using:
+```bash
+sudo apt-get update
+sudo apt-get install apache2-utils
+```
+
+2. Run Apache Bench:
+   * Use the following command to simulate load: `ab -n 10000 -c 200 http://<your-vm-ip>/`
+   * Replace <your-vm-ip> with the public IP address of your VM.
+   * This command will send 10,000 requests (-n 10000) with a concurrency level of 200 (-c 200).
+
+### Monitor and Trigger Alerts
+1. Set Up Alerts in Azure Monitor:
+   * Go to Azure Monitor in the Azure portal.
+   * Create a new alert rule.
+   * Define the conditions that should trigger the alert (e.g., high CPU usage, memory consumption).
+   * Set the action group to notify you when the alert is triggered.
+
+2. Monitor the Load:
+   * While running Apache Bench, keep an eye on the metrics in Azure Monitor.
+   * The high load should trigger the alert based on the conditions you set.
+
+
+## Remove dashboards and alert and action group
+### Removing a Dashboard
+1. Navigate to Dashboards:
+   * In the Azure portal, click on “Dashboard” from the left-hand menu.
+2. Select the Dashboard:
+   * Find the dashboard you want to delete. Click on the three dots (ellipsis) next to the dashboard name.
+3. Delete the Dashboard:
+   * Select “Delete” from the dropdown menu.
+   * Confirm the deletion when prompted.#
+
+### Removing an Alert Rule
+1. Navigate to Azure Monitor:
+   * In the Azure portal, go to “Monitoring” from the left-hand menu.
+2. Select Alerts:
+   * Under the “Alerts” section, click on “Alert rules”.
+3. Find the Alert Rule:
+   * Locate the alert rule you want to delete. You can use the search bar to find it quickly.
+4. Delete the Alert Rule:
+   * Click on the three dots (ellipsis) next to the alert rule.
+   * Select “Delete” and confirm the deletion.
+
+### Removing an Action Group
+1. Navigate to Azure Monitor:
+   * In the Azure portal, go to “Monitoring”.
+2. Select Action Groups:
+   * Under the “Alerts” section, click on “Action groups”.
+3. Find the Action Group:
+   * Locate the action group you want to delete.
+4. Delete the Action Group:
+   * Click on the three dots (ellipsis) next to the action group.
+   * Select “Delete” and confirm the deletion.
+
+
+![removing-alert-rule-and-action-group](./scripting/images/remove-action-alert-groups.png)
+
+
+## Delete the Action Group
 
 
