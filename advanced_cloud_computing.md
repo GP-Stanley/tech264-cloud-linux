@@ -128,7 +128,55 @@
     - [Removing a Dashboard](#removing-a-dashboard)
     - [Removing an Alert Rule](#removing-an-alert-rule)
     - [Removing an Action Group](#removing-an-action-group)
-  - [Delete the Action Group](#delete-the-action-group)
+- [Two-tier Deployment](#two-tier-deployment)
+- [Ramon's Diagram](#ramons-diagram-1)
+  - [To make it more secure](#to-make-it-more-secure)
+  - [How are we going to set up this NVA?](#how-are-we-going-to-set-up-this-nva)
+  - [How do we check the traffic is coming from the right place?](#how-do-we-check-the-traffic-is-coming-from-the-right-place)
+    - [What are the steps?](#what-are-the-steps)
+- [Code-along](#code-along)
+  - [Set up the house and the rooms for our architecture.](#set-up-the-house-and-the-rooms-for-our-architecture)
+    - [Set up our Virtual Network.](#set-up-our-virtual-network)
+    - [Private subnet](#private-subnet)
+    - [Step 2: Set up the db.](#step-2-set-up-the-db)
+    - [Step 3: Creating the App](#step-3-creating-the-app)
+    - [Step 4: Creating the NVA virutal machine](#step-4-creating-the-nva-virutal-machine)
+- [How to connect the VM app after you stop it and start again - using SSH key](#how-to-connect-the-vm-app-after-you-stop-it-and-start-again---using-ssh-key)
+      - [Set up a ping](#set-up-a-ping)
+    - [Step 5: Setting up the route table](#step-5-setting-up-the-route-table)
+    - [Step 6: IP forwarding](#step-6-ip-forwarding)
+- [Task: what has been done  to make the database more private](#task-what-has-been-done--to-make-the-database-more-private)
+    - [1. Removed the Public IP Address:](#1-removed-the-public-ip-address)
+    - [2. Isolated the DB in a Private Subnet:](#2-isolated-the-db-in-a-private-subnet)
+    - [3. Access DB via App VM (Jump Box):](#3-access-db-via-app-vm-jump-box)
+    - [4. Planned Deployment of NVA (Network Virtual Appliance):](#4-planned-deployment-of-nva-network-virtual-appliance)
+- [Task: Research VM availability options on Azure](#task-research-vm-availability-options-on-azure)
+  - [What is an Availability Set?](#what-is-an-availability-set)
+    - [How does it work?](#how-does-it-work)
+    - [Advantages:](#advantages-1)
+    - [Disadvantages:](#disadvantages-1)
+  - [What is an Availability Zone? Why superior to an Availability Set? Disadvantages?](#what-is-an-availability-zone-why-superior-to-an-availability-set-disadvantages)
+    - [What is an Availability Zone?](#what-is-an-availability-zone)
+    - [Why is it superior to an Availability Set?](#why-is-it-superior-to-an-availability-set)
+    - [Disadvantages:](#disadvantages-2)
+  - [What is a Virtual Machine Scale Set? What type of scaling does it do? How does it work? Limitations?](#what-is-a-virtual-machine-scale-set-what-type-of-scaling-does-it-do-how-does-it-work-limitations)
+    - [What is a Virtual Machine Scale Set?](#what-is-a-virtual-machine-scale-set)
+    - [What type of scaling does it do?](#what-type-of-scaling-does-it-do)
+    - [How does it work?](#how-does-it-work-1)
+    - [Limitations:](#limitations)
+- [Making an Alert for app vm](#making-an-alert-for-app-vm)
+    - [Steps to Create an Alert for a VM on Azure](#steps-to-create-an-alert-for-a-vm-on-azure)
+      - [1. **Navigate to Azure Monitor**](#1-navigate-to-azure-monitor)
+      - [2. **Create a New Alert Rule**](#2-create-a-new-alert-rule)
+      - [3. **Select the Target Resource (VM)**](#3-select-the-target-resource-vm)
+      - [4. **Define the Alert Condition**](#4-define-the-alert-condition)
+      - [5. **Configure Action Group (Who to Notify)**](#5-configure-action-group-who-to-notify)
+      - [6. **Set the Alert Rule Name and Severity**](#6-set-the-alert-rule-name-and-severity)
+      - [7. **Create the Alert**](#7-create-the-alert)
+    - [Below is the review \& Create Page:](#below-is-the-review--create-page)
+- [Getting an Alert](#getting-an-alert-1)
+  - [Generate CPU load using stress](#generate-cpu-load-using-stress)
+  - [Alerts to my Email](#alerts-to-my-email)
 
 # Differences between Azure and AWS
 
@@ -1555,7 +1603,7 @@ Hints:
    * Condition: Click Add Condition.
    * In the Signal Name dropdown, search for and select Percentage CPU.
    * Set the threshold for CPU usage. For example:
-   * Condition: Greater than
+   * Condition: Greater than or equal to
    * Threshold value: Set this to the percentage (e.g., 75%).
    * Aggregation type: Average (this takes the average CPU usage across all instances).
 
@@ -1661,7 +1709,392 @@ sudo apt-get install apache2-utils
 
 ![removing-alert-rule-and-action-group](./scripting/images/remove-action-alert-groups.png)
 
+---
 
-## Delete the Action Group
+
+# Two-tier Deployment
+# Ramon's Diagram
+
+* At the moment we have our App VM.
+* We have our db VM.
+* They each have a Network Interface Card. 
+* They each have a network Security Group with their own rules (e.g., allow HTTP, SSH (app), and the db (just SSH). 
+  * Allowed by default: it allows **internal traffic** on a virtual network.
+  * We can set a rule that virtual network traffic is not allowed by default, if we do this, we would have to allow MongoDB traffic which is PORT 27017, we then have to have a rule that is **higher priority: deny everything else**. 
+  * To make it more secure: set up stricter rules for the db.
+    * by default, virual network traaffic is not allowed on AWS.
+    * (SSH and MongoDB both use TCP)
+    * It's important to know the type of traffic you're allowing. 
+* Each VM is in it's own subnet.
+  * App VM: Public subnet (10.0.2.0/24).
+  * DB: private subnet (10.0.4.0/24). This is '4' because we're going to have an extra subnet in here. 
+* All of the subnets is going to be within a virtual network (VN) (10.0.0.0/16).
+* All 3 will need a public IP address so we can SSH in if needed.
+* From the public IP address, the HTTP traffic (web traffic), or the SSH traffic (you) coming in. 
+* From either of these entry points, it can be potentially dangerous. 
+* The virtual network encases all three.
+
+
+## To make it more secure
+* Remove the public IP address.
+  * delete the db public IP.
+  * You can access the db vm via SSH into the app vm via the public IP. 
+  * You should put your private key into the app vm after SSH-ing in. 
+* Add in another subnet: DMZ (de-militarised zone) (10.0.3.0/24).
+  * Create a new VM in here called an NVA VM (network Virtual Applicance). 
+  * This will have a NIC and an NSG.
+  * This will have a rule to allow SSH (for the moment).
+  * the NVA is going to filter any traffic being sent to the db. Its job is to make sure that only legitimate/valid/safe traffic from the right source is going to be allowed into the db. 
+  * If we need to SSH into our NVA, this could have dangerous traffic.
+
+
+## How are we going to set up this NVA?
+* In order to force traffic from the public subnet, to go via the NVA, we need to set up a route table: "to-private-subnet-route-table"
+* Their job is to route certain traffic to certain places. 
+  * This is going to be safe traffic. 
+  * It's going to come out of the app VM, out of the public subnet.
+  * The table needs to be associated with the subnet that the traffic is coming out of.
+  * We tell it that the next place we want it to go, the next `hop`, we want it to go to the DMZ subnet to the NVA VM.
+  * Then the NVA is going to do its filtering, its check. 
+  * This traffic you've got coming from the public subnet, its going to send it (`forwarded traffic`) to the private subnet and eventually the private db VM.
+  * This traffic should be safe as it's been filtered. 
+
+
+## How do we check the traffic is coming from the right place?
+* We have to set up a couple of things.
+* On the NIC itself (of the NVA), it needs `IP Forwarding enabled`. That will be done on Azure. 
+* On the actual NVA VM itself, we need to enable IP forwarding in Liux.
+* We need to set up our rules. 
+  * We need IP tables rules to help us out (this is often used on firewall rules).
+
+
+### What are the steps?
+* *Set up a new VN with 3 subnets. "tech264-georgia-3-subnet-vnet"
+* Set up stricter rules. 
+* Delete piblic IP of db. 
+* Set up NVA.
+* Set up the route table. 
+* Set up IP forwarding (in Azure and Linux).
+* IP tables rules. 
+
+![Ramons Diagram](./scripting/images/two-tier-arch.png)
+
+![Karis' Dia](./scripting/images/karis-diagram.png)
+
+
+# Code-along
+## Set up the house and the rooms for our architecture. 
+### Set up our Virtual Network.
+1. Got to Virtual Networks
+2. Naming convention: tech264-georgia-3-subnet-vnet
+3. IP addresses: Leave the default subnet > edit > name: public-subnet > Starting address: 10.0.2.0 > save > add subnet > name: dmz-subnet > starting address: 10.0.3.0 > save > add a third > private-subnet > starting address: 10.0.4.0 > Private subnet: not providing default outbound access. > enable private subnet > add/save. 
+
+
+### Private subnet
+  * Private subnets enhance security by not providing default outbound access.
+  * To enable outbound connectivity for virtual machines to access the internet, it is necessary to explicitly grant outbound access. A NAT gateway is the recommended way to provide outbound connectivity for virtual machines in the subnet.
+  * This means that the pubnet, whatever you've put in it, cannot access the internet. 
+  * If we had to SSH into this, we won't be able to install anything because it will need internet access to do this. 
+  * We will need the db image we created which has all the information it needs. 
+
+
+1. Tag: owner gerogia
+2. Review & create > create
+
+
+### Step 2: Set up the db.
+1. go to Images > find image > tech264-georgia-ready-to-run-db-image > create VM.
+2. Name: tech264-georgia-in-3-subnet-vnet-db-vm
+3. > put into availability zone 3 > check you've got the right image > adminuser > existing key > georgia-az-key > 
+4. Allow SSH > licensing type : Other
+5. Disk: Standard
+6. Networking: Networking > Virtual network > tech264-georgia-3-subnet-vnet
+Subnet > private-subnet (10.0.4.0/24)
+Public IP
+None
+Accelerated networking
+Off
+Place this virtual machine behind an existing load balancing solution?
+No
+Delete NIC when VM is deleted
+Disabled
+
+![alt text](./scripting/images/image-3.png)
+
+6. Review & Create
+
+
+### Step 3: Creating the App 
+1. go to Images > find image > tech264-georgia-ready-to-run-app-image > create VM.
+2. Create VM > tech264-georgia-in-3-subnet-sparta-app-vm
+3. Disk: Standard.
+4. put into availability zone 1 > check you've got the right image > adminuser > existing key > georgia-az-key 
+5. Allow SSH & HTTP > licensing type : Other
+6. public subnet (10.0.2.0/24). 
+
+![alt text](./scripting/images/image-4.png)
+
+5. Tags: owner georgia
+6. Advanced: user data: app only > MAKE SURE YOU CHANGE THE IP TO MATCH `tech264-georgia-in-3-subnet-vnet-db-vm` PRIVATE IP ADDRESS. 
+```bash
+#!/bin/bash
+
+echo cd into the app file
+cd repo/app
+echo now into the app file
+
+MONGODB_HOST="mongodb://10.0.4.4:27017/posts"
+
+echo "Connect via our VMs via IP."
+export DB_HOST=$MONGODB_HOST
+echo "Connection complete."
+printenv DB_HOST
+echo "env variable set."
+
+# Run the app
+echo Run app...
+pm2 start app.js
+echo Done!
+```
+7. Review and Create
+
+
+### Step 4: Creating the NVA virutal machine
+1. Create Virtual Machine
+2. name: `tech264-georgia-in-3-subnet-nva-vm`
+3. Zone 2
+4. Standard secutirty
+5. find image > see all images > `ramon-official-ubuntu2204-clean-image`
+6. username > key > etc
+7. Allow only SSH
+8. license type: other
+9. Disk: standard
+10. Networking: dmz-subnet (10.0.3.0/24)
+
+![alt text](./scripting/images/image-5.png)
+
+11. Tags: Owner, georgia
+12. review & Create
+
+
+
+# How to connect the VM app after you stop it and start again - using SSH key
+1. Connect the `VM with SSH key`
+2. To see the `repo/app`- need to be in root directory  -> `cd /repo/app`
+3. `export DB_HOST=mongodb://10.0.4.4:27017/posts`
+4. `printenv DB_HOST`
+5. `sudo pm2 stop all`
+6. `sudo -E pm2 start app.js`
+
+    > The `-E` option in the sudo command stands for “preserve environment”. When you use sudo -E, it tells sudo to preserve the user’s environment variables. This is useful when you need to run a command with elevated privileges but still want to retain the environment variables set in your current session.
+
+    Using -E **ensures** that the DB_HOST **environment variable** (and any other environment variables you have set) **is preserved when starting the application** with pm2 under sudo.
+
+
+
+
+#### Set up a ping 
+* go to app VM
+* SSH in: ssh -i ~/.ssh/tech264-georgia-az-key adminuser@172.187.129.73
+* 
+* Ramon made scripts to create and delete VMs.
+* `ping 10.0.4.4`: (this is linked to the db Private IP address). Sending a "Hello, are you there?". 
+  * We've set this up because we are going to see how things interupt this communication. 
+
+
+
+### Step 5: Setting up the route table
+
+![alt text](./scripting/images/image-6.png)
+
+1. Go to resource (tech264-georgia-to-private-subnet-rt) > overview > Settings > Routes > Add > Route name "`tech264-georgia-to-private-subnet-route`".
+2. Destination type: IP Addresses
+3. Destination IP addresses: 10.0.4.0/24 (the destination is the private subnet for this traffic).
+4. Next hop type: Virtual appliance
+5. Next hop adddress: 10.0.3.4 (private ip for the nva).
+6. Click 'Add'. 
+
+    > ⚠️Ensure you have IP forwarding enabled on your virtual appliance. You can enable this by navigating to the respective network interface's IP address settings.
+
+7. Associate this route table with where the traffic is coming out of, and then the route table will take care of delivering that traffic to the right spot.
+8. Subnets > Associate > click 3-subnet > public subnet. 
+
+> Effect on the ping - it has stopped
+> * we are sending traffic to our VNA machine but on the machine we need to now forward the traffic to the DB machine
+
+
+
+### Step 6: IP forwarding
+1. 
+
+
+
+
+
+# Task: what has been done  to make the database more private
+### 1. Removed the Public IP Address:
+   * The public IP of the database (DB VM) was removed, making it inaccessible directly from the internet. This prevents external users from attempting to connect to the database directly.
+
+### 2. Isolated the DB in a Private Subnet:
+   * The database was moved into a private subnet (10.0.4.0/24), which has no internet access. This means that only VMs within the same virtual network, such as the App VM, can communicate with the DB.
+
+### 3. Access DB via App VM (Jump Box):
+   * Instead of connecting to the DB directly, you now access the DB by first SSH-ing into the App VM (which has a public IP) and then connecting to the DB internally from the App VM. This adds an additional layer of protection.
+
+### 4. Planned Deployment of NVA (Network Virtual Appliance):
+   * A Network Virtual Appliance (NVA) was deployed in the DMZ subnet to act as a filtering gateway for any traffic heading towards the database. The NVA will ensure that only safe and legitimate traffic can reach the database, adding another layer of protection.
+
+These steps enhance the privacy of the database by significantly reducing its exposure to the public internet and adding multiple layers of filtering and security.
+
+
+![alt text](./scripting/images/availability.png)
+Source: https://techcommunity.microsoft.com/t5/itops-talk-blog/understanding-availability-sets-and-availability-zones/ba-p/1992518 
+
+
+# Task: Research VM availability options on Azure
+
+## What is an Availability Set?
+* An Availability Set in Azure is a *feature* that helps *ensure* your Virtual Machines (*VMs) stay online during planned or unplanned downtime *(e.g., maintenance or hardware failures). 
+* It* spreads your VMs across multiple isolated hardware nodes*, making sure they *aren’t all affected by the same failure*.
+
+### How does it work?
+When you place VMs in an Availability Set, Azure automatically distributes them across:
+
+* **Fault Domains**: *Physical hardware racks* in the datacenter. If one rack fails, VMs in different racks will continue running.
+* **Update Domains**: *Logical groups that allow Azure to perform maintenance on your VMs in stages*. If one update domain is undergoing maintenance, the others will remain online.
+
+### Advantages:
+* **High Availability**: VMs in an Availability Set are *protected from hardware failures* and *planned Azure maintenance*. This improves uptime.
+* **Cost-Effective**: There's *no extra cost* for using Availability Sets; you only pay for the VMs you run.
+
+### Disadvantages:
+* **Single Datacenter**: Availability Sets protect against failures within a single Azure region, but they *don’t provide protection if the entire datacenter goes offline*.
+* **No Zone Redundancy**: Availability Sets *only work within a single Azure region* and* don’t spread VMs across multiple geographic areas* (like Availability Zones can).
+
+
+
+
+## What is an Availability Zone? Why superior to an Availability Set? Disadvantages?
+### What is an Availability Zone?
+* An Availability Zone is a *physically separate location* within an Azure region. 
+* Each zone has its own *independent power, cooling, and networking*. 
+* Azure *guarantees* that if you place VMs in different Availability Zones, they’ll *stay up* even if *one entire zone* (or data center) *fails*.
+
+### Why is it superior to an Availability Set?
+* **Geographic Redundancy**: VMs placed in different Availability Zones are *located in separate physical datacenters*. This means that even if one entire datacenter goes down, your other VMs will continue running.
+* **Greater Fault Isolation**: Since zones are physically isolated, they *provide better protection against datacenter-wide failures*, unlike Availability Sets, which only protect against rack-level or update-level failures.
+  
+### Disadvantages:
+* **More Expensive**: Deploying VMs across multiple Availability Zones can be more costly due to the need for *multiple redundant VMs* and the potential for *data transfer costs between zones*.
+* **Latency**: While zones are in the same region, there may be slight *network latency between VMs located in different zones* compared to VMs within an Availability Set (which are on the same physical site).
+
+
+## What is a Virtual Machine Scale Set? What type of scaling does it do? How does it work? Limitations?
+
+### What is a Virtual Machine Scale Set?
+A Virtual Machine Scale Set (VMSS) allows you to *automatically deploy and manage a group of identical VMs*. 
+It enables your application to *automatically scale in or out based on demand*, ensuring you have the right amount of computing resources.
+
+### What type of scaling does it do?
+VM Scale Sets can perform:
+* **Horizontal Scaling**: Automatically *adds* (scales out) or *removes* (scales in) VMs based on defined rules or demand. 
+* For example, if your website is experiencing high traffic, new VMs can be added to handle the load. Once traffic reduces, unneeded VMs can be removed.
+
+### How does it work?
+1. **Automated Scaling**: You *define scaling rules based on metrics* like CPU usage, memory, or custom metrics. Azure monitors these metrics and adds/removes VMs accordingly.
+2. **Load Balancing**: Azure *automatically distributes traffic* across all the VMs in your scale set to make sure no single VM is overloaded.
+3. **Fault Tolerance**: VMSS can be configured to use Availability Zones or Availability Sets to ensure high availability.
+
+### Limitations:
+* **Homogeneous VMs**: All VMs in a scale set are *identical*, which might not suit applications needing different configurations on different VMs.
+* **Scaling Delay**: While VMSS can scale automatically, adding new VMs can *take a few minutes*, meaning it *might not react instantly* to traffic spikes.
+* **Complex Configuration**: Setting up and managing scaling rules and auto-scaling behavior can be *complex*, especially for beginners. You need to carefully tune these settings to avoid unnecessary costs or performance issues.
+
+
+| Feature               | **Advantages**                                                       | **Disadvantages**                                                |
+|-----------------------|----------------------------------------------------------------------|------------------------------------------------------------------|
+| **Availability Set**   | Cost-effective, protects against rack failures, improves uptime within a datacenter | Doesn’t protect against full datacenter failure, limited to a single region |
+| **Availability Zone**  | Protects against datacenter failure, provides greater fault isolation | Higher costs, potential for network latency between zones        |
+| **VM Scale Set**       | Auto-scales based on demand, load balancing built-in, supports Availability Sets/Zones | VMs must be identical, scaling can have delays, more complex to configure |
+
+
+
+# Making an Alert for app vm
+### Steps to Create an Alert for a VM on Azure
+
+#### 1. **Navigate to Azure Monitor**
+   - Log in to the [Azure portal](https://portal.azure.com/).
+   - In the search bar at the top, type **"Monitor"** and select **Monitor** from the list of results.
+
+#### 2. **Create a New Alert Rule**
+   - In the **Monitor** page, on the left-hand menu, select **Alerts**.
+   - Click **+ New alert rule** at the top of the Alerts page.
+
+#### 3. **Select the Target Resource (VM)**
+   - Under the **Scope** section, click **Select resource**.
+   - In the **Resource Type** dropdown, select **Virtual Machine**.
+   - Choose the VM you want to monitor from the list of available resources and click **Done**.
+
+#### 4. **Define the Alert Condition**
+   - In the **Condition** section, click **Add condition**.
+   - You will see a list of available metrics (like CPU, memory, disk, network, etc.).
+   - Select a metric, such as **Percentage CPU**, to monitor CPU usage.
+   - Configure the condition:
+     - Set the **threshold** value (e.g., alert if CPU usage is over 80% for 5 minutes).
+     - Set the **aggregation** (e.g., average over the last 5 minutes).
+   - Click **Done** when you’ve configured the condition.
+
+#### 5. **Configure Action Group (Who to Notify)**
+   - In the **Actions** section, click **Add action group**.
+   - An action group defines what happens when the alert is triggered, such as sending an email, SMS, or running an automation.
+   - Click **+ Create action group** and fill in the details:
+     - **Action group name**: Give it a meaningful name (e.g., "CPU-Alert-Group").
+     - **Notification type**: Choose the type of notification you want (e.g., email, SMS).
+     - Enter the recipient details (e.g., email address or phone number).
+   - Click **OK** to create the action group.
+
+#### 6. **Set the Alert Rule Name and Severity**
+   - In the **Alert rule details** section, provide:
+     - **Alert rule name**: Name your alert (e.g., "High CPU Alert").
+     - **Description**: Optionally, add a description of what this alert is monitoring.
+     - **Severity**: Select a severity level (e.g., Sev 1 for critical alerts, Sev 4 for informational).
+   
+![alt text](./scripting/images/image-8.png)
+
+#### 7. **Create the Alert**
+   - Review your settings, then click **Create alert rule**.
+   - Azure will now monitor the specified condition, and when it crosses the threshold you’ve set, the alert will trigger, and the action group will notify you.
+
+### Below is the review & Create Page:
+
+![alt text](./scripting/images/image-10.png)
+
+![alt text](./scripting/images/image-11.png)
+
+
+# Getting an Alert
+* I tried this on the first instance at 17:01.
+* install : `sudo apt-get install apache2-utils -y`
+* to try and get an alert: `ab -n 10000 -c 200 http://172.187.129.73/ 
+> If I had held my patience, this would have eventually given me an alert over 70%.
+
+
+## Generate CPU load using stress
+So i tried this: 
+Install stress: `sudo apt-get install stress`
+ 
+* This runs 4 workers that consume CPU for 100 seconds
+`stress --cpu 4 --timeout 100`
+
+
+## Alerts to my Email
+
+![alt text](./scripting/images/image-12.png)
+
+![alt text](./scripting/images/image-13.png)
+
+![alt text](./scripting/images/Screenshot (163).png>)
+
+
 
 
