@@ -1703,7 +1703,7 @@ sudo apt-get install apache2-utils
    * Find the dashboard you want to delete. Click on the three dots (ellipsis) next to the dashboard name.
 3. Delete the Dashboard:
    * Select “Delete” from the dropdown menu.
-   * Confirm the deletion when prompted.#
+   * Confirm the deletion when prompted.
 
 ### Removing an Alert Rule
 1. Navigate to Azure Monitor:
@@ -1798,9 +1798,16 @@ sudo apt-get install apache2-utils
 * Set up IP forwarding (in Azure and Linux).
 * IP tables rules. 
 
+  
+<br> 
+
+
 ![Ramons Diagram](./scripting/images/two-tier-arch.png)
 
 ![Karis' Dia](./scripting/images/karis-diagram.png)
+
+  
+<br> 
 
 
 # Code-along
@@ -1844,6 +1851,9 @@ Disabled
 
 6. Review & Create
 
+  
+<br> 
+
 
 ### Step 3: Creating the App 
 1. go to Images > find image > tech264-georgia-ready-to-run-app-image > create VM.
@@ -1853,7 +1863,15 @@ Disabled
 5. Allow SSH & HTTP > licensing type : Other
 6. public subnet (10.0.2.0/24). 
 
+  
+<br> 
+
+
 ![alt text](./scripting/images/image-4.png)
+
+  
+<br> 
+
 
 5. Tags: owner georgia
 6. Advanced: user data: app only > MAKE SURE YOU CHANGE THE IP TO MATCH `tech264-georgia-in-3-subnet-vnet-db-vm` PRIVATE IP ADDRESS. 
@@ -1892,11 +1910,17 @@ echo Done!
 9. Disk: standard
 10. Networking: dmz-subnet (10.0.3.0/24)
 
+  
+<br> 
+
+
 ![alt text](./scripting/images/image-5.png)
 
 11. Tags: Owner, georgia
 12. review & Create
 
+  
+<br> 
 
 
 # How to connect the VM app after you stop it and start again - using SSH key
@@ -1927,6 +1951,10 @@ echo Done!
 ### Step 5: Setting up the route table
 
 ![alt text](./scripting/images/image-6.png)
+
+  
+<br> 
+
 
 1. Go to resource (tech264-georgia-to-private-subnet-rt) > overview > Settings > Routes > Add > Route name "`tech264-georgia-to-private-subnet-route`".
 2. Destination type: IP Addresses
@@ -1971,9 +1999,15 @@ echo Done!
 
 These steps enhance the privacy of the database by significantly reducing its exposure to the public internet and adding multiple layers of filtering and security.
 
+  
+<br> 
+
 
 ![alt text](./scripting/images/availability.png)
 Source: https://techcommunity.microsoft.com/t5/itops-talk-blog/understanding-availability-sets-and-availability-zones/ba-p/1992518 
+
+  
+<br> 
 
 
 # Task: Research VM availability options on Azure
@@ -1998,15 +2032,17 @@ When you place VMs in an Availability Set, Azure automatically distributes them 
 * **No Zone Redundancy**: Availability Sets *only work within a single Azure region* and *don’t spread VMs across multiple geographic areas* (like Availability Zones can).
 
 
+<br>
 
 
 ## What is an Availability Zone? Why superior to an Availability Set? Disadvantages?
 ### What is an Availability Zone?
 * An Availability Zone is a *physically separate location* within an Azure region. 
 * Each zone has its own *independent power, cooling, and networking*. 
-* Azure *guarantees* that if you place VMs in different Availability Zones, they’ll *stay up* even if *one entire zone* (or data center) *fails*.
+* Azure *guarantees* (SLA) that if you place VMs in different Availability Zones, they’ll *stay up* even if *one entire zone* (or data center) *fails*.
 
 ### Why is it superior to an Availability Set?
+* **Service Level Agreement (SLA)**: specifies the guaranteed uptime for services (99.99%). 
 * **Geographic Redundancy**: VMs placed in different Availability Zones are *located in separate physical datacenters*. This means that even if one entire datacenter goes down, your other VMs will continue running.
 * **Greater Fault Isolation**: Since zones are physically isolated, they *provide better protection against datacenter-wide failures*, unlike Availability Sets, which only protect against rack-level or update-level failures.
   
@@ -2014,6 +2050,7 @@ When you place VMs in an Availability Set, Azure automatically distributes them 
 * **More Expensive**: Deploying VMs across multiple Availability Zones can be more costly due to the need for *multiple redundant VMs* and the potential for *data transfer costs between zones*.
 * **Latency**: While zones are in the same region, there may be slight *network delay* (latency) between VMs *located in different zones* compared to VMs within an Availability Set (which are on the same physical site).
 
+<br>
 
 ## What is a Virtual Machine Scale Set? What type of scaling does it do? How does it work? Limitations?
 
@@ -2029,12 +2066,14 @@ VM Scale Sets can perform:
 ### How does it work?
 1. **Automated Scaling**: You *define scaling rules based on metrics* like CPU usage, memory, or custom metrics. Azure monitors these metrics and adds/removes VMs accordingly.
 2. **Load Balancing**: Azure *automatically distributes traffic* across all the VMs in your scale set to make sure no single VM is overloaded.
-3. **Fault Tolerance**: VMSS can be configured to use Availability Zones or Availability Sets to ensure high availability.
+3. **Fault Tolerance**: VMSS (VM Scale Set) can be configured to use Availability Zones or Availability Sets to ensure high availability.
 
 ### Limitations:
-* **Homogeneous VMs**: All VMs in a scale set are *identical*, which might not suit applications needing different configurations on different VMs.
+* **Identical VMs**: All VMs in a scale set are *identical*, which might not suit applications needing different configurations on different VMs.
 * **Scaling Delay**: While VMSS can scale automatically, adding new VMs can *take a few minutes*, meaning it *might not react instantly* to traffic spikes.
 * **Complex Configuration**: Setting up and managing scaling rules and auto-scaling behavior can be *complex*, especially for beginners. You need to carefully tune these settings to avoid unnecessary costs or performance issues.
+
+<br>
 
 
 | Feature               | **Advantages**                                                       | **Disadvantages**                                                |
@@ -2043,7 +2082,7 @@ VM Scale Sets can perform:
 | **Availability Zone**  | Protects against datacenter failure, provides greater fault isolation | Higher costs, potential for network latency between zones        |
 | **VM Scale Set**       | Auto-scales based on demand, load balancing built-in, supports Availability Sets/Zones | VMs must be identical, scaling can have delays, more complex to configure |
 
-
+<br>
 
 # Making an Alert for app vm
 ### Steps to Create an Alert for a VM on Azure
@@ -2085,7 +2124,11 @@ VM Scale Sets can perform:
      - **Description**: Optionally, add a description of what this alert is monitoring.
      - **Severity**: Select a severity level (e.g., Sev 1 for critical alerts, Sev 4 for informational).
    
+<br> 
+
 ![alt text](./scripting/images/image-8.png)
+  
+<br> 
 
 #### 7. **Create the Alert**
    - Review your settings, then click **Create alert rule**.
