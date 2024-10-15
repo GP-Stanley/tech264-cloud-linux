@@ -1954,16 +1954,20 @@ echo Done!
 
 # Task: what has been done  to make the database more private
 ### 1. Removed the Public IP Address:
-   * The public IP of the database (DB VM) was removed, making it inaccessible directly from the internet. This prevents external users from attempting to connect to the database directly.
+   * The public IP of the database (DB VM) was removed, making it inaccessible directly from the internet. 
+   * This prevents external users from attempting to connect to the database directly.
 
 ### 2. Isolated the DB in a Private Subnet:
-   * The database was moved into a private subnet (10.0.4.0/24), which has no internet access. This means that only VMs within the same virtual network, such as the App VM, can communicate with the DB.
+   * The database was moved into a private subnet (10.0.4.0/24), which has no internet access. 
+   * This means that only VMs within the same virtual network, such as the App VM, can communicate with the DB.
 
 ### 3. Access DB via App VM (Jump Box):
-   * Instead of connecting to the DB directly, you now access the DB by first SSH-ing into the App VM (which has a public IP) and then connecting to the DB internally from the App VM. This adds an additional layer of protection.
+   * Instead of connecting to the DB directly, you now access the DB by first SSH-ing into the App VM (which has a public IP) and then connecting to the DB internally from the App VM. 
+   * This adds an additional layer of protection.
 
 ### 4. Planned Deployment of NVA (Network Virtual Appliance):
-   * A Network Virtual Appliance (NVA) was deployed in the DMZ subnet to act as a filtering gateway for any traffic heading towards the database. The NVA will ensure that only safe and legitimate traffic can reach the database, adding another layer of protection.
+   * A Network Virtual Appliance (NVA) was deployed in the DMZ subnet to act as a filtering gateway for any traffic heading towards the database. 
+   * The NVA will ensure that only safe and legitimate traffic can reach the database, adding another layer of protection.
 
 These steps enhance the privacy of the database by significantly reducing its exposure to the public internet and adding multiple layers of filtering and security.
 
@@ -1976,7 +1980,7 @@ Source: https://techcommunity.microsoft.com/t5/itops-talk-blog/understanding-ava
 
 ## What is an Availability Set?
 * An Availability Set in Azure is a *feature* that helps *ensure* your Virtual Machines (*VMs) stay online during planned or unplanned downtime *(e.g., maintenance or hardware failures). 
-* It* spreads your VMs across multiple isolated hardware nodes*, making sure they *aren’t all affected by the same failure*.
+* It *spreads your VMs across multiple isolated hardware nodes* (a physical server or a machine within a data center), making sure they *aren’t all affected by the same failure*.
 
 ### How does it work?
 When you place VMs in an Availability Set, Azure automatically distributes them across:
@@ -1987,10 +1991,11 @@ When you place VMs in an Availability Set, Azure automatically distributes them 
 ### Advantages:
 * **High Availability**: VMs in an Availability Set are *protected from hardware failures* and *planned Azure maintenance*. This improves uptime.
 * **Cost-Effective**: There's *no extra cost* for using Availability Sets; you only pay for the VMs you run.
+* **Load Balancing**: It helps in *balancing the load across different servers*, ensuring no single server is overwhelmed.
 
 ### Disadvantages:
 * **Single Datacenter**: Availability Sets protect against failures within a single Azure region, but they *don’t provide protection if the entire datacenter goes offline*.
-* **No Zone Redundancy**: Availability Sets *only work within a single Azure region* and* don’t spread VMs across multiple geographic areas* (like Availability Zones can).
+* **No Zone Redundancy**: Availability Sets *only work within a single Azure region* and *don’t spread VMs across multiple geographic areas* (like Availability Zones can).
 
 
 
@@ -2007,7 +2012,7 @@ When you place VMs in an Availability Set, Azure automatically distributes them 
   
 ### Disadvantages:
 * **More Expensive**: Deploying VMs across multiple Availability Zones can be more costly due to the need for *multiple redundant VMs* and the potential for *data transfer costs between zones*.
-* **Latency**: While zones are in the same region, there may be slight *network latency between VMs located in different zones* compared to VMs within an Availability Set (which are on the same physical site).
+* **Latency**: While zones are in the same region, there may be slight *network delay* (latency) between VMs *located in different zones* compared to VMs within an Availability Set (which are on the same physical site).
 
 
 ## What is a Virtual Machine Scale Set? What type of scaling does it do? How does it work? Limitations?
@@ -2049,7 +2054,7 @@ VM Scale Sets can perform:
 
 #### 2. **Create a New Alert Rule**
    - In the **Monitor** page, on the left-hand menu, select **Alerts**.
-   - Click **+ New alert rule** at the top of the Alerts page.
+   - Click **New alert rule** at the top of the Alerts page.
 
 #### 3. **Select the Target Resource (VM)**
    - Under the **Scope** section, click **Select resource**.
@@ -2094,16 +2099,14 @@ VM Scale Sets can perform:
 
 
 # Getting an Alert
-* I tried this on the first instance at 17:01.
 * install : `sudo apt-get install apache2-utils -y`
 * to try and get an alert: `ab -n 10000 -c 200 http://172.187.129.73/ 
 > If I had held my patience, this would have eventually given me an alert over 70%.
 
 
 ## Generate CPU load using stress
-So i tried this: 
+With less patience, i tried this: 
 Install stress: `sudo apt-get install stress`
- 
 * This runs 4 workers that consume CPU for 100 seconds
 `stress --cpu 4 --timeout 100`
 
@@ -2114,7 +2117,7 @@ Install stress: `sudo apt-get install stress`
 
 ![alt text](./scripting/images/image-13.png)
 
-![alt text](./scripting/images/Screenshot (163).png>)
+![alt text](./scripting/images/Screenshot.png)
 
 
 
