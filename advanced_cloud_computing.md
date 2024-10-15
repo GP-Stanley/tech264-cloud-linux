@@ -12,6 +12,9 @@
     - [Edited bash script:](#edited-bash-script)
   - [Task:](#task-1)
   - [](#)
+    - [scp](#scp)
+      - [Structure of the command](#structure-of-the-command)
+      - [Common Options](#common-options)
 - [A Reverse Proxy](#a-reverse-proxy)
 - [Reverse Proxy \& BindIp](#reverse-proxy--bindip)
 - [Task: Get a reverse proxy working:](#task-get-a-reverse-proxy-working)
@@ -348,6 +351,24 @@ with a message saying its by using your Bash script + a fresh VM).
 * We'll have to go in manually.
 * e.g., check if it's enabled successfully. 
 * check scp command: check bindIp, everything. 
+
+### scp
+`scp` (Secure Copy): a command to copy files and directories securely between two computers over a network. 
+* It uses SSH (Secure Shell) to ensure that the data is encrypted during transfer, making it safe from eavesdropping.
+
+#### Structure of the command
+scp **[options]** **[user@]source_host:source_path** **[user@]destination_host:destination_path**
+
+* [options]: These are optional flags that *modify how scp works*.
+* [user@]source_host:source_path: This specifies the *file you want to copy*. If the file is on a remote computer, you include the username and the computer’s address.
+* [user@]destination_host:destination_path: This specifies *where you want to copy the file to*. Again, include the username and address if it’s a remote computer.
+
+
+#### Common Options
+* `-P`: Specifies the port number to connect to on the remote host.
+* `-r`: Recursively copies entire directories.
+* `-C`: Compresses the data during transfer.
+* `-p`: Preserves the modification times, access times, and modes from the original file.
 
 
 > `Item potent`: it means you've designed it so that no matter how many times you run it, it will still achieve the desired state. It should work every single time. 
