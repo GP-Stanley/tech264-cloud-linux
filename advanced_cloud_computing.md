@@ -147,7 +147,19 @@
 - [How to connect the VM app after you stop it and start again - using SSH key](#how-to-connect-the-vm-app-after-you-stop-it-and-start-again---using-ssh-key)
       - [Set up a ping](#set-up-a-ping)
     - [Step 5: Setting up the route table](#step-5-setting-up-the-route-table)
-    - [Step 6: IP forwarding](#step-6-ip-forwarding)
+    - [Step 5.1: Getting the posts page working after logging off.](#step-51-getting-the-posts-page-working-after-logging-off)
+      - [1. Start up VMs: app, db, nva.](#1-start-up-vms-app-db-nva)
+      - [2. Disacosiating the route table to accosciate it again](#2-disacosiating-the-route-table-to-accosciate-it-again)
+      - [3. SSH into App](#3-ssh-into-app)
+      - [4. /posts page is now working: http://172.187.129.73/posts](#4-posts-page-is-now-working-http17218712973posts)
+      - [5. Set up ping](#5-set-up-ping)
+      - [6. Associate route table](#6-associate-route-table)
+    - [Step 6: Enable IP forwarding in Azure.](#step-6-enable-ip-forwarding-in-azure)
+    - [Step 7: Enable IP forwarding in your OS Linux.](#step-7-enable-ip-forwarding-in-your-os-linux)
+    - [Step 8: IP Tables Rules](#step-8-ip-tables-rules)
+    - [Step 10: Network Security Group.](#step-10-network-security-group)
+    - [Step 11: Deny everything else rule.](#step-11-deny-everything-else-rule)
+    - [Step 12: Clean-up.](#step-12-clean-up)
 - [Task: what has been done  to make the database more private](#task-what-has-been-done--to-make-the-database-more-private)
     - [1. Removed the Public IP Address:](#1-removed-the-public-ip-address)
     - [2. Isolated the DB in a Private Subnet:](#2-isolated-the-db-in-a-private-subnet)
@@ -1972,12 +1984,204 @@ echo Done!
 > * we are sending traffic to our VNA machine but on the machine we need to now forward the traffic to the DB machine
 
 
+### Step 5.1: Getting the posts page working after logging off. 
 
-### Step 6: IP forwarding
-1. 
+#### 1. Start up VMs: app, db, nva.
+
+#### 2. Disacosiating the route table to accosciate it again
+1. Search "Route Table" in Azure > find your own
+2. Scroll to settings on the left side, click "Subnets".
+3. On the 3 dots on the right, click "dissassociate". 
+
+<br>
+
+![dissociate-route-table](./scripting/images/dis-rt.png)
+
+<br>
+
+#### 3. SSH into App
+1. Connect the `VM with SSH key`
+2. To see the `repo/app`- need to be in root directory  -> `cd /repo/app`
+3. `export DB_HOST=mongodb://10.0.4.4:27017/posts`
+4. `printenv DB_HOST`
+5. `sudo pm2 stop all`
+6. `sudo -E pm2 start app.js`
+
+#### 4. /posts page is now working: http://172.187.129.73/posts
+
+<br>
+
+#### 5. Set up ping
+* `ping 10.0.4.4`
+
+<br>
+
+#### 6. Associate route table
+1. Search "Route Table" in Azure > find your own.
+2. Scroll to settings on the left side, click "Subnets".
+3. Click "Associate" > 
+4. Virutal network: tech264-georgia-3-subnet-vnet (tech264)
+5. Subnet: public-subnet.
+6. Click "OK".
+
+<br>
+
+![associating-route-table](./scripting/images/as-rt.png)
+
+
+<br>
+
+---
+
+### Step 6: Enable IP forwarding in Azure.
+* Go to Network Interface for the NVA.
+* Networking > network settings > network interface / IP configuration (on top of the page, normally in green) > click "enable IP forwarding" > click "apply".
+* Keep the subnet in the dmz-subnet.
+
+<br>
+
+### Step 7: Enable IP forwarding in your OS Linux.
+1. SSH into nva VM.
+2. Check if IP forwarding is enabled: 
+  * Output: net.ipv4.ip_forward = 0
+3. `sudo nano /etc/sysctl.conf`
+4. Find the part for IP forwarding: 
+   * #Uncomment the next line to enable packet forwarding for IPv4
+   * #net.ipv4.ip_forward=1 (get rid of the #).
+   * `Ctrl+S`, `Ctrl+x`.
+5. Check: `sysctl net.ipv4.ip_forward` (it hasn't changed).
+   * Output: net.ipv4.ip_forward = 0
+6. We now need to apply the file because we've changed it. 
+7. `sudo sysctl -p`: (reload the configuration)
+   * Output: net.ipv4.ip_forward = 1
+8. The ping has now started to move! 🎉🎊
+9. The posts page is working again! 🎊🥳🎉
+
+
+<br>
+
+
+### Step 8: IP Tables Rules
+* work as a filter for the firewall that is being passed.
+  * IP tables rules act as a set of instructions that the firewall uses to decide which network traffic is allowed or blocked.
+* only specific traffic that passes the rules can process through to the destingation.
+  * This means that only the network packets that meet the criteria defined in the rules are allowed to reach their intended destination. All other traffic is blocked or redirected based on the rules.
+
+
+1. Create a script on our nva.
+   * contains the rules. 
+2. Create in home directory is fine.
+3. `nano config-ip-tables.sh` 
+
+```bash
+#!/bin/bash
+ 
+# configure iptables
+ 
+echo "Configuring iptables..."
+ 
+# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+sudo iptables -A INPUT -i lo -j ACCEPT
+sudo iptables -A OUTPUT -o lo -j ACCEPT
+ 
+# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+sudo iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+ 
+# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+sudo iptables -A OUTPUT -m state --state ESTABLISHED -j ACCEPT
+ 
+# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+sudo iptables -A INPUT -m state --state INVALID -j DROP
+ 
+# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+sudo iptables -A INPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+sudo iptables -A OUTPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+ 
+# uncomment the following lines if want allow SSH into NVA only through the public subnet (app VM as a jumpbox)
+# this must be done once the NVA's public IP address is removed
+#sudo iptables -A INPUT -p tcp -s 10.0.2.0/24 --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+#sudo iptables -A OUTPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+ 
+# uncomment the following lines if want allow SSH to other servers using the NVA as a jumpbox
+# if need to make outgoing SSH connections with other servers from NVA
+#sudo iptables -A OUTPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+#sudo iptables -A INPUT -p tcp --sport 22 -m conntrack --ctstate ESTABLISHED -j ACCEPT
+ 
+# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+sudo iptables -A FORWARD -p tcp -s 10.0.2.0/24 -d 10.0.4.0/24 --destination-port 27017 -m tcp -j ACCEPT
+ 
+# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+sudo iptables -A FORWARD -p icmp -s 10.0.2.0/24 -d 10.0.4.0/24 -m state --state NEW,ESTABLISHED -j ACCEPT
+ 
+# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+sudo iptables -P INPUT DROP
+ 
+# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+sudo iptables -P FORWARD DROP
+ 
+echo "Done!"
+echo ""
+ 
+# make iptables rules persistent
+# it will ask for user input by default
+ 
+echo "Make iptables rules persistent..."
+sudo DEBIAN_FRONTEND=noninteractive apt install iptables-persistent -y
+echo "Done!"
+echo ""
+```
+
+4. Ctrl+S, Ctrl+x
+5. Give permisions: `chmod +x config-ip-tables.sh`
+6. `ls`: to make sure the file is there. 
+7. Update: `sudo apt-get update -y`
+8. Upgrade: `sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y`
+9.  Run script: `./config-ip-tables.sh`
+10. Restart nva: 
+11. /posts page still works! 🎉🥳🎊
+
+
+<br>
+
+
+### Step 10: Network Security Group.
+* Go to db VM.
+* Networking >? Network Settings > Click on your NSG.
+* Settings > inbound security rules > 
+* click "Add" > Source > IP Addresses > 
+* Source Ip addresses : 10.0.2.0/24 > 
+* Service: MongoDB (this will automatically give us the destination port ranges).
+* Add this rule. 
+* /posts page still works! 🎉🥳🎊
 
 
 
+Random notes: 
+"AllowVNextInbound": Any machine in the VNet, it allows the traffic and allows anything the Load Balancer needs to do. 
+On AWS, its called a Virtual Private Cloud (not VNet). 
+
+### Step 11: Deny everything else rule.
+* Click "Add" 
+* Change destination port ranges it "*"
+* Action: Deny
+* Priority: 500
+* /posts page still works! 🎉🥳🎊
+* ping has stopped. 
+
+
+<br> 
+
+
+### Step 12: Clean-up.
+* Go to Resource Groups > tech 264 > filter 'georgia'. 
+We only need: 
+* 2 subnet vnet
+* DB Image
+* App image
+* SSH Key
+
+
+<br>
 
 
 # Task: what has been done  to make the database more private
@@ -2036,19 +2240,20 @@ When you place VMs in an Availability Set, Azure automatically distributes them 
 
 
 ## What is an Availability Zone? Why superior to an Availability Set? Disadvantages?
+
 ### What is an Availability Zone?
 * An Availability Zone is a *physically separate location* within an Azure region. 
 * Each zone has its own *independent power, cooling, and networking*. 
 * Azure *guarantees* (SLA) that if you place VMs in different Availability Zones, they’ll *stay up* even if *one entire zone* (or data center) *fails*.
 
 ### Why is it superior to an Availability Set?
-* **Service Level Agreement (SLA)**: specifies the guaranteed uptime for services (99.99%). 
+* **Service Level Agreement (SLA)**: specifies the *guaranteed uptime* for services (99.99%). 
 * **Geographic Redundancy**: VMs placed in different Availability Zones are *located in separate physical datacenters*. This means that even if one entire datacenter goes down, your other VMs will continue running.
 * **Greater Fault Isolation**: Since zones are physically isolated, they *provide better protection against datacenter-wide failures*, unlike Availability Sets, which only protect against rack-level or update-level failures.
   
 ### Disadvantages:
-* **More Expensive**: Deploying VMs across multiple Availability Zones can be more costly due to the need for *multiple redundant VMs* and the potential for *data transfer costs between zones*.
-* **Latency**: While zones are in the same region, there may be slight *network delay* (latency) between VMs *located in different zones* compared to VMs within an Availability Set (which are on the same physical site).
+* 💸**More Expensive**: Deploying VMs across multiple Availability Zones can be more costly due to the need for *multiple redundant VMs* and the potential for *data transfer costs between zones*.
+* **Delay**: While zones are in the same region, there may be slight *network delay* (latency) between VMs *located in different zones* compared to VMs within an Availability Set (which are on the same physical site).
 
 <br>
 
@@ -2061,7 +2266,7 @@ It enables your application to *automatically scale in or out based on demand*, 
 ### What type of scaling does it do?
 VM Scale Sets can perform:
 * **Horizontal Scaling**: Automatically *adds* (scales out) or *removes* (scales in) VMs based on defined rules or demand. 
-* For example, if your website is experiencing high traffic, new VMs can be added to handle the load. Once traffic reduces, unneeded VMs can be removed.
+  * For example, if your website is experiencing high traffic, new VMs can be added to handle the load. Once traffic reduces, unneeded VMs can be removed.
 
 ### How does it work?
 1. **Automated Scaling**: You *define scaling rules based on metrics* like CPU usage, memory, or custom metrics. Azure monitors these metrics and adds/removes VMs accordingly.
