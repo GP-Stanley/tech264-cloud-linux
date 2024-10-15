@@ -147,9 +147,10 @@
 - [How to connect the VM app after you stop it and start again - using SSH key](#how-to-connect-the-vm-app-after-you-stop-it-and-start-again---using-ssh-key)
       - [Set up a ping](#set-up-a-ping)
     - [Step 5: Setting up the route table](#step-5-setting-up-the-route-table)
+      - [Why Do We Need Route Tables?](#why-do-we-need-route-tables)
     - [Step 5.1: Getting the posts page working after logging off.](#step-51-getting-the-posts-page-working-after-logging-off)
       - [1. Start up VMs: app, db, nva.](#1-start-up-vms-app-db-nva)
-      - [2. Disacosiating the route table to accosciate it again](#2-disacosiating-the-route-table-to-accosciate-it-again)
+      - [2. Disacosiating the route table to associate it again](#2-disacosiating-the-route-table-to-associate-it-again)
       - [3. SSH into App](#3-ssh-into-app)
       - [4. /posts page is now working: http://172.187.129.73/posts](#4-posts-page-is-now-working-http17218712973posts)
       - [5. Set up ping](#5-set-up-ping)
@@ -157,10 +158,11 @@
     - [Step 6: Enable IP forwarding in Azure.](#step-6-enable-ip-forwarding-in-azure)
     - [Step 7: Enable IP forwarding in your OS Linux.](#step-7-enable-ip-forwarding-in-your-os-linux)
     - [Step 8: IP Tables Rules](#step-8-ip-tables-rules)
+    - [Step 8.1: What the 'config-ip-tables.sh' does:](#step-81-what-the-config-ip-tablessh-does)
     - [Step 10: Network Security Group.](#step-10-network-security-group)
     - [Step 11: Deny everything else rule.](#step-11-deny-everything-else-rule)
     - [Step 12: Clean-up.](#step-12-clean-up)
-- [Task: what has been done  to make the database more private](#task-what-has-been-done--to-make-the-database-more-private)
+- [Task: what has been done to make the database more private](#task-what-has-been-done-to-make-the-database-more-private)
     - [1. Removed the Public IP Address:](#1-removed-the-public-ip-address)
     - [2. Isolated the DB in a Private Subnet:](#2-isolated-the-db-in-a-private-subnet)
     - [3. Access DB via App VM (Jump Box):](#3-access-db-via-app-vm-jump-box)
@@ -1682,6 +1684,10 @@ Source: https://www.stephenhackers.co.uk/azure-monitoring-alert-on-virtual-machi
    * Replace <your-vm-ip> with the public IP address of your VM.
    * If you are using an SSH key, ensure you specify the path to your private key: `ssh -i /path/to/your/private/key azureuser@<your-vm-ip>`
 
+
+<br>
+
+
 ### Overload the Instance with Apache Bench
 1. Install Apache Bench:
    * If Apache Bench (ab) isn't installed on your VM, you can install it using:
@@ -1705,6 +1711,9 @@ sudo apt-get install apache2-utils
 2. Monitor the Load:
    * While running Apache Bench, keep an eye on the metrics in Azure Monitor.
    * The high load should trigger the alert based on the conditions you set.
+
+
+<br>
 
 
 ## Remove dashboards and alert and action group
@@ -1743,6 +1752,9 @@ sudo apt-get install apache2-utils
 ![removing-alert-rule-and-action-group](./scripting/images/remove-action-alert-groups.png)
 
 ---
+
+
+<br>
 
 
 # Two-tier Deployment
@@ -1827,7 +1839,9 @@ sudo apt-get install apache2-utils
 ### Set up our Virtual Network.
 1. Got to Virtual Networks
 2. Naming convention: tech264-georgia-3-subnet-vnet
-3. IP addresses: Leave the default subnet > edit > name: public-subnet > Starting address: 10.0.2.0 > save > add subnet > name: dmz-subnet > starting address: 10.0.3.0 > save > add a third > private-subnet > starting address: 10.0.4.0 > Private subnet: not providing default outbound access. > enable private subnet > add/save. 
+3. IP addresses: Leave the default subnet > edit > name: public-subnet > Starting address: 10.0.2.0 > save 
+4. add subnet > name: dmz-subnet > starting address: 10.0.3.0 > save > 
+5. add a third > private-subnet > starting address: 10.0.4.0 > Private subnet: not providing default outbound access. > enable private subnet > add/save. 
 
 
 ### Private subnet
@@ -1958,9 +1972,16 @@ echo Done!
 * `ping 10.0.4.4`: (this is linked to the db Private IP address). Sending a "Hello, are you there?". 
   * We've set this up because we are going to see how things interupt this communication. 
 
+![ping](./scripting/images/ping.png)
+
 
 
 ### Step 5: Setting up the route table
+#### Why Do We Need Route Tables?
+* *Imagine you have a house with multiple rooms (subnets) and you want to control how people (data) move between these rooms. 
+* A route table helps you set rules for this movement, ensuring that data goes through the right paths and can even pass through security checks if needed.
+
+<br>
 
 ![alt text](./scripting/images/image-6.png)
 
@@ -1980,15 +2001,29 @@ echo Done!
 7. Associate this route table with where the traffic is coming out of, and then the route table will take care of delivering that traffic to the right spot.
 8. Subnets > Associate > click 3-subnet > public subnet. 
 
-> Effect on the ping - it has stopped
-> * we are sending traffic to our VNA machine but on the machine we need to now forward the traffic to the DB machine
+
+<br>
+
+![associate-rt](./scripting/images/ass-rt.png) 
+
+<br>
+
+> Effect on the ping - it has stopped.
+> 
+> We are sending traffic to our VNA machine but on the machine we need to now forward the traffic to the DB machine
+
+<br>
+
+![ping-stopped](./scripting/images/ping-stopped.png) 
+
+<br>
 
 
 ### Step 5.1: Getting the posts page working after logging off. 
 
 #### 1. Start up VMs: app, db, nva.
 
-#### 2. Disacosiating the route table to accosciate it again
+#### 2. Disacosiating the route table to associate it again
 1. Search "Route Table" in Azure > find your own
 2. Scroll to settings on the left side, click "Subnets".
 3. On the 3 dots on the right, click "dissassociate". 
@@ -2040,6 +2075,10 @@ echo Done!
 
 <br>
 
+![ip-configs](./scripting/images/ip-configs.png) 
+
+<br>
+
 ### Step 7: Enable IP forwarding in your OS Linux.
 1. SSH into nva VM.
 2. Check if IP forwarding is enabled: 
@@ -2049,13 +2088,28 @@ echo Done!
    * #Uncomment the next line to enable packet forwarding for IPv4
    * #net.ipv4.ip_forward=1 (get rid of the #).
    * `Ctrl+S`, `Ctrl+x`.
-5. Check: `sysctl net.ipv4.ip_forward` (it hasn't changed).
+
+<br>
+
+![uncomment-line](./scripting/images/ip-linux.png) 
+
+<br>
+
+
+1. Check: `sysctl net.ipv4.ip_forward` (it hasn't changed).
    * Output: net.ipv4.ip_forward = 0
-6. We now need to apply the file because we've changed it. 
-7. `sudo sysctl -p`: (reload the configuration)
+2. We now need to apply the file because we've changed it. 
+3. `sudo sysctl -p`: (reload the configuration)
    * Output: net.ipv4.ip_forward = 1
-8. The ping has now started to move! 🎉🎊
-9. The posts page is working again! 🎊🥳🎉
+
+<br>
+
+![apply-the-file](./scripting/images/apply-file.png) 
+
+<br> 
+
+4. The ping has now started to move! 🎉🎊
+5. The posts page is working again! 🎊🥳🎉
 
 
 <br>
@@ -2068,77 +2122,130 @@ echo Done!
   * This means that only the network packets that meet the criteria defined in the rules are allowed to reach their intended destination. All other traffic is blocked or redirected based on the rules.
 
 
+<br>
+
+
 1. Create a script on our nva.
    * contains the rules. 
+
+> This script sets up basic firewall rules using iptables for managing network traffic, ensuring security by restricting or allowing certain connections.
+
 2. Create in home directory is fine.
-3. `nano config-ip-tables.sh` 
+3. `nano config-ip-tables.sh` (the script is in the script folder).
+4. Make sure to comment-out what you need. 
+5. `Ctrl+S`, `Ctrl+x`
+6. Give permisions: `chmod +x config-ip-tables.sh`
+7. `ls`: to make sure the file is there. 
+
+<br>
+
+![check-ls](./scripting/images/check-ls.png) 
+
+<br>
+
+8. Update: `sudo apt-get update -y`
+9.  Upgrade: `sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y`
+10. Run script: `./config-ip-tables.sh` 
+11. /posts page still works! 🎉🥳🎊
+
+
+<br>
+
+### Step 8.1: What the 'config-ip-tables.sh' does:
+ ```bash
+ #!/bin/bash
+ ```
+* "shebang." It tells the system to run the script using the Bash shell.
+  
+```bash
+# configure iptables
+```
+* indicates that the script will configure iptables, a tool to manage Linux firewall rules.
 
 ```bash
-#!/bin/bash
- 
-# configure iptables
- 
 echo "Configuring iptables..."
- 
-# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+```
+* This prints a message to the terminal, letting the user know that the script is about to configure the firewall (iptables).
+
+```bash
 sudo iptables -A INPUT -i lo -j ACCEPT
 sudo iptables -A OUTPUT -o lo -j ACCEPT
- 
-# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+```
+* iptables commands (firewall rules).
+* `INPUT` and `OUTPUT` refer to incoming and outgoing network traffic.
+* The `-i lo` and `-o lo` options refer to the **loopback interface** (lo), which is used for local communication within the machine.
+* These two rules *allow all traffic coming from and going to the loopback interface* (which is used for processes to communicate locally).
+
+```bash
 sudo iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
- 
-# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+```
+* This rule *allows incoming traffic* that is part of an already established connection or related to an existing connection.
+* `ESTABLISHED` means the connection has already been established
+* `RELATED` means the traffic is related to an established connection, like a data response.
+
+```bash
 sudo iptables -A OUTPUT -m state --state ESTABLISHED -j ACCEPT
- 
-# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+```
+* This rule *allows outgoing traffic* for established connections.
+* This ensures that once a connection is made, its outgoing traffic is permitted.
+
+```bash
 sudo iptables -A INPUT -m state --state INVALID -j DROP
- 
-# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+```
+* This rule drops any incoming packets that are considered **invalid**.
+* Invalid packets could be *corrupted* or malformed, which could be a sign of malicious activity.
+
+```bash
 sudo iptables -A INPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
 sudo iptables -A OUTPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
- 
-# uncomment the following lines if want allow SSH into NVA only through the public subnet (app VM as a jumpbox)
-# this must be done once the NVA's public IP address is removed
-#sudo iptables -A INPUT -p tcp -s 10.0.2.0/24 --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-#sudo iptables -A OUTPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
- 
-# uncomment the following lines if want allow SSH to other servers using the NVA as a jumpbox
-# if need to make outgoing SSH connections with other servers from NVA
-#sudo iptables -A OUTPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
-#sudo iptables -A INPUT -p tcp --sport 22 -m conntrack --ctstate ESTABLISHED -j ACCEPT
- 
-# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+```
+* These two rules **allow SSH traffic** (which uses port 22) to connect to the machine.
+* The `first` rule allows *new and established* incoming connections via SSH.
+* The `second` rule allows *outgoing traffic* for established SSH connections.
+
+```bash
+# sudo iptables -A INPUT -p tcp -s 10.0.2.0/24 --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+# sudo iptables -A OUTPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+```
+* These are commented-out rules (indicated by `#`). If uncommented, they would *allow SSH access* to the machine only from the specific IP range 10.0.2.0/24.
+
+```bash
 sudo iptables -A FORWARD -p tcp -s 10.0.2.0/24 -d 10.0.4.0/24 --destination-port 27017 -m tcp -j ACCEPT
- 
-# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+```
+* This rule allows **forwarding of TCP** traffic from the source network 10.0.2.0/24 to the destination network 10.0.4.0/24 on **port 27017** (used by MongoDB).
+* **Forwarding** means *allowing traffic between networks*, which is typical in setups involving routers or network devices.
+
+```bash
 sudo iptables -A FORWARD -p icmp -s 10.0.2.0/24 -d 10.0.4.0/24 -m state --state NEW,ESTABLISHED -j ACCEPT
- 
-# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+```
+* This rule **allows ICMP traffic** (used for things like pinging) to be *forwarded between the two networks* 10.0.2.0/24 and 10.0.4.0/24 for new and established connections.
+
+```bash
 sudo iptables -P INPUT DROP
- 
-# ADD COMMENT ABOUT WHAT THE FOLLOWING COMMAND(S) DO
+```
+* This sets the **default policy** for *incoming traffic* to **DROP**.
+* If no other rule matches, any incoming traffic will be dropped (blocked).
+
+```bash
 sudo iptables -P FORWARD DROP
- 
+```
+* This sets the **default policy** for *forwarded traffic* to **DROP**, meaning unless explicitly allowed, all forwarded traffic will be blocked.
+
+```bash
 echo "Done!"
 echo ""
- 
-# make iptables rules persistent
-# it will ask for user input by default
- 
+```
+* These commands print a message saying the configuration is done and add a blank line for clarity.
+
+```bash
 echo "Make iptables rules persistent..."
 sudo DEBIAN_FRONTEND=noninteractive apt install iptables-persistent -y
 echo "Done!"
 echo ""
 ```
-
-4. Ctrl+S, Ctrl+x
-5. Give permisions: `chmod +x config-ip-tables.sh`
-6. `ls`: to make sure the file is there. 
-7. Update: `sudo apt-get update -y`
-8. Upgrade: `sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y`
-9.  Run script: `./config-ip-tables.sh`
-10. Restart nva: 
-11. /posts page still works! 🎉🥳🎊
+* Making iptables rules persistent
+* This section installs `iptables-persistent`, a package that saves the firewall rules so they remain active after a reboot.
+* The `DEBIAN_FRONTEND=noninteractive` part ensures the package is installed without user prompts.
 
 
 <br>
@@ -2147,11 +2254,33 @@ echo ""
 ### Step 10: Network Security Group.
 * Go to db VM.
 * Networking >? Network Settings > Click on your NSG.
+
+<br>
+
+![NSG](./scripting/images/nsg.png) 
+
+<br>
+
+
 * Settings > inbound security rules > 
-* click "Add" > Source > IP Addresses > 
+* click "Add" > Source > IP Addresses.
+
+<br>
+
+![add-inbound-rule](./scripting/images/inbound-rule.png) 
+
+<br>
+
 * Source Ip addresses : 10.0.2.0/24 > 
 * Service: MongoDB (this will automatically give us the destination port ranges).
 * Add this rule. 
+
+<br>
+
+![mongodb-inbound-rule](./scripting/images/mongodb-ir.png) 
+
+<br>
+
 * /posts page still works! 🎉🥳🎊
 
 
@@ -2165,6 +2294,18 @@ On AWS, its called a Virtual Private Cloud (not VNet).
 * Change destination port ranges it "*"
 * Action: Deny
 * Priority: 500
+
+<br>
+
+![deny-rule](./scripting/images/deny-rule1.png) 
+![deny-rule](./scripting/images/deny-rule2.png) 
+
+<br>
+
+![rules](./scripting/images/inbound-rules.png) 
+
+<br>
+
 * /posts page still works! 🎉🥳🎊
 * ping has stopped. 
 
@@ -2184,7 +2325,7 @@ We only need:
 <br>
 
 
-# Task: what has been done  to make the database more private
+# Task: what has been done to make the database more private
 ### 1. Removed the Public IP Address:
    * The public IP of the database (DB VM) was removed, making it inaccessible directly from the internet. 
    * This prevents external users from attempting to connect to the database directly.
