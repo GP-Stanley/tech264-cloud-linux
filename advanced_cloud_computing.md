@@ -1529,10 +1529,10 @@ echo Done!
 
 If you need to SSH into your first VM on the list:
 * You'll need to clik on the first instance in the list.
-* connect > SSH > put in key pair > `~/.ssh/tech264-georgia-az-key` > copy public IP that's provided, e.g. 10.0.2.6 > you need to get into the upblic ip of the load balancer
+* connect > SSH > put in key pair > `~/.ssh/tech264-georgia-az-key` > copy public IP that's provided, e.g. 10.0.2.6 > you need to get into the public ip of the load balancer
 * Search **load balancer**: click the right VM > get the settings > frontend IP config > copy IP address. 
-* Cange the IP address to the pblic ip address of the IP balancer. 
-* Go to a specific port (write this after you key): -p 50000
+* Cange the IP address to the public ip address of the IP balancer. 
+* Go to a specific port (write this after your key): -p 50000
 * Copy into Git Bash window. 
 * now you are in your first VM (name will appear after adminuser@tech254-r000000...). 
 
@@ -2508,6 +2508,20 @@ Install stress: `sudo apt-get install stress`
 
 ![alt text](./scripting/images/Screenshot.png)
 
+
+<br>
+
+| Feature             | Route Tables                                      | IPTables                                      | NSG Rules                                      |
+|---------------------|---------------------------------------------------|-----------------------------------------------|------------------------------------------------|
+| **Primary Function**| Route traffic to the correct network segment.     | Filter traffic based on IP, port, protocol.   | Allow or deny traffic to/from Azure resources. |
+| **Where Used**      | Azure VNets, subnets, routers, gateways.          | Linux VMs, Network Virtual Appliances (NVAs). | Azure resources (VMs, NICs, subnets).          |
+| **Scope**           | Network-wide routing decisions.                   | Per-machine firewalling and packet control.   | Subnet or VM-level traffic filtering.          |
+| **Traffic Control** | Directs traffic based on destination IP.          | Filters traffic based on IP, port, protocol (Layer 3 & 4). | Controls traffic based on IP, port, protocol (Layer 4). |
+| **Typical Use Case**| Routes traffic between subnets or to the internet.| Allows or blocks traffic at the VM level (Linux). | Controls inbound/outbound traffic to Azure VMs or NICs. |
+| **Example**         | Route traffic to DB subnet via NVA in DMZ.        | Block all SSH traffic except from one IP.     | Allow HTTP traffic from the internet to a VM.  |
+
+
+<br>
 
 
 
