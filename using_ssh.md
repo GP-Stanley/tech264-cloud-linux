@@ -46,9 +46,9 @@ We need to put it somewhere else.
 
 <br>
 
-![sshkeys](./azure-images/sshkeys.png)  
-
 ![add-ssh-key](./azure-images/add-ssh-key.png)
+
+![sshkeys](./azure-images/sshkeys.png)  
 
 <br>
 
@@ -116,12 +116,6 @@ To consolidate what we did in our code-along:
 * Delete the SSH keys we made
 * Do the steps again, excpert this time use a pre-existing repo, and switch it over to use SSH keys
 * Document the steps as you go, you should produce a guide to setting up SSH keys for use with GitHub.
-
-<br>
-
-### Location of GitHub Links
-
-![alt text](image.png)
 
 <br>
 
