@@ -1,4 +1,28 @@
 # Wed, 16/10, Code-Along: Use SSH to push changes to your GitHub Repo
+
+- [Wed, 16/10, Code-Along: Use SSH to push changes to your GitHub Repo](#wed-1610-code-along-use-ssh-to-push-changes-to-your-github-repo)
+- [A Guide to Setting Up SSH Keys for Use with GitHub](#a-guide-to-setting-up-ssh-keys-for-use-with-github)
+  - [Background Information](#background-information)
+  - [Step 1: Create/Generate an SSH Key pair.](#step-1-creategenerate-an-ssh-key-pair)
+  - [Step 2: Register the Padlock on GitHub.](#step-2-register-the-padlock-on-github)
+  - [Step 3: Add the Private Key onto Local Machine.](#step-3-add-the-private-key-onto-local-machine)
+  - [Step 4: Create Test Repo / Push changes to Test repo.](#step-4-create-test-repo--push-changes-to-test-repo)
+    - [First Option](#first-option)
+    - [Second Option](#second-option)
+  - [Step 5: Push changes to Test repo.](#step-5-push-changes-to-test-repo)
+  - [Task: Re-create SSH setup to authenticate to GitHub](#task-re-create-ssh-setup-to-authenticate-to-github)
+  - [Update the Remote URL in Your Local Repo](#update-the-remote-url-in-your-local-repo)
+    - [Step 1: Check your current remote URL](#step-1-check-your-current-remote-url)
+    - [Step 2: Change the remote URL to use SSH](#step-2-change-the-remote-url-to-use-ssh)
+    - [Step 3: Test the SSH Connection](#step-3-test-the-ssh-connection)
+    - [Making a push via SSH](#making-a-push-via-ssh)
+- [Task: Change it back to HTTPS](#task-change-it-back-to-https)
+  - [Test the Connection](#test-the-connection)
+  - [Change it back to HTTPS](#change-it-back-to-https)
+    - [Make sure there's something to push from tech264-test-git](#make-sure-theres-something-to-push-from-tech264-test-git)
+    - [Making a push via HTTPS](#making-a-push-via-https)
+
+
 <br>
 
 # A Guide to Setting Up SSH Keys for Use with GitHub
@@ -93,6 +117,8 @@ We need to put it somewhere else.
 
 > * cd into parent folder: `cd ..`
 > * remove the repo: `rm -rf tech264-georgia-test-ssh`
+
+<br> 
 
 ### Second Option
 * Go to repo
