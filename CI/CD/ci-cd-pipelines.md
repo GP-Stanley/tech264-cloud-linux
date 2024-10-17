@@ -30,8 +30,17 @@ CD stands for Continuous Delivery or Continuous Deployment (CDE?).
 
 ## Difference between CD and CDE
 * **CD** (Continuous Delivery): Refers to the practice of ensuring your codebase is `always ready to deploy`. A `manual approval` step might be required before deploying to production.
+  * More manual intervention and testing at different stages. 
+  * Culture is built in to avoid end users experiencing bugs. 
+  * They care about what their end users experience. 
+  * Typically seen inbigger organisations.
   
 * **CDE** (Continuous Deployment): Takes CD a step further by `automatically deploying` every change that passes the testing phase to production, `without any manual intervention`.
+  * Using this depends on the culture of the organisation and the users should know about this. 
+    * Faster delivery.
+    * Fast feedback loop.
+    * More susceptible to bugs. 
+    * Typically seen in start-ups. 
 
 <br>
 
