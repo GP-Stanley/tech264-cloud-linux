@@ -7,31 +7,40 @@ CI stands for **Continuous Integration**.
 * Each integration is *automatically tested to detect issues* early.
 
 ### Benefits
-* `Early bug detection`: Since code is tested every time it’s integrated, issues are caught earlier.
-* `Improved collaboration`: Frequent code merges help developers work better together.
-* `Faster development`: Smaller, more frequent updates make development smoother.
-* `Better code quality`: Automated testing ensures that issues are fixed as soon as they arise.
+* 🪲`Early bug detection`🪲: Since code is tested every time it’s integrated, issues are caught earlier.
+* 🤼`Improved collaboration`🤼: Frequent code merges help developers work better together.
+* ⏩`Faster development`📈: Smaller, more frequent updates make development smoother.
+* 👍🏻`Better code quality`👍🏻: Automated testing ensures that issues are fixed as soon as they arise.
 
 <br>
 
 ## What is CD? Benefits?
 CD stands for Continuous Delivery or Continuous Deployment (CDE?).
 
-  * **Continuous Delivery**: After code is integrated and tested, it’s *prepared for release* into production, but a human approval is needed before it’s deployed.
-  * **Continuous Deployment**: It’s the automated process where code goes from testing to production *without manual intervention*.
+  * 🚚**Continuous Delivery**🚚: After code is integrated and tested, it’s *prepared for release* into production, but a human approval is needed before it’s deployed.
+  * 📦**Continuous Deployment**☑️: It’s the automated process where code goes from testing to production *without manual intervention*.
 
 ### Benefits
-* **Faster releases**: Changes can be *deployed to production* more frequently.
-* **Reduced risks**: Frequent deployments with smaller changes *reduce* the chance of big *failures*.
-* **Increased automation**: *Saves time* by automating manual steps.
-* **Better user feedback**: New features or fixes *reach users faster*, leading to *quicker feedback*.
+* ⏩**Faster releases**⏩: Changes can be *deployed to production* more frequently.
+* 📉**Reduced risks**📉: Frequent deployments with smaller changes *reduce* the chance of big *failures*.
+* 🔁**Increased automation**🔁: *Saves time* by automating manual steps.
+* 📝**Better user feedback**📝: New features or fixes *reach users faster*, leading to *quicker feedback*.
 
 <br>
 
 ## Difference between CD and CDE
-* **CD** (Continuous Delivery): Refers to the practice of ensuring your codebase is *always ready to deploy*. A *manual approval* step might be required before deploying to production.
+* **CD** (Continuous Delivery): Refers to the practice of ensuring your codebase is `always ready to deploy`. A `manual approval` step might be required before deploying to production.
   
-* **CDE** (Continuous Deployment): Takes CD a step further by *automatically deploying* every change that *passes the testing phase* to production, without any manual intervention.
+* **CDE** (Continuous Deployment): Takes CD a step further by `automatically deploying` every change that passes the testing phase to production, `without any manual intervention`.
+
+<br>
+
+| **Aspect** | **CD (Continuous Delivery)** | **CDE (Continuous Deployment)** |
+|------------|------------------------------|---------------------------------|
+| **Deployment Readiness** | Always ready to deploy | Always ready to deploy |
+| **Approval** | Manual approval required | No manual approval needed |
+| **Automation** | Partially automated | Fully automated |
+
 
 <br>
 
@@ -72,6 +81,10 @@ A Jenkins pipeline (B.T.D.PDA) has the following stages:
 
 <br>
 
+![stages-jenkins](./cicd-images/stages-jenkins.png)
+
+<br>
+
 ## What alternatives are there for Jenkins
 Other tools that do similar things to Jenkins include:
 * GitLab CI/CD
@@ -90,6 +103,11 @@ A CI/CD pipeline **automates parts of the software development process**, like t
 * **Higher quality**: *Consistent testing and deployment* *reduce the risk of bugs* in production.
 * **Cost savings**: Automation *reduces the need for manual work*, which *saves time and money*.
 
+<br>
+
+![pipeline](./cicd-images/pipeline.png)
+
+source: https://www.xenonstack.com/blog/continuous-delivery-jenkins-pipeline
 
 <br>
 
@@ -100,7 +118,13 @@ Developer -> Code commit -> CI: Build & Test -> CD: Deploy -> Production
 
 <br>
 
+![pipeline-comp](./cicd-images/pipeline-comps.png)
+
+source: https://www.geeksforgeeks.org/cicd-pipeline-system-design/
+
 ![diagram-cicd](./cicd-images/cicd-diagram.png)
+
+source: https://blog.bytebytego.com/p/a-crash-course-in-cicd
 
 <br>
 
@@ -122,8 +146,5 @@ SDLC (Software Development Life Cycle) is a process followed to create high-qual
 ![sdlc-phases](./cicd-images/sdlc-phases.png) 
 
 <br>
-
-
-
 
 
