@@ -109,7 +109,7 @@ We need to put it somewhere else.
 * We do this on our local machine. 
 
 
-## Re-create SSH setup to authenticate to GitHub
+## Task: Re-create SSH setup to authenticate to GitHub
 To consolidate what we did in our code-along:
 
 * Delete your test repo (if you made one)
@@ -124,6 +124,7 @@ To consolidate what we did in our code-along:
 ![alt text](image.png)
 
 <br>
+
 ## Update the Remote URL in Your Local Repo
 ### Step 1: Check your current remote URL
 * cd into `tech264-test-git`
@@ -153,7 +154,7 @@ To consolidate what we did in our code-along:
 * cd into .ssh folder
 * eval `ssh-agent -s`
 Agent pid 1224
-* `shh-add tech264-georgia-github-key`
+* `ssh-add tech264-georgia-github-key`
 * `ssh -T git@github.com`
 
 <br>
@@ -164,7 +165,7 @@ Agent pid 1224
 
 ### Making a push via SSH
 * cd into github repos > tech264-test-git
-* `ssh -T git@github.com`
+* Double check for authentication: `ssh -T git@github.com`
 * Now make a change to your file on the visual studio code.
   * `git status`
   * `git add .`
@@ -172,10 +173,91 @@ Agent pid 1224
   * `git push -u origin main`
   * `git status`
 
+<br>
+
+# Task: Change it back to HTTPS
+
+## Test the Connection
+* cd into .ssh folder
+* eval `ssh-agent -s`
+Agent pid 1224
+* `ssh-add tech264-georgia-github-key`
+* `ssh -T git@github.com`
+
+<br>
+
+![ssh-agent-2](./azure-images/ssh-agent-2.png)
 
 <br>
 
 
+## Change it back to HTTPS
+* Open Git Bash Terminal.
+* Navigate to chosen repo (e.g., tech264-test-git).
+* Check your current remote URL: `git remote -v`
 
+<br>
 
+![git-remote-v](./azure-images/git-remote-v2.png) 
 
+<br>
+
+* Open GitHub and navigate to correct repo.
+* Click "code" (green button).
+* Copy HTTPS link.
+  * * (e.g: https://github.com/GP-Stanley/tech264-test-git.git)
+
+<br>
+
+![test-code](./azure-images/test-code.png)
+
+<br>
+
+* Go back to Git Bash Terminal. 
+* Replace the SSH  with the HTTPS URL .
+* `git remote set-url origin https://github.com/GP-Stanley/tech264-test-git.git`
+* To confirm the change: `git remote -v`
+
+<br>
+
+![set-url-https](./azure-images/set-url-https.png)
+
+<br>
+
+* Check for authentication: `ssh -T git@github.com`
+
+<br>
+
+![ssh-T](./azure-images/ssh-t.png)
+
+<br>
+
+### Make sure there's something to push from tech264-test-git
+* Edit a file in tech264-test-git so you have something to push.
+* 
+
+### Making a push via HTTPS
+* cd into github repos > tech264-test-git
+* Double check for authentication: `ssh -T git@github.com`
+* Now make a change to your file on the visual studio code.
+  * `git status`
+  * `git add .`
+  * `git commit -m`
+  * `git push -u origin main`
+  * `git status`
+
+<br>
+
+![git-status-add](./azure-images/status-add.png)
+
+<br>
+
+> When you see the warning “LF will be replaced by CRLF,” it means that Git will convert the line endings from LF to CRLF the next time it processes the file. This is common when working on a project across different operating systems.
+
+<br>
+
+![git-commit-push](./azure-images/commit-push.png)
+
+![git-status](./azure-images/git-status.png) 
+
+<br>
