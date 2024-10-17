@@ -209,6 +209,20 @@ To consolidate what we did in our code-along:
 <br>
 
 ## Update the Remote URL in Your Local Repo
+
+### Test the SSH Connection
+* cd into .ssh folder
+* eval `ssh-agent -s`
+Agent pid 1224
+* `ssh-add tech264-georgia-github-key`
+* `ssh -T git@github.com`
+
+<br>
+
+![ssh-agent](./azure-images/ss-agent.png)
+
+<br>
+
 ### Step 1: Check your current remote URL
 * cd into `tech264-test-git`
 * Check your current remote URL: `git remote -v`
@@ -230,19 +244,6 @@ To consolidate what we did in our code-along:
 <br>
 
 ![url-to-ssh](./azure-images/url-to-ssh.png)
-
-<br>
-
-### Step 3: Test the SSH Connection
-* cd into .ssh folder
-* eval `ssh-agent -s`
-Agent pid 1224
-* `ssh-add tech264-georgia-github-key`
-* `ssh -T git@github.com`
-
-<br>
-
-![ssh-agent](./azure-images/ss-agent.png)
 
 <br>
 
