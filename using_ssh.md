@@ -10,10 +10,11 @@
     - [First Option](#first-option)
     - [Second Option](#second-option)
   - [Step 5: Push changes to Test repo.](#step-5-push-changes-to-test-repo)
-  - [Task: Re-create SSH setup to authenticate to GitHub](#task-re-create-ssh-setup-to-authenticate-to-github)
-  - [Step 1: Create/Generate an SSH Key pair.](#step-1-creategenerate-an-ssh-key-pair-1)
-  - [Step 2: Register the Padlock on GitHub.](#step-2-register-the-padlock-on-github-1)
-  - [Step 3: Add the Private Key onto Local Machine.](#step-3-add-the-private-key-onto-local-machine-1)
+- [Task: Re-create SSH setup to authenticate to GitHub](#task-re-create-ssh-setup-to-authenticate-to-github)
+  - [Delete the SSH Key-pairs on Git Bash Termial](#delete-the-ssh-key-pairs-on-git-bash-termial)
+  - [Create/Generate an SSH Key pair.](#creategenerate-an-ssh-key-pair)
+  - [Register the Padlock on GitHub.](#register-the-padlock-on-github)
+  - [Add the Private Key onto Local Machine.](#add-the-private-key-onto-local-machine)
   - [Update the Remote URL in Your Local Repo](#update-the-remote-url-in-your-local-repo)
     - [Step 1: Check your current remote URL](#step-1-check-your-current-remote-url)
     - [Step 2: Change the remote URL to use SSH](#step-2-change-the-remote-url-to-use-ssh)
@@ -147,7 +148,7 @@ We need to put it somewhere else.
 
 <br>
 
-## Task: Re-create SSH setup to authenticate to GitHub
+# Task: Re-create SSH setup to authenticate to GitHub
 To consolidate what we did in our code-along:
 
 * Delete your test repo (if you made one)
@@ -157,7 +158,16 @@ To consolidate what we did in our code-along:
 
 <br>
 
-## Step 1: Create/Generate an SSH Key pair. 
+## Delete the SSH Key-pairs on Git Bash Termial
+* cd into .ssh folder
+* Identify the key pair you want to delete. 
+* Delete key-pair:
+  * `rm -f tech264-georgia-github-key tech264-github-key.pub`
+* Check again if they're there: `ls -a`. 
+
+<br>
+
+## Create/Generate an SSH Key pair. 
 * We're going to do this on our local machine. 
 * Git Bash window > cd .ssh > pwd (to check where you are) > enter this command: `ssh-keygen -t rsa -b 4096 -C "georgiastanley98@gmail.com"`
 * File name: `tech264-georgia-github-key`
@@ -168,7 +178,7 @@ To consolidate what we did in our code-along:
 
 <br>
 
-## Step 2: Register the Padlock on GitHub.
+## Register the Padlock on GitHub.
 * register the public key (the padlock).
 * Go to GitHub Account.
 * Go to Setings: SSH and GPG Keys > New SSH Key > 
@@ -181,7 +191,7 @@ To consolidate what we did in our code-along:
 
 <br>
 
-## Step 3: Add the Private Key onto Local Machine.
+## Add the Private Key onto Local Machine.
 * Add the private key to SSH register.
 * Go to the Git Bash window.
 * We want to start the SSH Agent: eval `ssh-agent -s`
