@@ -16,15 +16,17 @@
   - [Register the Padlock on GitHub.](#register-the-padlock-on-github)
   - [Add the Private Key onto Local Machine.](#add-the-private-key-onto-local-machine)
   - [Update the Remote URL in Your Local Repo](#update-the-remote-url-in-your-local-repo)
+    - [Test the SSH Connection](#test-the-ssh-connection)
     - [Step 1: Check your current remote URL](#step-1-check-your-current-remote-url)
     - [Step 2: Change the remote URL to use SSH](#step-2-change-the-remote-url-to-use-ssh)
-    - [Step 3: Test the SSH Connection](#step-3-test-the-ssh-connection)
     - [Making a push via SSH](#making-a-push-via-ssh)
 - [Task: Change it back to HTTPS](#task-change-it-back-to-https)
   - [Test the Connection](#test-the-connection)
   - [Change it back to HTTPS](#change-it-back-to-https)
     - [Make sure there's something to push from tech264-test-git](#make-sure-theres-something-to-push-from-tech264-test-git)
     - [Making a push via HTTPS](#making-a-push-via-https)
+- [Task: Use a new Git Bash window to push a change with SSH](#task-use-a-new-git-bash-window-to-push-a-change-with-ssh)
+  - [Test the Connection](#test-the-connection-1)
 
 
 <br>
@@ -343,5 +345,33 @@ Agent pid 1224
 ![git-commit-push](./azure-images/commit-push.png)
 
 ![git-status](./azure-images/git-status.png) 
+
+<br>
+
+# Task: Use a new Git Bash window to push a change with SSH
+> * Once you have SSH working with GitHub, close the Git Bash window you were using
+> * Open a new Git Bash window, go to your test-ssh repo and push a change - you should get a permissions error
+> * Without deleting your key on your local computer or Git Hub (you know there is nothing wrong with your keys - they were working fine in the last Git Bash window), try to work out how to fix the error
+> * Document/explain the steps / commands you used
+> * Document using the same repo you used for Task: Document "Using SSH with GitHub"
+
+<br>
+
+![alt text](image.png)
+
+![alt text](image-1.png)
+
+<br>
+
+## Test the Connection
+* cd into .ssh folder
+* eval `ssh-agent -s`
+Agent pid 1224
+* `ssh-add tech264-georgia-github-key`
+* `ssh -T git@github.com`
+
+<br>
+
+![ssh-agent-2](./azure-images/ssh-agent-2.png)
 
 <br>

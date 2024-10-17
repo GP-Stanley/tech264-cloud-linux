@@ -363,3 +363,9 @@ az storage blob upload \
 ### Re-run the app.
 * cd into repo/app
 * Restart the app: `sudo -E pm2 start app.js`
+
+<br>
+
+![working-cat-image](./azure-images/cat-image.png)
+
+<br>
