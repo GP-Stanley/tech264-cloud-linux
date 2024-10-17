@@ -366,6 +366,7 @@ az storage blob upload \
 
 <br>
 
+![ipaddress](./azure-images/ipaddress.png)
 ![working-cat-image](./azure-images/cat-image.png)
 
 <br>

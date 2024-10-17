@@ -357,9 +357,9 @@ Agent pid 1224
 
 <br>
 
-![alt text](image.png)
+![permission-denied](./azure-images/permission-denied.png)
 
-![alt text](image-1.png)
+![ssh-permission-denied](./azure-images/ssh-permission-denied.png)
 
 <br>
 
