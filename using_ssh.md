@@ -11,6 +11,9 @@
     - [Second Option](#second-option)
   - [Step 5: Push changes to Test repo.](#step-5-push-changes-to-test-repo)
   - [Task: Re-create SSH setup to authenticate to GitHub](#task-re-create-ssh-setup-to-authenticate-to-github)
+  - [Step 1: Create/Generate an SSH Key pair.](#step-1-creategenerate-an-ssh-key-pair-1)
+  - [Step 2: Register the Padlock on GitHub.](#step-2-register-the-padlock-on-github-1)
+  - [Step 3: Add the Private Key onto Local Machine.](#step-3-add-the-private-key-onto-local-machine-1)
   - [Update the Remote URL in Your Local Repo](#update-the-remote-url-in-your-local-repo)
     - [Step 1: Check your current remote URL](#step-1-check-your-current-remote-url)
     - [Step 2: Change the remote URL to use SSH](#step-2-change-the-remote-url-to-use-ssh)
@@ -133,15 +136,65 @@ We need to put it somewhere else.
 
 ## Step 5: Push changes to Test repo.
 * We do this on our local machine. 
+* cd into github repos > tech264-test-git
+* Double check for authentication: `ssh -T git@github.com`
+* Now make sure you've made an edit to your file on visual studio code.
+  * `git status`
+  * `git add .`
+  * `git commit -m`
+  * `git push -u origin main`
+  * `git status`
 
+<br>
 
 ## Task: Re-create SSH setup to authenticate to GitHub
 To consolidate what we did in our code-along:
 
 * Delete your test repo (if you made one)
 * Delete the SSH keys we made
-* Do the steps again, excpert this time use a pre-existing repo, and switch it over to use SSH keys
+* Do the steps again, excpert this time use a pre-existing repo, and switch it over to use SSH keys.
 * Document the steps as you go, you should produce a guide to setting up SSH keys for use with GitHub.
+
+<br>
+
+## Step 1: Create/Generate an SSH Key pair. 
+* We're going to do this on our local machine. 
+* Git Bash window > cd .ssh > pwd (to check where you are) > enter this command: `ssh-keygen -t rsa -b 4096 -C "georgiastanley98@gmail.com"`
+* File name: `tech264-georgia-github-key`
+* Enter passphrase: click "Enter" twice. 
+* `ls` to check it's there:
+  * tech264-georgia-github-key
+  * tech264-georgia-github-key.pub
+
+<br>
+
+## Step 2: Register the Padlock on GitHub.
+* register the public key (the padlock).
+* Go to GitHub Account.
+* Go to Setings: SSH and GPG Keys > New SSH Key > 
+* Title: tech264-georgia-github-key
+  * Authentication key
+* In git bash window:  `cat tech264-georgia-github-key.pub`
+    * 'cat' to print the key.
+* Copy entire output and paste it into the Key description.
+* This allows access to all of your GitHub Repo Accounts because it's in your settings. 
+
+<br>
+
+## Step 3: Add the Private Key onto Local Machine.
+* Add the private key to SSH register.
+* Go to the Git Bash window.
+* We want to start the SSH Agent: eval `ssh-agent -s`
+  * Output: Agent pid 920. 
+  * Once this is running, 
+* Use the SSH add command to register: `ssh-add tech264-georgia-github-key`
+  * Put in your own private key name after the command.
+  * Output: Identity added: tech264-georgia-github-key (georgiastanley98@gmail.com)
+* Test the SSH connection to github: `ssh -T git@github.com`.
+  * You may have to type 'yes' if it's your first time.
+* See if we can authenticate using this private key we've just regoistered.
+  * Output: Hi GP-Stanley! You've successfully authenticated, but GitHub does not provide shell access.
+* Once you've registered the key, you can be anywhere in your root directory tree. 
 
 <br>
 
