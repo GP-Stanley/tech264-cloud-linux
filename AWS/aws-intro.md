@@ -2,7 +2,10 @@
  * It is a comprehensive and widely adopted cloud computing platform provided by Amazon. 
  * AWS offers featured services from data centers globally, including computing power, storage options, and networking capabilities.
 
+# Table of Contents
+
 - [Amazon Web Services (AWS)](#amazon-web-services-aws)
+- [Table of Contents](#table-of-contents)
 - [Logging into AWS](#logging-into-aws)
   - [Cloud Reminders](#cloud-reminders)
 - [Task: Re-deploy app in 2-tier architecture on AWS](#task-re-deploy-app-in-2-tier-architecture-on-aws)
@@ -93,7 +96,8 @@ Db vm: default subnet 2
   * This is so the app can connect to it and we can successfully connect to the app.
 * Create the APP vm next. 
   * This will include the script that will have the private IP of the database so they can connect. 
-* <br>
+
+<br>
 
 ## Go to Credentials Folder 
 * Via local folder > .ssh > credentials (this will give you the link if you haven't got it saved).
