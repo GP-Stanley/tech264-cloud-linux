@@ -1,3 +1,8 @@
+# Amazon Web Services (AWS)
+ * It is a comprehensive and widely adopted cloud computing platform provided by Amazon. 
+ * AWS offers featured services from data centers globally, including computing power, storage options, and networking capabilities.
+
+- [Amazon Web Services (AWS)](#amazon-web-services-aws)
 - [Logging into AWS](#logging-into-aws)
   - [Cloud Reminders](#cloud-reminders)
 - [Task: Re-deploy app in 2-tier architecture on AWS](#task-re-deploy-app-in-2-tier-architecture-on-aws)
