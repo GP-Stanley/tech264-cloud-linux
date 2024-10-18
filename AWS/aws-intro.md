@@ -1,5 +1,31 @@
-# Logging into AWS
+- [Logging into AWS](#logging-into-aws)
+  - [Cloud Reminders](#cloud-reminders)
+- [Task: Re-deploy app in 2-tier architecture on AWS](#task-re-deploy-app-in-2-tier-architecture-on-aws)
+  - [Ramon's Diagram](#ramons-diagram)
+- [Deploying App in 2-tier architecture on AWS](#deploying-app-in-2-tier-architecture-on-aws)
+  - [Go to Credentials Folder](#go-to-credentials-folder)
+  - [](#)
+  - [Create Key-Pair](#create-key-pair)
+  - [EC2: Create Database VM](#ec2-create-database-vm)
+  - [Create a Security Group](#create-a-security-group)
+  - [Add Image](#add-image)
+  - [Network Settings](#network-settings)
+    - [Optional: Create a Subnet.](#optional-create-a-subnet)
+    - [Optional: Add Inbound Port Rules](#optional-add-inbound-port-rules)
+  - [Add Database Bash Script to App VM User Data.](#add-database-bash-script-to-app-vm-user-data)
+  - [Making the App vm](#making-the-app-vm)
+    - [Create New Security Group for App.](#create-new-security-group-for-app)
+  - [Linking db vm to App VM - User data](#linking-db-vm-to-app-vm---user-data)
+  - [Running the App VM](#running-the-app-vm)
+  - [Connect via SSH on Git Bash](#connect-via-ssh-on-git-bash)
+  - [SSH in](#ssh-in)
+    - [Connect via SSH](#connect-via-ssh)
+- [Posts page is working!!](#posts-page-is-working)
+  - [Delete keys you aren't using](#delete-keys-you-arent-using)
 
+
+
+# Logging into AWS
 * After you log in, make sure you're in the correct region (Ireland, eu-west-1).
   
 ## Cloud Reminders
