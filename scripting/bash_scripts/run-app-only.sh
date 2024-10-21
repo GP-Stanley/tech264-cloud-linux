@@ -1,6 +1,6 @@
 #!/bin/bash
 
-GITHUB_REPO="https://github.com/GP-Stanley/tech264-sparta-app"
+GITHUB_REPO="https://github.com/GP-Stanley/sparta-test-app"
 
 MONGODB_HOST="mongodb://10.0.3.4:27017/posts"
 

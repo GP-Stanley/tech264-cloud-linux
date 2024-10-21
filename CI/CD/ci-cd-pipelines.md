@@ -1,5 +1,76 @@
 # Week 5: CI/CD Pipelines with Jenkins
 
+- [Week 5: CI/CD Pipelines with Jenkins](#week-5-cicd-pipelines-with-jenkins)
+- [Task: Research CI/CD and Jenkins](#task-research-cicd-and-jenkins)
+  - [What is CI? Benefits?](#what-is-ci-benefits)
+    - [Benefits](#benefits)
+  - [What is CD? Benefits?](#what-is-cd-benefits)
+    - [Benefits](#benefits-1)
+  - [Difference between CD and CDE](#difference-between-cd-and-cde)
+  - [What is Jenkins?](#what-is-jenkins)
+  - [Why use Jenkins? Benefits of using Jenkins? Disadvantages?](#why-use-jenkins-benefits-of-using-jenkins-disadvantages)
+    - [Benefits of using Jenkins:](#benefits-of-using-jenkins)
+    - [Disadvantages:](#disadvantages)
+  - [Stages of Jenkins](#stages-of-jenkins)
+  - [What alternatives are there for Jenkins](#what-alternatives-are-there-for-jenkins)
+  - [Why build a pipeline? Business value?](#why-build-a-pipeline-business-value)
+    - [Business value:](#business-value)
+  - [Create a general diagram of CICD](#create-a-general-diagram-of-cicd)
+  - [Understand SDLC workflow: plan, design, develop, deploy](#understand-sdlc-workflow-plan-design-develop-deploy)
+- [Friday 18/10 Notes](#friday-1810-notes)
+- [CI/CD Pipeline: Ramon's Diagram](#cicd-pipeline-ramons-diagram)
+  - [Why build a CI/CD pipeline?](#why-build-a-cicd-pipeline)
+  - [Why Jenkins?](#why-jenkins)
+    - [More Detailed Benefits of Jenkins](#more-detailed-benefits-of-jenkins)
+    - [What's it's business value?](#whats-its-business-value)
+  - [What's going to happen in our pipeline?](#whats-going-to-happen-in-our-pipeline)
+  - [There are 2 parts to our pipeline:](#there-are-2-parts-to-our-pipeline)
+    - [1. Continuous Integration (CI) part:](#1-continuous-integration-ci-part)
+    - [2. Continuous Deployment (CD) part:](#2-continuous-deployment-cd-part)
+- [Code-Along](#code-along)
+  - [Test: Making our pipeline](#test-making-our-pipeline)
+  - [Run the pipeline](#run-the-pipeline)
+  - [Test: Create another job/ another pipeline](#test-create-another-job-another-pipeline)
+  - [Test: Make a multi-stage Pipeline: Connecting our existing pipes](#test-make-a-multi-stage-pipeline-connecting-our-existing-pipes)
+- [Three Job Jenkins Pipeline](#three-job-jenkins-pipeline)
+- [Ramon's Diagram: How it's going to work](#ramons-diagram-how-its-going-to-work)
+  - [Jenkins CICD Pipeline with Three Jobs](#jenkins-cicd-pipeline-with-three-jobs)
+  - [The Trigger to all of this.](#the-trigger-to-all-of-this)
+  - [The 3 Jobs:](#the-3-jobs)
+    - [**Job 1**: Testing the code on the "dev" branch.](#job-1-testing-the-code-on-the-dev-branch)
+    - [**Job 2**: Merge from the "dev" branch to the "main" branch (the source of the code).](#job-2-merge-from-the-dev-branch-to-the-main-branch-the-source-of-the-code)
+    - [**Job 3**: Deploy the updated code to an EC2 instance to run the uppdated code.](#job-3-deploy-the-updated-code-to-an-ec2-instance-to-run-the-uppdated-code)
+      - [Deployment Method:](#deployment-method)
+      - [Requirements:](#requirements)
+      - [Code/Script Validation:](#codescript-validation)
+    - [AWS EC2 Instance](#aws-ec2-instance)
+    - [EC2 Instance will need:](#ec2-instance-will-need)
+  - [Generate a New-key Pair](#generate-a-new-key-pair)
+    - [Give this Key to a Specific Repo](#give-this-key-to-a-specific-repo)
+    - [Get App Folder Into Repo](#get-app-folder-into-repo)
+  - [Git Clone - Existing App Repo](#git-clone---existing-app-repo)
+  - [Getting our Key on Jenkins](#getting-our-key-on-jenkins)
+  - [We're setting up a padlock on a SPECIFIC repo: "sparta-test-app".](#were-setting-up-a-padlock-on-a-specific-repo-sparta-test-app)
+  - [Job 1: pipeline](#job-1-pipeline)
+  - [Set up our Webhook so we get the trigger.](#set-up-our-webhook-so-we-get-the-trigger)
+    - [Go to Git Bash Window](#go-to-git-bash-window)
+  - [Set up GitHub so it sends a webhook to Jenkins](#set-up-github-so-it-sends-a-webhook-to-jenkins)
+- [Task: 3-job Jenkins pipeline to deploy Sparta test app](#task-3-job-jenkins-pipeline-to-deploy-sparta-test-app)
+  - [Get job 2 working](#get-job-2-working)
+    - [Git Publisher - Jenkins Plug In.](#git-publisher---jenkins-plug-in)
+- [Improved Version of Job 2: Using Git Publisher Plug-in](#improved-version-of-job-2-using-git-publisher-plug-in)
+- [Get Job 3 Working](#get-job-3-working)
+  - [Copy Tested Code from Jenkins](#copy-tested-code-from-jenkins)
+  - [Configure SSH Access](#configure-ssh-access)
+  - [Configure Job 3](#configure-job-3)
+    - [Using 'scp' Command](#using-scp-command)
+    - [Using 'rsync' Command](#using-rsync-command)
+  - [Ensure Dependencies / Run Commands on EC2](#ensure-dependencies--run-commands-on-ec2)
+    - [SSH from Jenkins into the EC2 Instance to run the commands.](#ssh-from-jenkins-into-the-ec2-instance-to-run-the-commands)
+    - [Commands we need to run:](#commands-we-need-to-run)
+  - [Restart the Instance](#restart-the-instance)
+
+
 # Task: Research CI/CD and Jenkins
 ## What is CI? Benefits?
 CI stands for **Continuous Integration**. 
@@ -612,6 +683,27 @@ Build steps > execute shell > Command > "georgia-job1-ci-test"
   * git merge origin/dev
   * git push origin main 
 
+> BEST PRACTISE A better way to do it:
+>
+> * Use a Jenkins plug in to do what you need it to do in terms of commands, (Use a Jenkins plug-in to do the commands). 
+>
+>   * e.g., 
+
+<br>
+
+### Git Publisher - Jenkins Plug In.
+* The git plugin provides fundamental git operations for Jenkins projects. 
+  * It can poll, fetch, checkout, branch, list, merge, tag, and push repositories.
+
+Source: https://plugins.jenkins.io/git/#plugin-content-merge-extensions
+
+![alt text](image.png)
+
+![alt text](image-1.png)
+
+<br>
+
+
 ![build-triggers2](./cicd-images/build-triggers2.png) 
 
 * Build Environment > SSH agent > Add Key. 
@@ -637,3 +729,99 @@ Build steps > execute shell > Command > "georgia-job1-ci-test"
 ![github-ubuntu](./cicd-images/github-ubuntu.png)
 
 > `git switch main` to get onto the main branch again. 
+
+<br>
+
+# Improved Version of Job 2: Using Git Publisher Plug-in
+* Go to job 2 on Jenkins. 
+* Use Git Publisher instead of Git Commands. 
+* Delete contents of Execute Shell. 
+* Open post-build actions >
+* branch to push > dev
+* target remote name > origin
+
+![alt text](image-2.png)
+
+![alt text](image-3.png)
+
+![alt text](image-4.png)
+
+> THIS NEEDS TO BE CHECKED. 
+
+<br>
+
+
+# Get Job 3 Working
+> You will need both Jenkins and AWS.
+
+## Copy Tested Code from Jenkins
+* Copy the updated & tested code from Jenkins to the AWS EC2 instance
+  * Code in job 1: 
+> cd app 
+> 
+> npm install
+> 
+> npm test
+  
+  * Code in job 2: 
+> git switch main
+> 
+> git merge origin/dev
+> 
+> git push origin main
+
+<br>
+
+## Configure SSH Access
+* Jenkins will need to SSH into the EC2 instance to update the code & re-run the app.
+
+> Only 1 person needs to add the key/SSH credentials/pem file on Jenkins for Job 3
+
+* Ensure you have an EC2 instance running Ubuntu 22.04 LTS.
+* Allow Jenkins’ IP to SSH into the EC2 instance by updating the security group rules.
+* Add the SSH credentials (pem file) to Jenkins:
+  * Go to **Manage Jenkins** > **Manage Credentials**.
+  * Add a new SSH credential with the private key from your pem file.
+
+<br>
+
+## Configure Job 3
+* To copy the code from Jenkins to to EC2, use the scp or rsync commands from Jenkins
+**DO NOT**: git clone from main branch and push to production
+
+### Using 'scp' Command
+* In the job configuration, add a build step to execute a shell command.
+* Use scp or rsync to copy the code from Jenkins to the EC2 instance. 
+
+`scp -i /path/to/your-key.pem /path/to/your-code.zip ec2-user@your-ec2-ip:/path/to/destination/`
+
+### Using 'rsync' Command
+* In the job configuration, add a build step to execute a shell command.
+* Use scp or rsync to copy the code from Jenkins to the EC2 instance. 
+
+`rsync -e "ssh -i /path/to/your-key.pem" -av /path/to/your-code/ ec2-user@your-ec2-ip:/path/to/destination/` 
+
+<br>
+
+## Ensure Dependencies / Run Commands on EC2 
+* You will need an EC2 instance already running.
+  * Should use normal Ubuntu 22.04 LTS image.
+  * Use normal SG rules, but allow Jenkin's IP to SSH in.
+  * Must have all dependencies installed to run Sparta test app.
+
+### SSH from Jenkins into the EC2 Instance to run the commands. 
+* Copied prov-app script into EC2 Instance user data. 
+
+### Commands we need to run:
+* cd into app folder.
+* stop the app from running.
+* install any new packages/updated code. 
+* re-run the app. 
+
+<br>
+
+## Restart the Instance
+* After copying the code, SSH into the EC2 instance to update the code and restart the application.
+
+---
+
