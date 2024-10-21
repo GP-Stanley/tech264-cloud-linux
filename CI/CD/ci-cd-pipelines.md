@@ -702,9 +702,9 @@ Build steps > execute shell > Command > "georgia-job1-ci-test"
 
 Source: https://plugins.jenkins.io/git/#plugin-content-merge-extensions
 
-![alt text](image.png)
+![git-publisher](./cicd-images/git-publisher.png)
 
-![alt text](image-1.png)
+![git-publisher](./cicd-images/git-publisher1.png)
 
 <br>
 
@@ -745,11 +745,11 @@ Source: https://plugins.jenkins.io/git/#plugin-content-merge-extensions
 * branch to push > dev
 * target remote name > origin
 
-![alt text](image-2.png)
+![git-publisher](./cicd-images/git-publisher3.png)
 
-![alt text](image-3.png)
+![post-git-publisher](./cicd-images/post-git-publisher.png)
 
-![alt text](image-4.png)
+![alt text](./cicd-images/branches.png)
 
 > THIS NEEDS TO BE CHECKED. 
 
@@ -788,7 +788,7 @@ Source: https://plugins.jenkins.io/git/#plugin-content-merge-extensions
   * Go to **Manage Jenkins** > **Manage Credentials**.
   * Add a new SSH credential with the private key from your pem file.
 
-![alt text](image-5.png)
+![job3-execute](./cicd-images/job3-execute.png)
 
 <br>
 
@@ -861,24 +861,24 @@ ssh -o StrictHostKeyChecking=no ubuntu@3.254.199.107 <<EOF
 EOF
 ```
 
-![alt text](image-6.png) 
+![working-app](./cicd-images/working-app.png) 
 
 ## SSH into the Instance
 * `ssh -i "tech264-georgia-aws-key.pem" ubuntu@ec2-3-254-199-107.eu-west-1.compute.amazonaws.com`
 * cd into the repo/app and `pm2 start app.js`.
 
-![alt text](image-7.png)
+![stop-all](./cicd-images/stop-all.png)
 
 ## Nano file in Git Bash Terminal
 * Go to " ~/OneDrive - Sparta Global/Documents/GitHub Repos/tech264-sparta-test-app-cicd/app/views (dev)" (wherever you want to make your changes).
 * Switch from main branch to dev branch - `git switch dev`.
 * `nano index.ejs`
 
-![alt text](image-9.png)
+![pm2-stop-all](./cicd-images/pm2-stop-all.png)
 
 * Git add > commit > push > git status. 
 
-![alt text](image-8.png)
+![nano-index](./cicd-images/nano-index.png)
 
 * If all jobs are successful, you should see on your Jenkins Dashboard the builds happening in real time. 
 * Once you are done with the "dev" branch, check if there are any commits left. If not, switch back to the main branch. `git switch main`
