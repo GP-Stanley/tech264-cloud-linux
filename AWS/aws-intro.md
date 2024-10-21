@@ -232,7 +232,7 @@ Check your ip address in your user data for your app matches your db private ip.
 ## Connect via SSH on Git Bash
 * cd into your .ssh folder. 
 ssh -i /c/users/georg/.ssh/tech264-georgia-aws-key.pem
- ec2-user@3.248.211.123
+ ec2-user@3.253.103.76
 
 <br>
 

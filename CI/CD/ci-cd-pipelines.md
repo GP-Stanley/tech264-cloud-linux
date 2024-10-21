@@ -69,6 +69,11 @@
     - [SSH from Jenkins into the EC2 Instance to run the commands.](#ssh-from-jenkins-into-the-ec2-instance-to-run-the-commands)
     - [Commands we need to run:](#commands-we-need-to-run)
   - [Restart the Instance](#restart-the-instance)
+  - [Connect via SSH on Git Bash](#connect-via-ssh-on-git-bash)
+  - [SSH in](#ssh-in)
+- [Job 3](#job-3)
+  - [SSH into the Instance](#ssh-into-the-instance)
+  - [Nano file in Git Bash Terminal](#nano-file-in-git-bash-terminal)
 
 
 # Task: Research CI/CD and Jenkins
@@ -783,6 +788,8 @@ Source: https://plugins.jenkins.io/git/#plugin-content-merge-extensions
   * Go to **Manage Jenkins** > **Manage Credentials**.
   * Add a new SSH credential with the private key from your pem file.
 
+![alt text](image-5.png)
+
 <br>
 
 ## Configure Job 3
@@ -824,4 +831,58 @@ Source: https://plugins.jenkins.io/git/#plugin-content-merge-extensions
 * After copying the code, SSH into the EC2 instance to update the code and restart the application.
 
 ---
+
+## Connect via SSH on Git Bash
+* cd into your .ssh folder. 
+ssh -i "tech264-georgia-aws-key.pem" ubuntu@ec2-3-253-103-76.eu-west-1.compute.amazonaws.com
+
+<br>
+
+ ## SSH in
+ * Give yourself permission for the key: `chmod 400 tech264-georgia-aws-key.pem`
+
+<br>
+
+# Job 3 
+* Make sure you're app script is working. 
+* 
+
+Execute shell:
+```bash
+rsync -avz -e "ssh -o StrictHostKeyChecking=no" app ubuntu@3.254.199.107:~
+
+# scp app ubuntu@3.254.199.107:~
+ssh -o StrictHostKeyChecking=no ubuntu@3.254.199.107 <<EOF
+
+  pm2 stop all
+  cd app
+  npm install
+  pm2 start app.js
+EOF
+```
+
+![alt text](image-6.png) 
+
+## SSH into the Instance
+* `ssh -i "tech264-georgia-aws-key.pem" ubuntu@ec2-3-254-199-107.eu-west-1.compute.amazonaws.com`
+* cd into the repo/app and `pm2 start app.js`.
+
+![alt text](image-7.png)
+
+## Nano file in Git Bash Terminal
+* Go to " ~/OneDrive - Sparta Global/Documents/GitHub Repos/tech264-sparta-test-app-cicd/app/views (dev)" (wherever you want to make your changes).
+* Switch from main branch to dev branch - `git switch dev`.
+* `nano index.ejs`
+
+![alt text](image-9.png)
+
+* Git add > commit > push > git status. 
+
+![alt text](image-8.png)
+
+* If all jobs are successful, you should see on your Jenkins Dashboard the builds happening in real time. 
+* Once you are done with the "dev" branch, check if there are any commits left. If not, switch back to the main branch. `git switch main`
+
+
+
 
