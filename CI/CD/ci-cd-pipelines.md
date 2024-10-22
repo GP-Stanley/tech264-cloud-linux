@@ -72,6 +72,7 @@
   - [Connect via SSH on Git Bash](#connect-via-ssh-on-git-bash)
   - [SSH in](#ssh-in)
 - [Job 3](#job-3)
+    - [What your code is doing](#what-your-code-is-doing)
   - [SSH into the Instance](#ssh-into-the-instance)
   - [Nano file in Git Bash Terminal](#nano-file-in-git-bash-terminal)
 
@@ -851,7 +852,6 @@ Execute shell:
 ```bash
 rsync -avz -e "ssh -o StrictHostKeyChecking=no" app ubuntu@3.254.199.107:~
 
-# scp app ubuntu@3.254.199.107:~
 ssh -o StrictHostKeyChecking=no ubuntu@3.254.199.107 <<EOF
 
   pm2 stop all
@@ -863,11 +863,40 @@ EOF
 
 ![working-app](./cicd-images/working-app.png) 
 
+<br>
+
+### What your code is doing
+`rsync -avz -e “ssh -o StrictHostKeyChecking=no” app ubuntu@3.254.199.107:~`
+* `rsync`: A utility for efficiently transferring and synchronizing files between a local and a remote system.
+* `-a`: Archive mode, which preserves permissions, timestamps, symbolic links, etc.
+* `-v`: Verbose mode, which provides detailed output of the transfer process.
+* `-z`: Compresses file data during the transfer to save bandwidth.
+* `-e “ssh -o StrictHostKeyChecking=no”`: Specifies the remote shell program to use (in this case, SSH) and disables strict host key checking to avoid manual confirmation of the remote host’s key.
+* `app`: The source directory or file to be transferred.
+* `ubuntu@3.254.199.107:~`: The destination, where ubuntu is the username and 3.254.199.107 is the IP address of the remote server. The ~ indicates the home directory of the ubuntu user on the remote server.
+
+`ssh -o StrictHostKeyChecking=no ubuntu@3.254.199.107 <<EOF`
+* `ssh -o StrictHostKeyChecking=no`: Connects to the remote server via SSH, again disabling strict host key checking.
+* `ubuntu@3.254.199.107`: The remote server’s username and IP address.
+* `<<EOF`: Indicates the start of a here document, which allows you to pass a block of commands to be executed on the remote server.
+
+The block of commands within the here document:
+* `pm2 stop all`: Stops all processes managed by PM2, a process manager for Node.js applications.
+* `cd app`: Changes the directory to app.
+* `npm install`: Installs the necessary Node.js dependencies specified in the package.json file.
+* `pm2 start app.js`: Starts the app.js application using PM2.
+
+In summary, this script **transfers the app directory to a remote server**, then **connects to that server to stop any running Node.js applications**, **install dependencies**, and **restart the application**. This is a common workflow for deploying updates to a Node.js application on a remote server.
+
+<br>
+
 ## SSH into the Instance
 * `ssh -i "tech264-georgia-aws-key.pem" ubuntu@ec2-3-254-199-107.eu-west-1.compute.amazonaws.com`
 * cd into the repo/app and `pm2 start app.js`.
 
 ![stop-all](./cicd-images/stop-all.png)
+
+<br>
 
 ## Nano file in Git Bash Terminal
 * Go to " ~/OneDrive - Sparta Global/Documents/GitHub Repos/tech264-sparta-test-app-cicd/app/views (dev)" (wherever you want to make your changes).
