@@ -1249,6 +1249,18 @@ Run the master playbook
         chdir: /home/{{ ansible_user }}/app/seeds/seed.json
 ```
 
+WHEN YOU HAVE TIME:
+* Removing the seeds should be within your app playbook. This is the code block you should try. Make sure to remove the code block present in the database playbook.
+
+```yaml
+   # Seed the database
+    - name: Seed the MongoDB database
+      ansible.builtin.command:
+        cmd: node seeds/seed.js
+      args:
+        chdir: /home/{{ ansible_user }}/app
+```
+
 <br>
 
 # Test on two NEW target nodes: app & db
