@@ -25,7 +25,12 @@
     - [Inventory or `hosts` file](#inventory-or-hosts-file)
     - [Playbooks files](#playbooks-files)
   - [Target Nodes](#target-nodes)
+    - [Communication Protocols](#communication-protocols)
+    - [Inventory File](#inventory-file)
+    - [Execution of Tasks](#execution-of-tasks)
+  - [Benefits of Using Target Nodes](#benefits-of-using-target-nodes)
 - [Idempotency](#idempotency-1)
+  - [Benefits of Idempotency](#benefits-of-idempotency)
   - [How can I make commands idempotent?](#how-can-i-make-commands-idempotent)
 - [Basic Ansible Commands](#basic-ansible-commands)
 - [Task: Create EC2 instances for Ansible controller and target node](#task-create-ec2-instances-for-ansible-controller-and-target-node)
@@ -33,26 +38,29 @@
   - [SSH into Controller VM Code-Along](#ssh-into-controller-vm-code-along)
 - [Adhoc Documentation](#adhoc-documentation)
   - [What is an adhoc?](#what-is-an-adhoc)
+    - [Use Cases](#use-cases)
     - [Key Points](#key-points)
     - [Benefits](#benefits)
     - [Adhock Command](#adhock-command)
 - [Create a test.txt file](#create-a-testtxt-file)
 - [How to Create a Playbook](#how-to-create-a-playbook)
+- [Consolidate adhoc commands](#consolidate-adhoc-commands)
+  - [Benefits of Consolidating Commands:](#benefits-of-consolidating-commands)
 - [Task: Consolidate adhoc commands](#task-consolidate-adhoc-commands)
-  - [Task: Work out the command to use to copy test.txt to your target node](#task-work-out-the-command-to-use-to-copy-testtxt-to-your-target-node)
-- [Task: Create playbook to provision app VM](#task-create-playbook-to-provision-app-vm)
+- [Copy File Command](#copy-file-command)
+- [Create playbook to provision app VM](#create-playbook-to-provision-app-vm)
   - [SSH into Target-node-app VM: Code-Along](#ssh-into-target-node-app-vm-code-along)
   - [Stage 1: Playbook to install nodejs on the target node](#stage-1-playbook-to-install-nodejs-on-the-target-node)
     - [Controller Bash Window](#controller-bash-window)
   - [Stage 2: Add run npm in the background (pm2)](#stage-2-add-run-npm-in-the-background-pm2)
-  - [Optional: Identifying the contents of the default file for nginx](#optional-identifying-the-contents-of-the-default-file-for-nginx)
-  - [If you need to start the VMs back up after stopping the instance](#if-you-need-to-start-the-vms-back-up-after-stopping-the-instance)
-- [Create the database VM (another Ansible node)](#create-the-database-vm-another-ansible-node)
+  - [Check Default Nginx File](#check-default-nginx-file)
+  - [Restarting AWS VMs](#restarting-aws-vms)
+- [Create the database VM target node](#create-the-database-vm-target-node)
   - [On the database VM bash window](#on-the-database-vm-bash-window)
-  - [Set up db VM from ansible controller: create a playbook](#set-up-db-vm-from-ansible-controller-create-a-playbook)
-- [Task: Create playbooks to provision the app and database](#task-create-playbooks-to-provision-the-app-and-database)
+  - [Create DB VM Playbook](#create-db-vm-playbook)
+- [Provision App and Database Playbooks](#provision-app-and-database-playbooks)
 - [Create prov-db.yml](#create-prov-dbyml)
-  - [From the Ansible controller, run adhoc commands to:](#from-the-ansible-controller-run-adhoc-commands-to)
+  - [Run Ad-hoc Commands from Controller](#run-ad-hoc-commands-from-controller)
 - [Create env var DB\_HOST](#create-env-var-db_host)
   - [Create env var DB\_HOST in your prov-db.yml script](#create-env-var-db_host-in-your-prov-dbyml-script)
 - [Ansible Master Playbook](#ansible-master-playbook)
@@ -61,7 +69,7 @@
   - [Set the env variable](#set-the-env-variable)
   - [Add the playbooks into the master playbook](#add-the-playbooks-into-the-master-playbook)
 - [Rebooting VMs on AWS](#rebooting-vms-on-aws)
-- [Test on two NEW target nodes: app \& db](#test-on-two-new-target-nodes-app--db)
+- [Two NEW target nodes: app \& db](#two-new-target-nodes-app--db)
   - [Create 2 instances on AWS](#create-2-instances-on-aws)
   - [SSH into new app and db target nodes in seperate terminals.](#ssh-into-new-app-and-db-target-nodes-in-seperate-terminals)
   - [Check your DB\_HOST env variable.](#check-your-db_host-env-variable)
@@ -253,19 +261,56 @@
 
 ## Target Nodes
 
-* Target nodes are the **computers or servers** that **Ansible manages**.
-* These are the machines where Ansible will **execute** the tasks defined in your playbooks.
+* Target nodes are the computers or servers that Ansible manages. 
+  * These nodes can be physical machines, virtual machines, cloud instances, or even containers.
+* These are the machines where Ansible will execute the tasks defined in your playbooks. 
+  * The tasks can range from installing software, configuring services, managing files, and more.
+
+### Communication Protocols
+* **SSH** (Secure Shell) 
+* * For Linux/Unix systems, Ansible uses SSH to communicate with the target nodes. 
+* SSH is a secure protocol that allows encrypted communication between the Ansible controller and the target nodes.
+* **WinRM** (Windows Remote Management)
+* * For Windows systems, Ansible uses WinRM to communicate with the target nodes. 
+* WinRM is a protocol that allows remote management of Windows machines.
 * Ansible communicates with these nodes over SSH (for Linux/Unix systems) or WinRM (for Windows systems) to perform the necessary actions.
 
+### Inventory File
+* The inventory file is a crucial component that lists the target nodes and groups them for easier management. 
+* It defines which machines Ansible will communicate with and apply configurations to.
+
+### Execution of Tasks
+* Ansible executes tasks on the target nodes as defined in the playbooks. 
+* Each task is executed in the order specified in the playbook, ensuring that the desired state is achieved on the target nodes.
+
+## Benefits of Using Target Nodes
+* **Scalability**: Ansible can manage a large number of target nodes simultaneously, making it suitable for both small and large-scale deployments.
+* **Consistency**: By defining tasks in playbooks, Ansible ensures that configurations are applied consistently across all target nodes.
+* **Automation**: Automating repetitive tasks reduces the risk of human error and saves time, allowing administrators to focus on more strategic activities.
+
 > In short, Ansible is the conductor, and the target nodes are the orchestra, following the conductor's instructions to perform tasks in harmony.
+> 
+> By managing target nodes effectively, Ansible ensures that your infrastructure is configured and maintained consistently and efficiently.
+
+<br>
 
 # Idempotency
 Are commands designed for item potency? - No. 
 
->Idempotency ensures that applying the same configuration multiple times does not change the system state after the first application. 
+> Idempotency ensures that applying the same configuration multiple times does not change the system state after the first application. 
+
 * This is crucial for maintaining consistency and reliability in automated deployments. 
-* Ansible is designed with idempotency in mind, meaning that its modules and playbooks are built to achieve a desired state without causing unintended changes if run repeatedly. 
+* Ansible is designed with idempotency in mind, meaning that its modules and playbooks are built to achieve a desired state without causing unintended changes if run repeatedly.
+ 
 * This makes Ansible a powerful tool for managing infrastructure as code, ensuring that systems remain in the desired state even after multiple executions of the same playbook.
+
+## Benefits of Idempotency
+* **Consistency**: Idempotency ensures that systems remain in the desired state, regardless of how many times a playbook is executed. 
+  * This is vital for maintaining a stable and predictable environment.
+* **Reliability**: By preventing unintended changes, idempotency enhances the reliability of automated deployments. 
+  * It reduces the risk of errors and ensures that configurations are applied consistently.
+* **Efficiency**: Idempotent operations avoid unnecessary changes, saving time and resources. 
+  * This makes the automation process more efficient and reduces the load on the managed systems.
 
 <br>
 
@@ -434,12 +479,12 @@ Create 2 instances on AWS:
 `ssh -i ~/.ssh/tech264-georgia-aws-key.pem ubuntu@ec2-34-253-182-234.eu-west-1.compute.amazonaws.com`
 
 This command is used to establish a secure SSH connection to a remote server. Here's a breakdown of what each part does:
-* **ssh**: This is the command to start an SSH (Secure Shell) session.
-* **-i ~/.ssh/tech264-georgia-aws-key.pem**: This option specifies the identity file (private key) to use for authentication. 
+* `ssh`: This is the command to start an SSH (Secure Shell) session.
+* `-i ~/.ssh/tech264-georgia-aws-key.pem`: This option specifies the identity file (private key) to use for authentication. 
   * In this case, it's the tech264-georgia-aws-key.pem file located in the ~/.ssh directory.
-* **ubuntu@ec2-34-253-182-234.eu-west-1.compute.amazonaws.com**: This specifies the user (ubuntu) and the remote server's address (ec2-34-253-182-234.eu-west-1.compute.amazonaws.com) to connect to.
+* `ubuntu@ec2-34-253-182-234.eu-west-1.compute.amazonaws.com`: This specifies the user (ubuntu) and the remote server's address (ec2-34-253-182-234.eu-west-1.compute.amazonaws.com) to connect to.
 
-> This command uses the specified private key to authenticate and connect to the remote server as the ubuntu user.
+> This command uses the specified private key to authenticate and connect to the remote server as the ubuntu user. By doing so, it ensures a secure and encrypted connection between your local machine and the remote server.
 
 <br>
 
@@ -573,6 +618,24 @@ Adhoc Documentation: https://docs.ansible.com/ansible/latest/command_guide/intro
 * Ansible ad-hoc commands are simple, one-time tasks that you can run directly from the command line without writing a playbook. 
 * They are useful for quick, on-the-fly operations, such as checking the status of a service, copying files, or managing packages on remote nodes.
 
+### Use Cases
+Ad-hoc commands are particularly useful for:
+
+* **Checking the Status of a Service**: Quickly verify if a service is running on a remote node.
+* **Copying Files**: Transfer files between your local machine and remote nodes.
+* **Managing Packages**: Install, update, or remove software packages on remote nodes.
+
+Example: 
+Here’s an example of an ad-hoc command to check the uptime of all hosts in your inventory:
+```yaml
+ansible all -m command -a "uptime"
+```
+
+In this example:
+* **all**: Refers to all hosts in your inventory.
+* **-m command**: Specifies the module to use (in this case, the command module).
+* **-a "uptime"**: Provides the arguments to pass to the module (in this case, the uptime command).
+
 ### Key Points
 * **Quick Execution**: Ad-hoc commands are designed for immediate execution, making them ideal for tasks that don't require the complexity of a full playbook.
 * **Syntax**: The basic syntax for an ad-hoc command is:
@@ -599,6 +662,11 @@ ansible all -m apt -a "name=nginx state=present"
 $ ansible web -m ansible.builtin.copy -a "src=/etc/hosts dest=/tmp/hosts"
 ```
 
+Breakdown of the command:
+* **ansible web**: This specifies the target group [web] defined in your inventory file.
+* **-m ansible.builtin.copy**: This specifies the module to use, in this case, the copy module.
+* **-a "src=/etc/hosts dest=/tmp/hosts"**: This provides the arguments to the module, specifying the source file (/etc/hosts) and the destination (/tmp/hosts) on the target nodes.
+
 <br>
 
 # Create a test.txt file
@@ -612,7 +680,7 @@ $ ansible web -m ansible.builtin.copy -a "src=/etc/hosts dest=/tmp/hosts"
 <br>
 
 # How to Create a Playbook
-We want this playbook to install nginx an make sure it's in a desired state by the time ansible is finished iwth this playbook.
+We want this playbook to install nginx an make sure it's in a desired state by the time ansible is finished with this playbook.
 
 * `cd /etc/ansible/`
 * `pwd` to check you're in your ansible directory. Output: /etc/ansible
@@ -659,7 +727,21 @@ We want this playbook to install nginx an make sure it's in a desired state by t
 
 <br>
 
+# Consolidate adhoc commands
+* To consolidate commands means to combine multiple commands into a single, streamlined command or script. 
+* This approach simplifies the execution process, reduces redundancy, and makes the overall operation more efficient. 
+* By consolidating commands, you can achieve the same results with fewer steps, making it easier to manage and automate tasks.
+
+## Benefits of Consolidating Commands:
+* **Efficiency**: Reduces the number of steps needed to perform a task, saving time and effort.
+* **Simplicity**: Simplifies complex operations by combining multiple commands into one.
+* **Consistency**: Ensures that tasks are performed in a consistent manner every time.
+* **Automation**: Facilitates automation by creating scripts that can be executed with a single command.
+
+<br>
+
 # Task: Consolidate adhoc commands
+
 1. Use adhoc command to copy the private key (see note below) on AWS from controller to target node node
    * cd into home directory
 ```yaml
@@ -675,7 +757,8 @@ ansible ec2-app-instance -m ansible.builtin.copy -a "src=~/.ssh/tech264-georgia-
 
 <br>
 
-## Task: Work out the command to use to copy test.txt to your target node
+# Copy File Command
+Task: Work out the command to use to copy test.txt to your target node.
 * `cd /etc/ansible/`
 * `pwd` to check you're in your ansible directory. Output: /etc/ansible.
 * sudo nano testtxt.yaml
@@ -694,7 +777,7 @@ ansible ec2-app-instance -m ansible.builtin.copy -a "src=~/.ssh/tech264-georgia-
 
 <br>
 
-# Task: Create playbook to provision app VM
+# Create playbook to provision app VM
 Stage 1
 * Create a new playbook called prov_app_with_npm_start.yml to install nodejs on the target node
 
@@ -842,88 +925,14 @@ Remember:
         chdir: "{{ app_dest_path }}"
 ```
 
-Final script: 
-
-```yaml
----
-- name: prov_app_with_npm_start.yml
-  hosts: web
-  gather_facts: yes
-  become: true
-
-  vars:
-    app_source_path: "/home/{{ ansible_user }}/app"
-    app_dest_path: "/home/{{ ansible_user }}/app/app"
-
-  tasks:
-
-    # Add the GPG key for the NodeSource repository
-    - name: Install curl (required to add NodeSource repository)
-      ansible.builtin.apt:
-        update_cache: yes   # equivalent of audo apt update
-        name: curl
-        state: present
-
-    - name: Add NodeSource repository for Node.js 20
-      ansible.builtin.shell:
-        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-
-    # Install Node.js on the target node
-    - name: Install Node.js on the target node
-      ansible.builtin.package:
-        name: nodejs
-        state: present
-
-    # Install pm2 globally
-    - name: Install PM2 globally
-      ansible.builtin.npm:
-        name: pm2
-        global: true
-        state: present
-
-    # Clone the app repository to the control node
-    - name: Clone the app repository to the control node
-      delegate_to: localhost
-      ansible.builtin.git:
-        repo: 'https://github.com/GP-Stanley/tech264-sparta-app'
-        dest: "{{ app_source_path }}"
-        version: main
-      tags: clone_app
-
-    # Copy app folder to the target node
-    - name: Copy app folder to target node
-      ansible.builtin.copy:
-        src: "{{ app_source_path }}/"
-        dest: "{{ app_dest_path }}"
-        mode: '0755'
-      tags: copy_app
-
-    # Install npm dependencies within the app folder
-    - name: Install npm dependencies in the app folder
-      community.general.npm:
-        path: "{{ app_dest_path }}"
-      tags: install_dependencies
-
-    # Stop pm2 processes
-    - name: Stop all processes running on pm2
-      ansible.builtin.shell:
-        cmd: pm2 stop all
-        chdir: /home/ubuntu/app/app
-      ignore_errors: yes
-      tags: pm2_stop
-
-    # Start the node.js app with PM2
-    - name: Start the node.js app
-      ansible.builtin.shell:
-        cmd: pm2 start app.js
-        chdir: "{{ app_dest_path }}"
-```
+* Visit ansible-playbooks for final result. 
 
 ![app-page](./ansible-images/app-page.png)
 
 <br>
 
-## Optional: Identifying the contents of the default file for nginx
+## Check Default Nginx File
+Optional: Identifying the contents of the default file for nginx.
 * Go to your target node VM on Gitbash terminal. 
 * `cd /etc/nginx/sites-available`
 * Use 'ls': you should see default.
@@ -933,14 +942,14 @@ Final script:
 
 <br>
 
-## If you need to start the VMs back up after stopping the instance
-* cd etc/ansible
+## Restarting AWS VMs 
+* cd /etc/ansible
 * sudo nano hosts
 * edit IPs for app and db VM to match the new ones after re-boot. 
 
 <br>
 
-# Create the database VM (another Ansible node)
+# Create the database VM target node
 Create the database VM on AWS
   * **Name**: tech264-georgia-ubuntu-2204-ansible-target-node-db
   * **Size**: t2.micro as usual
@@ -979,7 +988,7 @@ ec2-db-instance | SUCCESS => {
 ```
 
 * ssh into database vm normally through AWS.
-  * `ssh -i "tech264-georgia-aws-key.pem" ubuntu@ec2-3-248-217-156.eu-west-1.compute.amazonaws.com`
+  * e.g: `ssh -i "tech264-georgia-aws-key.pem" ubuntu@ec2-3-248-217-156.eu-west-1.compute.amazonaws.com`
   * give it permissions: 'yes'.
 
 <br>
@@ -993,10 +1002,11 @@ ec2-db-instance | SUCCESS => {
 
 <br>
 
-## Set up db VM from ansible controller: create a playbook
+## Create DB VM Playbook
+Set up db VM from ansible controller: create a playbook.
 * go to controller window
-* go to etc/ansible
-* sudo nano install_mongodb.yml
+  * go to cd /etc/ansible
+  * sudo nano install_mongodb.yml
 * Write your script
 
 ```yaml
@@ -1066,7 +1076,7 @@ ec2-db-instance | SUCCESS => {
 
 <br>
 
-# Task: Create playbooks to provision the app and database
+# Provision App and Database Playbooks
 Create a new playbook named prov-db.yml. This playbook should to do install/configure the database on the database VM:
 * Install Mongo DB v7.0.6 and troubleshoot why it is not running.
 * Suggestion: service module
@@ -1085,7 +1095,7 @@ Create a new playbook named prov-db.yml. This playbook should to do install/conf
 * Go back to the controller terminal and try running the db script again.
   * `ansible-playbook prov-db.yml`
 
-* You can also do it within your provision script/ playbook:
+* You can also do it within your provision playbook:
 ```yaml
     # modify MongoDB configuration to allow remote connections
     - name: Configure MongoDB to allow remote connections
@@ -1107,8 +1117,8 @@ Create a new playbook named prov-db.yml. This playbook should to do install/conf
 
 # Create prov-db.yml 
 * On the controller bash window
-* `cd /etc/ansible`
-* `sudo nano prov-db.yml`
+  * `cd /etc/ansible`
+  * `sudo nano prov-db.yml`
 * Test the script: `ansible-playbook prov-db.yml`
 
 ![test-play](./ansible-images/test-play.png)
@@ -1158,7 +1168,8 @@ Create a new playbook named prov-db.yml. This playbook should to do install/conf
 ```
 <br>
 
-## From the Ansible controller, run adhoc commands to:
+## Run Ad-hoc Commands from Controller
+From the Ansible controller, run adhoc commands to:
 * Check the status of the database to make sure it's running.
   * `ansible db -a "sudo systemctl status mongod"`
 
@@ -1302,19 +1313,8 @@ Run the master playbook
 /posts page is working but the database needs seeding
 * We need to seed the database which will import data from a JSON file into MongoDB.
   * `cd /etc/ansible`
-  * `sudo nano prov-db.yml`
-  * At the end of your prov-db.yml playbook.
-
-```yaml
-    - name: Seed the MongoDB database 
-      ansible.builtin.command: 
-        cmd: node seeds/seed.js 
-      args: 
-        chdir: /home/{{ ansible_user }}/app/seeds/seed.json
-```
-
-WHEN YOU HAVE TIME:
-* Removing the seeds should be within your app playbook. This is the code block you should try. Make sure to remove the code block present in the database playbook.
+  * `sudo nano prov_app_with_pm2_start.yml`
+  * At the end of your prov_app_with_pm2_start.yml playbook.
 
 ```yaml
    # Seed the database
@@ -1327,7 +1327,7 @@ WHEN YOU HAVE TIME:
 
 <br>
 
-# Test on two NEW target nodes: app & db
+# Two NEW target nodes: app & db
 Same naming convention:
 * tech264-georgia-ubuntu-2204-ansbile-target-node-db
 * tech264-georgia-ubuntu-2204-ansbile-target-node-app
