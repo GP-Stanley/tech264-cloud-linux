@@ -19,6 +19,8 @@
 - [Ramon's Diagram: Ansible Architecture](#ramons-diagram-ansible-architecture)
 - [Ansible Architecture](#ansible-architecture)
   - [Controller VM Requirements](#controller-vm-requirements)
+    - [Private key](#private-key)
+    - [Ansible installed on it](#ansible-installed-on-it)
   - [Important Ansible Files](#important-ansible-files)
     - [Inventory or `hosts` file](#inventory-or-hosts-file)
     - [Playbooks files](#playbooks-files)
@@ -53,7 +55,11 @@
   - [From the Ansible controller, run adhoc commands to:](#from-the-ansible-controller-run-adhoc-commands-to)
 - [Create env var DB\_HOST](#create-env-var-db_host)
   - [Create env var DB\_HOST in your prov-db.yml script](#create-env-var-db_host-in-your-prov-dbyml-script)
-- [Create prov-app.yml script](#create-prov-appyml-script)
+- [Ansible Master Playbook](#ansible-master-playbook)
+  - [Key Points:](#key-points-1)
+- [Create prov-app-all.yml master playbook](#create-prov-app-allyml-master-playbook)
+  - [Set the env variable](#set-the-env-variable)
+  - [Add the playbooks into the master playbook](#add-the-playbooks-into-the-master-playbook)
 - [Rebooting VMs on AWS](#rebooting-vms-on-aws)
 - [Test on two NEW target nodes: app \& db](#test-on-two-new-target-nodes-app--db)
   - [Create 2 instances on AWS](#create-2-instances-on-aws)
@@ -202,23 +208,44 @@
 
 ## Controller VM Requirements
 
-* Private key
-* Ansible installed on it
+###  Private key
+* The private key is essential for secure SSH access to the target nodes (servers) that Ansible will manage. 
+* This key pairs with the public key installed on the target nodes, allowing the Controller VM to authenticate and execute commands remotely.
+* Ensure the private key is stored securely on the Controller VM, typically in the ~/.ssh directory. 
+* The key should have appropriate permissions set to prevent unauthorised access.
 
----
+### Ansible installed on it
+* Ansible must be installed on the Controller VM to run playbooks and manage configurations on the target nodes. 
+* Ansible acts as the orchestrator, sending commands and configurations to the nodes.
+
+<br>
 
 ## Important Ansible Files
 
 ### Inventory or `hosts` file
-  * Located in the `/etc/ansible` directory.
-  * Lists the **hosts** and **groups** of hosts that Ansible will manage.
-> Defines which machines Ansible will communicate with and apply configurations to.
+  * Located in the `/etc/ansible` directory, but you can specify a different location if needed.
+  * The inventory file lists the hosts and groups of hosts that Ansible will manage. 
+    * It defines which machines Ansible will communicate with and apply configurations to.
+  * The file is organised into groups, making it easy to manage multiple hosts. 
+    * Each group can contain one or more hosts, and you can also define variables for groups or individual hosts.
+
+
+**Benefit:**
+* Organising hosts into groups allows you to apply configurations to multiple machines simultaneously, improving efficiency and consistency.
 
 ### Playbooks files
-  * Specify multiple **commands** (tasks) to **achieve a desired state**.
-  * **Declarative**: you define the state, Ansible handles the rest.
-  * YAML files that define the tasks and configurations to be applied to your managed nodes.
+  * Playbooks specify multiple commands (tasks) to achieve a desired state on your managed nodes. They are the core of Ansible's automation capabilities.
+  * Playbooks are declarative, meaning you define the desired state, and Ansible handles the rest. This approach simplifies configuration management by focusing on the end result rather than the steps to achieve it.
+  * Playbooks are written in YAML, making them easy to read and write. They consist of one or more plays, each targeting a group of hosts and defining a series of tasks to be executed.
   * Can include tasks like installing software, configuring services, and managing files, making it easy to manage complex deployments and configurations.
+
+**Capabilities**: 
+* Playbooks can include tasks like installing software, configuring services, managing files, and more. 
+* This flexibility makes it easy to manage complex deployments and configurations.
+
+**Benefits**: 
+* Playbooks allow you to describe a desired state for your systems and automate the process of achieving that state. 
+* This ensures consistency, reduces manual effort, and minimizes the risk of errors.
 
 > Playbooks are the heart of Ansible's automation, allowing you to describe a desired state for your systems and automate the process of achieving that state.
 
@@ -1184,25 +1211,55 @@ On the app VM, manually create an env var DB_HOST, check it's been created, rest
 
 <br>
 
-# Create prov-app.yml script
+# Ansible Master Playbook
+* An Ansible master playbook is like a master plan that organises and runs multiple smaller playbooks. 
+* It's a way to manage and execute several tasks in a specific order, all from one central file. 
+* This makes it easier to automate complex processes that involve multiple steps or systems.
+
+## Key Points:
+* **Centralised Control**: The master playbook calls other playbooks, allowing you to manage everything from one place.
+* **Modular**: By breaking down tasks into smaller playbooks, you can reuse and maintain them more easily.
+* **Sequential Execution**: Ensures tasks are executed in the correct order.
+
+<br>
+
+# Create prov-app-all.yml master playbook
 * In your app playbook, create an environment variable, then start app in the background
-  * One way to access the environment variable within your playbook is to use your playboook to make it persistent
-* Add the prov-db.yml to one playbook called prov-app-all.yml so you can run one playbook to configure/provision the app and database VMs (agents)
-* Test the playbook runs without errors and the app and /posts page work
-  * Deliverable 1: Paste link to your working /posts page in the main chat with the message "/posts working using one playbook to configure app + db"
+  * One way to access the environment variable within your playbook is to use your playboook to make it persistent.
 
-Added this into the app script: 
+## Set the env variable
+Set the Environment Variable in /etc/environment:
+* This file is sourced by all login shells, making the environment variable available system-wide.
+
 ```yaml
-    # Set DB_HOST environment variable 
-    - name: Set DB_HOST environment variable 
-      ansible.builtin.lineinfile: 
-        path: /etc/environment 
-        line: 'DB_HOST=mongodb://172.31.19.24:27017/posts' 
+    # Set DB_HOST environment variable (persistent)
+    - name: Set DB_HOST environment variable
+      ansible.builtin.lineinfile:
+        path: /etc/environment
+        line: 'DB_HOST=mongodb://{{ db_host_ip }}:27017/posts'
         state: present
+```
 
-    # Source the environment variables 
-    - name: Source environment variables 
-      ansible.builtin.shell: source /etc/environment
+* This playbook sets the DB_HOST environment variable persistently by adding it to /etc/environment and then sourcing it to make it available in the current session. 
+* This ensures that your application can access the environment variable both now and in future sessions.
+
+<br>
+
+## Add the playbooks into the master playbook
+
+* Add the prov-db.yml to one playbook called prov-app-all.yml so you can run one playbook to configure/provision the app and database VMs (agents).
+* Test the playbook runs without errors and the app and /posts page work.
+
+```yaml
+---
+- name: install nginx
+  import_playbook: install_nginx.yaml
+
+- name: database playbook
+  import_playbook: prov-db.yml
+
+- name: app playbook
+  import_playbook: prov_app_with_npm_start.yml
 ```
 
 <br>

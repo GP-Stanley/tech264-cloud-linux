@@ -10,6 +10,9 @@
     app_dest_path: "/home/{{ ansible_user }}/app/app"
     db_host_ip: "172.31.31.214"  # Define the IP address as a variable
 
+    # Alternate way to get db IP variable (from Adonis)
+    # db_host_ip: "{{ hostvars[groups['db'][0]]['ansible_default_ipv4']['address'] }}"
+
   tasks:
 
     # Add the GPG key for the NodeSource repository
