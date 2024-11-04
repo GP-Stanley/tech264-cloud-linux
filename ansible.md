@@ -14,8 +14,8 @@
     - [Key Functions:](#key-functions)
 - [Who is Using IaC and Ansible in the Industry?](#who-is-using-iac-and-ansible-in-the-industry)
 - [What is Ansible?](#what-is-ansible)
-- [A Push Tool](#a-push-tool)
-- [Agent-less](#agent-less)
+  - [A Push Tool](#a-push-tool)
+  - [Agent-less](#agent-less)
 - [Ramon's Diagram: Ansible Architecture](#ramons-diagram-ansible-architecture)
 - [Ansible Architecture](#ansible-architecture)
   - [Controller VM Requirements](#controller-vm-requirements)
@@ -24,6 +24,7 @@
     - [Playbooks files](#playbooks-files)
   - [Target Nodes](#target-nodes)
 - [Idempotency](#idempotency-1)
+- [Basic Ansible Commands](#basic-ansible-commands)
   - [How can I make commands idempotent?](#how-can-i-make-commands-idempotent)
 - [Task: Create EC2 instances for Ansible controller and target node](#task-create-ec2-instances-for-ansible-controller-and-target-node)
 - [How to establish a secure SSH connection to a remote server](#how-to-establish-a-secure-ssh-connection-to-a-remote-server)
@@ -34,14 +35,13 @@
     - [Benefits](#benefits)
 - [Create a test.txt file](#create-a-testtxt-file)
 - [How to Create a Playbook](#how-to-create-a-playbook)
-- [Go to other window ?????????](#go-to-other-window-)
 - [Adhock](#adhock)
 - [Task Consolidate adhoc commands](#task-consolidate-adhoc-commands)
 - [Task: Work out the command to use to copy test.txt to your target node](#task-work-out-the-command-to-use-to-copy-testtxt-to-your-target-node)
-- [SSH into Target-node-app (18) VM Code-Along](#ssh-into-target-node-app-18-vm-code-along)
+- [SSH into Target-node-app VM: Code-Along](#ssh-into-target-node-app-vm-code-along)
 - [Task: Create playbook to provision app VM](#task-create-playbook-to-provision-app-vm)
 - [Stage 1: Playbook to install nodejs on the target node](#stage-1-playbook-to-install-nodejs-on-the-target-node)
-  - [Controller Bash Window (144)](#controller-bash-window-144)
+  - [Controller Bash Window](#controller-bash-window)
 - [Stage 2: Add run npm in the background (pm2)](#stage-2-add-run-npm-in-the-background-pm2)
 - [Optional: Identifying the contents of the default file for nginx](#optional-identifying-the-contents-of-the-default-file-for-nginx)
 - [Create the database VM (another Ansible node)](#create-the-database-vm-another-ansible-node)
@@ -52,9 +52,11 @@
 - [Create prov-db.yml](#create-prov-dbyml)
 - [From the Ansible controller, run adhoc commands to:](#from-the-ansible-controller-run-adhoc-commands-to)
 - [Create env var DB\_HOST](#create-env-var-db_host)
-- [Create env car DB\_HOST in your prov-db.yml script](#create-env-car-db_host-in-your-prov-dbyml-script)
+- [Create env var DB\_HOST in your prov-db.yml script](#create-env-var-db_host-in-your-prov-dbyml-script)
 - [Create prov-app.yml script](#create-prov-appyml-script)
 - [Added this into the app script.](#added-this-into-the-app-script)
+- [Rebooting VMs on AWS](#rebooting-vms-on-aws)
+- [Test on two NEW target nodes: app \& db](#test-on-two-new-target-nodes-app--db)
 
 <br>
 
@@ -166,11 +168,11 @@
 
 <br>
 
-# A Push Tool
+## A Push Tool
 * It pushes configurations from a central control machine to the nodes (servers) you want to manage. 
 * It doesn't require any agents to be installed on the nodes, making it simpler and more efficient for managing multiple systems
 
-# Agent-less
+## Agent-less
 * it doesn't require any software (agents) to be installed on the machines it manages. 
 * Instead, it uses SSH (for Linux/Unix systems) or WinRM (for Windows systems) to communicate with and configure the target machines. 
 * This makes it simpler to set up and maintain.
@@ -231,6 +233,82 @@ Are commands designed for item potency? - No.
 * This is crucial for maintaining consistency and reliability in automated deployments. 
 * Ansible is designed with idempotency in mind, meaning that its modules and playbooks are built to achieve a desired state without causing unintended changes if run repeatedly. 
 * This makes Ansible a powerful tool for managing infrastructure as code, ensuring that systems remain in the desired state even after multiple executions of the same playbook.
+
+<br>
+
+# Basic Ansible Commands
+Ansible is a powerful automation tool used to manage and configure systems. Below are some of the basic commands you need to get started with Ansible.
+
+1. Checking Ansible Version
+To check the installed version of Ansible:
+```yaml
+ansible --version
+```
+2. Ping All Hosts
+To verify connectivity to all hosts in your inventory:
+```yaml
+ansible all -m ping
+```
+3. Running Ad-Hoc Commands
+Ad-hoc commands allow you to run simple tasks without writing a playbook.
+
+Example: Rebooting Hosts
+```yaml
+ansible all -a "/sbin/reboot"
+```
+Example: Running a Command
+```yaml
+ansible all -m command -a "uname -a"
+```
+4. Managing Users
+You can manage users on remote hosts using the user module.
+
+Example: Creating a New User
+```yaml
+ansible all -m user -a "name=ansible password=<encrypted_password>"
+```
+Example: Deleting a User
+```yamle
+ansible all -m user -a "name=ansible state=absent"
+```
+5. Gathering Facts
+To gather information about your hosts:
+
+```yaml
+ansible all -m setup
+```
+6. Running Playbooks
+Playbooks are YAML files that define a series of tasks to be executed on your hosts.
+
+Example: Running a Playbook
+```yaml
+ansible-playbook playbook.yml
+```
+7. Managing Inventory
+Ansible uses an inventory file to manage and organize hosts.
+
+Example: Listing Hosts in Inventory
+```yaml
+ansible all --list-hosts -i inventory
+```
+8. Checking Syntax
+To check the syntax of a playbook:
+
+```yaml
+ansible-playbook playbook.yml --syntax-check
+```
+9. Dry Run
+To perform a dry run (test run) of a playbook:
+
+```yaml
+ansible-playbook playbook.yml --check
+```
+10. Viewing Help
+To view help for any Ansible command:
+
+```yaml
+ansible <command> --help
+```
 
 <br>
 
@@ -521,8 +599,8 @@ We want this playbook to install nginx an make sure it's in a desired state by t
 
 <br>
 
-# Go to other window ?????????
-* sudo systemctl status nginx
+* Go to other window and check it's status.
+  * `sudo systemctl status nginx`
 
 ![sys-status](./ansible-images/sys-status.png)
 
@@ -572,7 +650,7 @@ ansible ec2-app-instance -m ansible.builtin.copy -a "src=~/.ssh/tech264-georgia-
 
 <br>
 
-# SSH into Target-node-app (18) VM Code-Along
+# SSH into Target-node-app VM: Code-Along
 
 1.  Update & upgrade:
   * `sudo apt update -y`
@@ -615,7 +693,7 @@ The playbook should:
  
 <br>
 
-## Controller Bash Window (144)
+## Controller Bash Window
 * `cd /etc/ansible/`
 * `pwd` to check you're in your ansible directory. Output: /etc/ansible.
 * `sudo nano prov_app_with_npm_start.yml`
@@ -782,6 +860,14 @@ Final script:
         path: "{{ app_dest_path }}"
       tags: install_dependencies
 
+    # Stop pm2 processes
+    - name: Stop all processes running on pm2
+      ansible.builtin.shell:
+        cmd: pm2 stop all
+        chdir: /home/ubuntu/app/app
+      ignore_errors: yes
+      tags: pm2_stop
+
     # Start the node.js app with PM2
     - name: Start the node.js app
       ansible.builtin.shell:
@@ -940,16 +1026,31 @@ ec2-db-instance | SUCCESS => {
 Create a new playbook named prov-db.yml. This playbook should to do install/configure the database on the database VM:
 * Install Mongo DB v7.0.6 and troubleshoot why it is not running.
 * Suggestion: service module
+  * > It only checks if it's been installed, it does not enable it. 
+  * > "State: present" can also mean that it's just present, installed - not necessarily running.
+  * > This can depend on the default from package to package.
+
 * Allow connections to database from 127.0.0.1 to 0.0.0.0
   * edit mongod.conf file in the database VM bash terminal. 
   * command: `sudo nano /etc/mongod.conf`
 
 ![bind-ip](./ansible-images/bind-ip.png)
 
-* we will change '127.0.0.1' to: 0.0.0.0
+* You can change '127.0.0.1' to: 0.0.0.0
 * Ctrl+S, Ctrl+X
 * Go back to the controller terminal and try running the db script again.
   * `ansible-playbook prov-db.yml`
+
+* You can also do it within your provision script/ playbook:
+```yaml
+    # modify MongoDB configuration to allow remote connections
+    - name: Configure MongoDB to allow remote connections
+      ansible.builtin.lineinfile:
+        path: /etc/mongod.conf
+        regexp: '^  bindIp:.*'
+        line: '  bindIp: 0.0.0.0'
+        state: present
+```
 
 <br>
 
@@ -1043,7 +1144,7 @@ On the app VM, manually create an env var DB_HOST, check it's been created, rest
 >
 > Aka: we need to put it into our script, not do it manually.
 
-# Create env car DB_HOST in your prov-db.yml script
+# Create env var DB_HOST in your prov-db.yml script
 * Navigate to your prov-db.yml script.
 * Have your DB_HOST env to hand: 'DB_HOST=mongodb://172.31.19.24:27017/posts' 
 * Add this code block to the end of the file.
@@ -1086,3 +1187,121 @@ On the app VM, manually create an env var DB_HOST, check it's been created, rest
     - name: Source environment variables 
       ansible.builtin.shell: source /etc/environment
 ```
+
+<br>
+
+# Rebooting VMs on AWS
+* SSH into all three using seperate Git Bash terminals.
+  * Organise them so you can remember which is where.
+
+On the Controller terminal:
+* Check your IP addressed are correct.
+  * `cd /etc/ansible`
+  * `sudo nano hosts`
+  * Edit the IP for the [web] and [bd] groups to match the IPs on AWS.
+* Check your DB_HOST env variable.
+  * Check the IP is the same as the private IP of the db VM.
+  * Navigate to your prov-db.yml script on the controller bash window. 
+    * `cd /etc/ansible`
+    * `sudo nano prov-db.yml`
+*  Check the IP is the same within your prov-app.yaml playbook.
+  * Navigate to your prov-app.yml script on the controller bash window. 
+    * `cd /etc/ansible`
+    * `sudo nano prov_app_with_npm_start.yml`
+
+Check the app and db instance are listening
+* `ansible all -m ping`
+* You may need to type 'yes' to the fingerprint twice to give it permission. 
+
+![new-ping](./ansible-images/new-ping.png)
+
+Check your DB_HOST variable
+* `echo $DB_HOST` on the target-node app VM.
+
+![app-db-host](./ansible-images/app-db-host.png)
+
+Run the master playbook
+* Make sure you're in the controller terminal. 
+  * `cd /etc/ansible`
+* `ansible-playbook prov-app-all.yml`
+
+/posts page is working but the database needs seeding
+* We need to seed the database which will import data from a JSON file into MongoDB.
+  * `cd /etc/ansible`
+  * `sudo nano prov-db.yml`
+  * At the end of your prov-db.yml playbook.
+
+```yaml
+    - name: Seed the MongoDB database 
+      ansible.builtin.command: 
+        cmd: node seeds/seed.js 
+      args: 
+        chdir: /home/{{ ansible_user }}/app/seeds/seed.json
+```
+
+<br>
+
+# Test on two NEW target nodes: app & db
+Same naming convention:
+* tech264-georgia-ubuntu-2204-ansbile-target-node-db
+* tech264-georgia-ubuntu-2204-ansbile-target-node-app
+
+Create 2 instances on AWS:
+* Create the database VM on AWS
+  * **Name**: tech264-georgia-ubuntu-2204-ansible-new-target-node-db
+  * **Size**: t2.micro as usual
+  * **Security group**: Same as usual for database
+    * ssh, 27017: 0.0.0.0/0
+
+![nsg-port](./ansible-images/nsg-port.png)
+
+  * **Key pair**: Use the one you usually use for your AWS instances
+  * **Image** - Ubuntu Server 22.04 LTS (free tier eligible) (should be in default list)
+  * Leave it blank - don't run any scripts or user data on it.
+
+* Ansible 'target node' instance (will run the app)
+  * **Name**: tech264-georgia-ubuntu-2204-ansbile-new-target-node-app
+  * **Security group**: Allow SSH, HTTP, port 3000 (the usual for the app)
+  * **Key pair**: Use the one you usually use for your AWS instances (and the same one as you used on the controller)
+  * **Image** - Ubuntu Server 22.04 LTS (free tier eligible)
+  * Leave it blank - don't run any scripts or user data on it
+* Check you can SSH into both machines (preferably do it separate Git Bash).
+
+<br>
+
+* SSH into new app and db target nodes in seperate terminals.
+* Edit the IP for the [web] and [bd] groups to match the IPs on AWS.  
+  * cd /etc/ansible
+  * `sudo nano hosts`
+* database public ip: 108.129.172.158
+* app public ip: 108.129.131.254
+
+* Check your DB_HOST env variable.
+  * Check the IP is the same as the private IP of the db VM.
+  * Navigate to your prov-db.yml script on the controller bash window. 
+    * `cd /etc/ansible`
+    * `sudo nano prov-db.yml`
+*  Check the IP is the same within your prov-app.yaml playbook. New IP: 172.31.31.214
+  * Navigate to your prov-app.yml script on the controller bash window. 
+    * `cd /etc/ansible`
+    * `sudo nano prov_app_with_npm_start.yml`
+
+Check the app and db instance are listening on the controller node. 
+* `ansible all -m ping`
+* You may need to type 'yes' to the fingerprint twice to give it permission. 
+
+Check your DB_HOST variable
+* `echo $DB_HOST` on the target-node app VM.
+* `export DB_HOST=mongodb://172.31.31.214:27017/posts`
+* `echo $DB_HOST` on the target-node app VM.
+
+Install nginx
+* Add this playbook to the beginning of the master playbook.
+  * `sudo nano prov-app-all.yml`
+  * import_playbook: install_nginx.yaml: place this at the top of the playbook. 
+
+Run the master playbook
+* Navigate to cd /etc/ansible
+* `ansible-playbook prov-app-all.yml`: to run both playbooks.
+
+<br> 
