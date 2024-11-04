@@ -24,37 +24,36 @@
     - [Playbooks files](#playbooks-files)
   - [Target Nodes](#target-nodes)
 - [Idempotency](#idempotency-1)
-- [Basic Ansible Commands](#basic-ansible-commands)
   - [How can I make commands idempotent?](#how-can-i-make-commands-idempotent)
+- [Basic Ansible Commands](#basic-ansible-commands)
 - [Task: Create EC2 instances for Ansible controller and target node](#task-create-ec2-instances-for-ansible-controller-and-target-node)
-- [How to establish a secure SSH connection to a remote server](#how-to-establish-a-secure-ssh-connection-to-a-remote-server)
-- [SSH into Controller (144) VM Code-Along](#ssh-into-controller-144-vm-code-along)
+  - [How to establish a secure SSH connection to a remote server](#how-to-establish-a-secure-ssh-connection-to-a-remote-server)
+  - [SSH into Controller VM Code-Along](#ssh-into-controller-vm-code-along)
 - [Adhoc Documentation](#adhoc-documentation)
   - [What is an adhoc?](#what-is-an-adhoc)
     - [Key Points](#key-points)
     - [Benefits](#benefits)
+    - [Adhock Command](#adhock-command)
 - [Create a test.txt file](#create-a-testtxt-file)
 - [How to Create a Playbook](#how-to-create-a-playbook)
-- [Adhock](#adhock)
-- [Task Consolidate adhoc commands](#task-consolidate-adhoc-commands)
-- [Task: Work out the command to use to copy test.txt to your target node](#task-work-out-the-command-to-use-to-copy-testtxt-to-your-target-node)
-- [SSH into Target-node-app VM: Code-Along](#ssh-into-target-node-app-vm-code-along)
+- [Task: Consolidate adhoc commands](#task-consolidate-adhoc-commands)
+  - [Task: Work out the command to use to copy test.txt to your target node](#task-work-out-the-command-to-use-to-copy-testtxt-to-your-target-node)
 - [Task: Create playbook to provision app VM](#task-create-playbook-to-provision-app-vm)
-- [Stage 1: Playbook to install nodejs on the target node](#stage-1-playbook-to-install-nodejs-on-the-target-node)
-  - [Controller Bash Window](#controller-bash-window)
-- [Stage 2: Add run npm in the background (pm2)](#stage-2-add-run-npm-in-the-background-pm2)
-- [Optional: Identifying the contents of the default file for nginx](#optional-identifying-the-contents-of-the-default-file-for-nginx)
+  - [SSH into Target-node-app VM: Code-Along](#ssh-into-target-node-app-vm-code-along)
+  - [Stage 1: Playbook to install nodejs on the target node](#stage-1-playbook-to-install-nodejs-on-the-target-node)
+    - [Controller Bash Window](#controller-bash-window)
+  - [Stage 2: Add run npm in the background (pm2)](#stage-2-add-run-npm-in-the-background-pm2)
+  - [Optional: Identifying the contents of the default file for nginx](#optional-identifying-the-contents-of-the-default-file-for-nginx)
+  - [If you need to start the VMs back up after stopping the instance](#if-you-need-to-start-the-vms-back-up-after-stopping-the-instance)
 - [Create the database VM (another Ansible node)](#create-the-database-vm-another-ansible-node)
-- [If you need to start the VMs back up after stopping the instance](#if-you-need-to-start-the-vms-back-up-after-stopping-the-instance)
-- [On the database VM bash window](#on-the-database-vm-bash-window)
-- [Set up db VM from ansible controller: create a playbook](#set-up-db-vm-from-ansible-controller-create-a-playbook)
+  - [On the database VM bash window](#on-the-database-vm-bash-window)
+  - [Set up db VM from ansible controller: create a playbook](#set-up-db-vm-from-ansible-controller-create-a-playbook)
 - [Task: Create playbooks to provision the app and database](#task-create-playbooks-to-provision-the-app-and-database)
 - [Create prov-db.yml](#create-prov-dbyml)
-- [From the Ansible controller, run adhoc commands to:](#from-the-ansible-controller-run-adhoc-commands-to)
+  - [From the Ansible controller, run adhoc commands to:](#from-the-ansible-controller-run-adhoc-commands-to)
 - [Create env var DB\_HOST](#create-env-var-db_host)
-- [Create env var DB\_HOST in your prov-db.yml script](#create-env-var-db_host-in-your-prov-dbyml-script)
+  - [Create env var DB\_HOST in your prov-db.yml script](#create-env-var-db_host-in-your-prov-dbyml-script)
 - [Create prov-app.yml script](#create-prov-appyml-script)
-- [Added this into the app script.](#added-this-into-the-app-script)
 - [Rebooting VMs on AWS](#rebooting-vms-on-aws)
 - [Test on two NEW target nodes: app \& db](#test-on-two-new-target-nodes-app--db)
 
@@ -236,82 +235,6 @@ Are commands designed for item potency? - No.
 
 <br>
 
-# Basic Ansible Commands
-Ansible is a powerful automation tool used to manage and configure systems. Below are some of the basic commands you need to get started with Ansible.
-
-1. Checking Ansible Version
-To check the installed version of Ansible:
-```yaml
-ansible --version
-```
-2. Ping All Hosts
-To verify connectivity to all hosts in your inventory:
-```yaml
-ansible all -m ping
-```
-3. Running Ad-Hoc Commands
-Ad-hoc commands allow you to run simple tasks without writing a playbook.
-
-Example: Rebooting Hosts
-```yaml
-ansible all -a "/sbin/reboot"
-```
-Example: Running a Command
-```yaml
-ansible all -m command -a "uname -a"
-```
-4. Managing Users
-You can manage users on remote hosts using the user module.
-
-Example: Creating a New User
-```yaml
-ansible all -m user -a "name=ansible password=<encrypted_password>"
-```
-Example: Deleting a User
-```yamle
-ansible all -m user -a "name=ansible state=absent"
-```
-5. Gathering Facts
-To gather information about your hosts:
-
-```yaml
-ansible all -m setup
-```
-6. Running Playbooks
-Playbooks are YAML files that define a series of tasks to be executed on your hosts.
-
-Example: Running a Playbook
-```yaml
-ansible-playbook playbook.yml
-```
-7. Managing Inventory
-Ansible uses an inventory file to manage and organize hosts.
-
-Example: Listing Hosts in Inventory
-```yaml
-ansible all --list-hosts -i inventory
-```
-8. Checking Syntax
-To check the syntax of a playbook:
-
-```yaml
-ansible-playbook playbook.yml --syntax-check
-```
-9. Dry Run
-To perform a dry run (test run) of a playbook:
-
-```yaml
-ansible-playbook playbook.yml --check
-```
-10. Viewing Help
-To view help for any Ansible command:
-
-```yaml
-ansible <command> --help
-```
-
-<br>
-
 ## How can I make commands idempotent?
 **1. Use Ansible Modules**
 * Ansible modules are designed to be idempotent. 
@@ -367,6 +290,92 @@ handlers:
 
 <br>
 
+# Basic Ansible Commands
+Ansible is a powerful automation tool used to manage and configure systems. Below are some of the basic commands you need to get started with Ansible.
+
+1. Checking Ansible Version
+
+To check the installed version of Ansible:
+```yaml
+ansible --version
+```
+2. Ping All Hosts
+
+To verify connectivity to all hosts in your inventory:
+```yaml
+ansible all -m ping
+```
+3. Running Ad-Hoc Commands
+
+Ad-hoc commands allow you to run simple tasks without writing a playbook.
+
+Example: Rebooting Hosts
+```yaml
+ansible all -a "/sbin/reboot"
+```
+Example: Running a Command
+```yaml
+ansible all -m command -a "uname -a"
+```
+4. Managing Users
+
+You can manage users on remote hosts using the user module.
+
+Example: Creating a New User
+```yaml
+ansible all -m user -a "name=ansible password=<encrypted_password>"
+```
+Example: Deleting a User
+```yamle
+ansible all -m user -a "name=ansible state=absent"
+```
+5. Gathering Facts
+
+To gather information about your hosts:
+
+```yaml
+ansible all -m setup
+```
+6. Running Playbooks
+
+Playbooks are YAML files that define a series of tasks to be executed on your hosts.
+
+Example: Running a Playbook
+```yaml
+ansible-playbook playbook.yml
+```
+7. Managing Inventory
+
+Ansible uses an inventory file to manage and organize hosts.
+
+Example: Listing Hosts in Inventory
+```yaml
+ansible all --list-hosts -i inventory
+```
+8. Checking Syntax
+
+To check the syntax of a playbook:
+
+```yaml
+ansible-playbook playbook.yml --syntax-check
+```
+9. Dry Run
+
+To perform a dry run (test run) of a playbook:
+
+```yaml
+ansible-playbook playbook.yml --check
+```
+10. Viewing Help
+
+To view help for any Ansible command:
+
+```yaml
+ansible <command> --help
+```
+
+<br>
+
 # Task: Create EC2 instances for Ansible controller and target node
 Create 2 instances on AWS:
 * Ansible 'controller' instance:
@@ -386,7 +395,7 @@ Create 2 instances on AWS:
 
 <br>
 
-# How to establish a secure SSH connection to a remote server
+## How to establish a secure SSH connection to a remote server
 
 `ssh -i ~/.ssh/tech264-georgia-aws-key.pem ubuntu@ec2-34-253-182-234.eu-west-1.compute.amazonaws.com`
 
@@ -400,7 +409,7 @@ This command is used to establish a secure SSH connection to a remote server. He
 
 <br>
 
-# SSH into Controller (144) VM Code-Along
+## SSH into Controller VM Code-Along
 
 1. Update & upgrade
    * First, update the package lists and upgrade the installed packages to ensure your system is up-to-date.
@@ -549,6 +558,15 @@ ansible all -m apt -a "name=nginx state=present"
 
 <br>
 
+### Adhock Command
+* An ad hoc task can harness the power of Ansible and SCP to transfer many files to multiple machines in parallel. To transfer a file directly to all servers in the [web] group.
+
+```yaml
+$ ansible web -m ansible.builtin.copy -a "src=/etc/hosts dest=/tmp/hosts"
+```
+
+<br>
+
 # Create a test.txt file
 * cd into home directoory `cd`.
 * `echo "hello. I'm a test file." > test.txt
@@ -591,6 +609,7 @@ We want this playbook to install nginx an make sure it's in a desired state by t
 
 # ends with ... (three dots) to say it's the end of the file
 ```
+
 ![nano-nginx](./ansible-images/nano-nginx.png)
 
 * `ansible-playbook install_nginx.yaml`: get it to start the tasks. 
@@ -606,16 +625,7 @@ We want this playbook to install nginx an make sure it's in a desired state by t
 
 <br>
 
-# Adhock
-* An ad hoc task can harness the power of Ansible and SCP to transfer many files to multiple machines in parallel. To transfer a file directly to all servers in the [web] group.
-
-```yaml
-$ ansible web -m ansible.builtin.copy -a "src=/etc/hosts dest=/tmp/hosts"
-```
-
-<br>
-
-# Task Consolidate adhoc commands
+# Task: Consolidate adhoc commands
 1. Use adhoc command to copy the private key (see note below) on AWS from controller to target node node
    * cd into home directory
 ```yaml
@@ -631,7 +641,7 @@ ansible ec2-app-instance -m ansible.builtin.copy -a "src=~/.ssh/tech264-georgia-
 
 <br>
 
-# Task: Work out the command to use to copy test.txt to your target node
+## Task: Work out the command to use to copy test.txt to your target node
 * `cd /etc/ansible/`
 * `pwd` to check you're in your ansible directory. Output: /etc/ansible.
 * sudo nano testtxt.yaml
@@ -647,15 +657,6 @@ ansible ec2-app-instance -m ansible.builtin.copy -a "src=~/.ssh/tech264-georgia-
 ```
 
 ![play-test](./ansible-images/play-test.png)
-
-<br>
-
-# SSH into Target-node-app VM: Code-Along
-
-1.  Update & upgrade:
-  * `sudo apt update -y`
-  * `sudo DEBIAN_FRONTEND=noninteractive apt upgrade -y`
-  * Tab+Enter if you get a pink screen.
 
 <br>
 
@@ -683,7 +684,16 @@ Deliver link to documentation around COB
 
 <br>
 
-# Stage 1: Playbook to install nodejs on the target node
+## SSH into Target-node-app VM: Code-Along
+
+1.  Update & upgrade:
+  * `sudo apt update -y`
+  * `sudo DEBIAN_FRONTEND=noninteractive apt upgrade -y`
+  * Tab+Enter if you get a pink screen.
+
+<br>
+
+## Stage 1: Playbook to install nodejs on the target node
 * Create a new playbook called prov_app_with_npm_start.yml to install nodejs on the target node
 
 The playbook should:
@@ -693,7 +703,7 @@ The playbook should:
  
 <br>
 
-## Controller Bash Window
+### Controller Bash Window
 * `cd /etc/ansible/`
 * `pwd` to check you're in your ansible directory. Output: /etc/ansible.
 * `sudo nano prov_app_with_npm_start.yml`
@@ -770,7 +780,7 @@ Notes:
 
 <br>
 
-# Stage 2: Add run npm in the background (pm2)
+## Stage 2: Add run npm in the background (pm2)
 * Make an updated version of prov_app_with_npm_start.yml named prov_app_with_pm2.yml (or similar)
 * Go back to controller node and add the command to run npm in the background
   * The goal is to configure and launch the app using the this playbook
@@ -879,13 +889,20 @@ Final script:
 
 <br>
 
-# Optional: Identifying the contents of the default file for nginx
+## Optional: Identifying the contents of the default file for nginx
 * Go to your target node VM on Gitbash terminal. 
 * `cd /etc/nginx/sites-available`
 * Use 'ls': you should see default.
 * `nano default`: to edit what's inside.
 
 ![commands](./ansible-images/commands.png)
+
+<br>
+
+## If you need to start the VMs back up after stopping the instance
+* cd etc/ansible
+* sudo nano hosts
+* edit IPs for app and db VM to match the new ones after re-boot. 
 
 <br>
 
@@ -933,14 +950,7 @@ ec2-db-instance | SUCCESS => {
 
 <br>
 
-# If you need to start the VMs back up after stopping the instance
-* cd etc/ansible
-* sudo nano hosts
-* edit IPs for app and db VM to match the new ones after re-boot. 
-
-<br>
-
-# On the database VM bash window
+## On the database VM bash window
 
 1.  Update & upgrade:
   * `sudo apt update -y`
@@ -949,7 +959,7 @@ ec2-db-instance | SUCCESS => {
 
 <br>
 
-# Set up db VM from ansible controller: create a playbook
+## Set up db VM from ansible controller: create a playbook
 * go to controller window
 * go to etc/ansible
 * sudo nano install_mongodb.yml
@@ -1114,7 +1124,7 @@ Create a new playbook named prov-db.yml. This playbook should to do install/conf
 ```
 <br>
 
-# From the Ansible controller, run adhoc commands to:
+## From the Ansible controller, run adhoc commands to:
 * Check the status of the database to make sure it's running.
   * `ansible db -a "sudo systemctl status mongod"`
 
@@ -1144,7 +1154,7 @@ On the app VM, manually create an env var DB_HOST, check it's been created, rest
 >
 > Aka: we need to put it into our script, not do it manually.
 
-# Create env var DB_HOST in your prov-db.yml script
+## Create env var DB_HOST in your prov-db.yml script
 * Navigate to your prov-db.yml script.
 * Have your DB_HOST env to hand: 'DB_HOST=mongodb://172.31.19.24:27017/posts' 
 * Add this code block to the end of the file.
@@ -1174,7 +1184,7 @@ On the app VM, manually create an env var DB_HOST, check it's been created, rest
 * Test the playbook runs without errors and the app and /posts page work
   * Deliverable 1: Paste link to your working /posts page in the main chat with the message "/posts working using one playbook to configure app + db"
 
-# Added this into the app script. 
+Added this into the app script: 
 ```yaml
     # Set DB_HOST environment variable 
     - name: Set DB_HOST environment variable 
