@@ -1,12 +1,10 @@
 ```yaml
-  GNU nano 6.2                                                                                                                                                                                                                                                                                                                                                                                      prov-db.yml
 ---
 # Playbook to install and configure MongoDB on the database VM
 - name: Provision MongoDB on database VM
   hosts: db
-  gather_facts: yes
+  gather_facts: yes yes # aka sudo privileges 
   become: true
-
   tasks:
 
     # Import the MongoDB public key
