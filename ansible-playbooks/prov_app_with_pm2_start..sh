@@ -84,3 +84,16 @@
         DB_HOST: "mongodb://172.31.19.24:27017/posts"
       tags: pm2_start
 ```
+
+
+ONCE REMOVED FROM DATABASE PLAYBOOK, PUT THIS CODE AT THE END OF THIS (APP) PLAYBOOK.
+
+
+```yaml
+   # Seed the database
+    - name: Seed the MongoDB database
+      ansible.builtin.command:
+        cmd: node seeds/seed.js
+      args:
+        chdir: "{{ app_dest_path }}"
+```
