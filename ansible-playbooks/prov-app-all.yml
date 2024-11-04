@@ -1,0 +1,4 @@
+---
+- import_playbook: install_nginx.yaml
+- import_playbook: prov-db.yml
+- import_playbook: prov_app_with_npm_start.yml

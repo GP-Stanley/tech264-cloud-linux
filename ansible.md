@@ -56,6 +56,13 @@
 - [Create prov-app.yml script](#create-prov-appyml-script)
 - [Rebooting VMs on AWS](#rebooting-vms-on-aws)
 - [Test on two NEW target nodes: app \& db](#test-on-two-new-target-nodes-app--db)
+  - [Create 2 instances on AWS](#create-2-instances-on-aws)
+  - [SSH into new app and db target nodes in seperate terminals.](#ssh-into-new-app-and-db-target-nodes-in-seperate-terminals)
+  - [Check your DB\_HOST env variable.](#check-your-db_host-env-variable)
+  - [Check the app and db instance are listening on the controller node.](#check-the-app-and-db-instance-are-listening-on-the-controller-node)
+  - [Check your DB\_HOST variable](#check-your-db_host-variable)
+  - [Install nginx](#install-nginx)
+  - [Run the master playbook](#run-the-master-playbook)
 
 <br>
 
@@ -1268,7 +1275,7 @@ Same naming convention:
 * tech264-georgia-ubuntu-2204-ansbile-target-node-db
 * tech264-georgia-ubuntu-2204-ansbile-target-node-app
 
-Create 2 instances on AWS:
+## Create 2 instances on AWS
 * Create the database VM on AWS
   * **Name**: tech264-georgia-ubuntu-2204-ansible-new-target-node-db
   * **Size**: t2.micro as usual
@@ -1291,14 +1298,14 @@ Create 2 instances on AWS:
 
 <br>
 
-* SSH into new app and db target nodes in seperate terminals.
+## SSH into new app and db target nodes in seperate terminals.
 * Edit the IP for the [web] and [bd] groups to match the IPs on AWS.  
   * cd /etc/ansible
   * `sudo nano hosts`
 * database public ip: 108.129.172.158
 * app public ip: 108.129.131.254
 
-* Check your DB_HOST env variable.
+## Check your DB_HOST env variable.
   * Check the IP is the same as the private IP of the db VM.
   * Navigate to your prov-db.yml script on the controller bash window. 
     * `cd /etc/ansible`
@@ -1308,21 +1315,21 @@ Create 2 instances on AWS:
     * `cd /etc/ansible`
     * `sudo nano prov_app_with_npm_start.yml`
 
-Check the app and db instance are listening on the controller node. 
+## Check the app and db instance are listening on the controller node. 
 * `ansible all -m ping`
 * You may need to type 'yes' to the fingerprint twice to give it permission. 
 
-Check your DB_HOST variable
+## Check your DB_HOST variable
 * `echo $DB_HOST` on the target-node app VM.
 * `export DB_HOST=mongodb://172.31.31.214:27017/posts`
 * `echo $DB_HOST` on the target-node app VM.
 
-Install nginx
+## Install nginx
 * Add this playbook to the beginning of the master playbook.
   * `sudo nano prov-app-all.yml`
   * import_playbook: install_nginx.yaml: place this at the top of the playbook. 
 
-Run the master playbook
+## Run the master playbook
 * Navigate to cd /etc/ansible
 * `ansible-playbook prov-app-all.yml`: to run both playbooks.
 

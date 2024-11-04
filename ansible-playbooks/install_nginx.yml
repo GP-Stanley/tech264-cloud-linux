@@ -1,0 +1,23 @@
+# starts with --- (three hyphens)
+---
+
+# name of the play(book)
+- name: install nginx play
+  # where (on which devices) do we want to run this playbook
+  hosts: web
+
+  # get comprehensive facts on the hosts ('no' to speed things up)
+  gather_facts: yes
+
+  # do we need to provide admin access - use sudo
+  become: true
+
+  # instructions "tasks" (tasks of the play)
+  # task - install nginx on the target node
+  tasks:
+  - name: install and configure nginx
+    # use package 'nginx', 'state=present' means we need it running
+    apt: pkg=nginx state=present
+
+# ends with ... (three dots) to say it's the end of the file
+

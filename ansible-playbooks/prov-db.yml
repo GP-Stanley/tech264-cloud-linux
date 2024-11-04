@@ -78,5 +78,8 @@
       ansible.builtin.command:
         cmd: node seeds/seed.js
       args:
-        chdir: /home/{{ ansible_user }}/app/seeds/seed.js
+        chdir: /home/{{ ansible_user }}/app/seeds/seed.js # this is the app_dest_path
 ```
+
+WHEN YOU HAVE THE CHANCE, THIS BLOCK OF CODE (ABOUT SEEDING THE DB), SHOULD BE DELETED 
+AND REPLACED BY A CODE BLOCK AT THE BOTTOM OF THE APP PLAYBOOK.
