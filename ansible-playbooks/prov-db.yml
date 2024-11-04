@@ -58,28 +58,4 @@
       ansible.builtin.service:
         name: mongod
         state: restarted
-
-    # Set DB_HOST environment variable on the app VM
-    - name: Set DB_HOST environment variable
-      ansible.builtin.lineinfile:
-        path: /etc/environment
-        line: 'DB_HOST=mongodb://172.31.19.24:27017/posts'
-        state: present
-
-    # Restart the app
-    - name: Restart the app
-      ansible.builtin.shell:
-        cmd: npm start
-        chdir: /home/ubuntu/app/app
-      become: true
-
-    # Seed the database
-    - name: Seed the MongoDB database
-      ansible.builtin.command:
-        cmd: node seeds/seed.js
-      args:
-        chdir: /home/{{ ansible_user }}/app/seeds/seed.js # this is the app_dest_path
 ```
-
-WHEN YOU HAVE THE CHANCE, THIS BLOCK OF CODE (ABOUT SEEDING THE DB), SHOULD BE DELETED 
-AND REPLACED BY A CODE BLOCK AT THE BOTTOM OF THE APP PLAYBOOK.

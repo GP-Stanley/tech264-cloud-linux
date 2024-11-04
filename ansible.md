@@ -735,7 +735,7 @@ Notes:
     # Add the GPG key for the NodeSource repository
     - name: Install curl (required to add NodeSource repository)
       ansible.builtin.apt:
-        update_cache: yes
+        update_cache: yes   # equivalent of audo apt update
         name: curl
         state: present
 
@@ -833,7 +833,7 @@ Final script:
     # Add the GPG key for the NodeSource repository
     - name: Install curl (required to add NodeSource repository)
       ansible.builtin.apt:
-        update_cache: yes
+        update_cache: yes   # equivalent of audo apt update
         name: curl
         state: present
 
@@ -996,14 +996,14 @@ ec2-db-instance | SUCCESS => {
     ansible.builtin.apt_repository:
       repo: "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu {{ ansible_distribution_release }}/mongodb-org/7.0 multiverse"
       state: present
-      update_cache: yes
+      update_cache: yes   # equivalent of audo apt update
 
   # install mongodb
   - name: Install MongoDB 7.0.6
     ansible.builtin.apt:
       name: mongodb-org=7.0.6
       state: present
-      update_cache: yes
+      update_cache: yes   # equivalent of audo apt update
 ```
 * Start your script: `ansible-playbook install_mongodb.yml`
 
@@ -1105,14 +1105,14 @@ Create a new playbook named prov-db.yml. This playbook should to do install/conf
       ansible.builtin.apt_repository:
         repo: "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu {{ ansible_distribution_release }}/mongodb-org/7.0 multiverse"
         state: present
-        update_cache: yes
+        update_cache: yes   # equivalent of audo apt update
 
     # Install MongoDB 7.0.6
     - name: Install MongoDB 7.0.6
       ansible.builtin.apt:
         name: mongodb-org=7.0.6
         state: present
-        update_cache: yes
+        update_cache: yes   # equivalent of audo apt update
 
     # modify MongoDB configuration to allow remote connections
     - name: Configure MongoDB to allow remote connections
