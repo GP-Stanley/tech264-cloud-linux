@@ -2,7 +2,7 @@
 
 GITHUB_REPO="https://github.com/GP-Stanley/sparta-test-app"
 
-MONGODB_HOST="mongodb://172.31.58.67:27017/posts"
+MONGODB_HOST="mongodb://172.31.19.24:27017/posts"
 
 echo update env variable sources list...
 sudo apt-get update -y
