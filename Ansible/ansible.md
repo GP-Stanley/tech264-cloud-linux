@@ -77,6 +77,14 @@
   - [Check your DB\_HOST variable](#check-your-db_host-variable)
   - [Install nginx](#install-nginx)
   - [Run the master playbook](#run-the-master-playbook)
+- [How Terraform and Ansible fit into the bigger picture](#how-terraform-and-ansible-fit-into-the-bigger-picture)
+- [Green Field \& Brown Field](#green-field--brown-field)
+  - [**Green field**](#green-field)
+    - [Characteristics:](#characteristics)
+  - [**Brown field**](#brown-field)
+    - [Characteristics](#characteristics-1)
+    - [Challenges](#challenges)
+  - [Ansible in Green Field and Brown Field Projects](#ansible-in-green-field-and-brown-field-projects)
 
 <br>
 
@@ -1391,3 +1399,63 @@ Same naming convention:
 * `ansible-playbook prov-app-all.yml`: to run both playbooks.
 
 <br> 
+
+# How Terraform and Ansible fit into the bigger picture
+Ramon's Diagram:
+
+![bigger-pic](./ansible-images/bigger-pic.png)
+
+* We have our provisioning architecture (creates infrastructure). We've used Terraform for this. 
+  * For Terraform, your code will go into the main.tf (or other files like variables.tf). 
+  * This will deploy things to the cloud by interacting with the Cloud providers API to create things in the cloud. 
+    * e.g., VMs and their dependencies. 
+
+* We need to configure the inrastructure. To do that we use Ansible. 
+  * Playbooks (yaml files). 
+  * We use these to configure whatever it is in cloud. 
+  * It may need to install software, updates, and change settings. 
+
+* To make it automated, you can create a CI/CD pipeline, i.e., with Jenkins. 
+
+<br>
+
+# Green Field & Brown Field
+## **Green field**
+* A Green Field project refers to a scenario where there is no existing infrastructure. 
+* You are starting from scratch, building everything from the ground up.
+
+### Characteristics:
+* **Flexibility**: You have the freedom to design and implement the infrastructure according to the latest best practices and technologies.
+* **Modernisation**: Opportunity to use the latest tools, frameworks, and methodologies without worrying about legacy systems.
+* **Clean Slate**: No need to deal with existing configurations, making it easier to implement a consistent and standardised setup.
+
+Example: Setting up a new cloud environment for a startup, where you can choose the latest cloud services, container orchestration tools like Kubernetes, and configuration management tools like Ansible.
+
+## **Brown field**
+* Definition: A Brown Field project involves working with an existing infrastructure. You need to integrate new systems or update the current setup while considering the existing environment.
+
+### Characteristics
+* **Legacy Systems**: You may need to work with outdated or unsupported systems that require special handling.
+* **Compatibility**: Ensuring new configurations and tools are compatible with the existing infrastructure.
+* **Incremental Updates**: Often involves making incremental changes to avoid disrupting the current operations.
+
+### Challenges
+* **Maintenance**: Existing infrastructure may not have been kept up to date, leading to potential compatibility issues.
+* **Reliance on Commands**: You may be forced to rely on specific commands rather than using Ansible modules that should be compatible, due to the limitations of the legacy systems.
+
+Example: Upgrading the infrastructure of an established enterprise, where you need to integrate new cloud services with on-premises servers and ensure minimal disruption to ongoing operations.
+
+<br>
+
+## Ansible in Green Field and Brown Field Projects
+Green Field
+* **Playbooks**: Create comprehensive playbooks to set up the entire infrastructure, including servers, networking, and applications.
+* **Roles**: Use Ansible roles to organise tasks and ensure reusability and consistency across different environments.
+* **Automation**: Automate the provisioning, configuration, and deployment processes to ensure a smooth and efficient setup.
+
+Brown Field:
+* **Inventory Management**: Use Ansible inventory files to manage and organise existing infrastructure.
+* **Incremental Changes**: Implement playbooks that make incremental changes to the existing setup, ensuring compatibility and minimal disruption.
+* **Custom Modules**: Develop custom Ansible modules or scripts to handle specific tasks that are not supported by standard modules, especially when dealing with legacy systems.
+
+<br>
