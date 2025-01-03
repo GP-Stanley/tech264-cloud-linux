@@ -135,7 +135,7 @@ Db vm: default subnet 2
 * Go to search bar in AWS, search "EC2" > Add "Instance".
 * Name: `tech264-georgia-aws-db-vm`
 * Instance type: `t2.micro` (this will be the same for the app vm). 
-* Use default VPC
+* Use default VPC.
 
 ![alt text](./aws-images/image-11.png)
 ![alt text](./aws-images/image-13.png) 

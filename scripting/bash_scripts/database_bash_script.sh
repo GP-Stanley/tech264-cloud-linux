@@ -1,5 +1,3 @@
-DATABASE
-```bash
 #!/bin/bash
 
 # Update the system package list
@@ -61,4 +59,3 @@ echo Done!
 echo Restarting MongoDB service...
 sudo systemctl start mongod
 echo Done!
-```
